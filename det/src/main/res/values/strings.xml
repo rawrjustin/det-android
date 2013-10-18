@@ -4,5 +4,12 @@
     <string name="app_name">det</string>
     <string name="action_settings">Settings</string>
     <string name="hello_world">Hello world!</string>
+    <string name="login">Log In</string>
+    <string name="logout">Log Out</string>
+    <string name="app_id">115466291969343</string>
+    <string name="parse_app_id">SnZIklEaMlecec0zVwMgEgXDgeDWgM458xCUXPqU</string>
+    <string name="parse_client_key">TLNJj6cz7SquDWwPlNHRg79YGHWpftHbh0WoEyLx</string>
+    <string name="title_activity_user_home">UserHomeActivity</string>
+    <string name="login_intro">Please log in to use Det</string>
 
 </resources>
