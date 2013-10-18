@@ -3,6 +3,10 @@ package com.jab.det;
 import java.util.Arrays;
 import java.util.List;
 
+import com.facebook.Request;
+import com.facebook.Response;
+import com.facebook.Session;
+import com.facebook.model.GraphUser;
 import com.parse.LogInCallback;
 import com.parse.ParseException;
 import com.parse.ParseFacebookUtils;
@@ -61,21 +65,47 @@ public class LoginActivity extends Activity {
 
 	/* Gets run when user clicks log in with facebook button */
 	private void onLoginButtonClicked() {
+		// TODO: Link new user with existing parse row if exists
 		LoginActivity.this.progressDialog = ProgressDialog.show(
 				LoginActivity.this, "", "Logging in...", true);
-		List<String> permissions = Arrays.asList("basic_info", "user_about_me",
+		List<String> permissions = Arrays.asList("email", "basic_info", "user_about_me",
 				"user_relationships", "user_birthday", "user_location");
 		ParseFacebookUtils.logIn(permissions, this, new LogInCallback() {
 			@Override
-			public void done(ParseUser user, ParseException err) {
-				LoginActivity.this.progressDialog.dismiss();
-				if (user == null) {
+			public void done(final ParseUser parseUser, ParseException err) {
+				if (parseUser == null) {
 					Log.d(DetApplication.TAG,
 							"Uh oh. The user cancelled the Facebook login.");
-				} else if (user.isNew()) {
+				} else if (parseUser.isNew()) {
 					Log.d(DetApplication.TAG,
 							"User signed up and logged in through Facebook!");
-					showUserHomeActivity();
+
+					// TODO: Populate user properties
+					// Request me request
+				    Request.executeMeRequestAsync(Session.getActiveSession(), new Request.GraphUserCallback() {
+
+				        @Override
+				        public void onCompleted(GraphUser graphUser, Response response) {
+				            if (graphUser != null) {
+				                // Display the parsed user info
+				            	parseUser.put("name", graphUser.getName());
+				            	parseUser.put("fbID", graphUser.getId());
+				            	parseUser.put("email", graphUser.getProperty("email"));
+				            	try {
+					            	parseUser.save();
+				            	} catch (Exception e)
+				            	{
+				            		// TODO: Handle save exception
+				            	}
+				            	
+				            	Log.d(DetApplication.TAG, "User properties saved");
+				            	LoginActivity.this.progressDialog.dismiss();
+								showUserHomeActivity();
+				            } else {
+				            	// TODO: Handle error
+				            }
+				        }
+				    });
 				} else {
 					Log.d(DetApplication.TAG,
 							"User logged in through Facebook!");
@@ -84,7 +114,7 @@ public class LoginActivity extends Activity {
 			}
 		});
 	}
-
+	
 	private void showUserHomeActivity() {
 		Intent intent = new Intent(this, UserHomeActivity.class);
 		startActivity(intent);
