@@ -1,11 +1,8 @@
 package com.jab.det;
 
-import com.parse.Parse;
-import com.parse.ParseACL;
 import com.parse.ParseAnalytics;
 import com.parse.ParseException;
 import com.parse.ParseObject;
-import com.parse.ParseUser;
 
 import android.os.Bundle;
 import android.app.Activity;
@@ -19,24 +16,12 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        Parse.initialize(this, "SnZIklEaMlecec0zVwMgEgXDgeDWgM458xCUXPqU", "TLNJj6cz7SquDWwPlNHRg79YGHWpftHbh0WoEyLx");
-        
+        // Track parse statistics
         ParseAnalytics.trackAppOpened(getIntent());
-        
-        ParseObject gameScore = new ParseObject("GameScore");
-        gameScore.put("score", 1337);
-        gameScore.put("playerName", "Sean Plott");
-        gameScore.put("cheatMode", false);
-        try {
-			gameScore.save();
-		} catch (ParseException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 
 		TextView textView = new TextView(this);
         textView.setTextSize(40);
-        textView.setText("TESTING");
+        textView.setText("Test message");
         setContentView(textView);
     }
 
@@ -47,5 +32,4 @@ public class MainActivity extends Activity {
         getMenuInflater().inflate(R.menu.main, menu);
         return true;
     }
-    
 }
