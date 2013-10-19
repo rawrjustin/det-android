@@ -17,7 +17,8 @@
     <string name="add_transaction_description">What did you pay for?</string>
     <string name="add_transaction_amount_hint">Enter amount.</string>
     <string name="add_transaction_description_hint">Enter description.</string>
-    <string name="add_transaction_add_friends">Who did you pay for?</string>
-    <string name="add_transaction_add_friends_button">Select friends</string>
+    <string name="select_friends_text">Who did you pay for?</string>
+    <string name="select_friends_button">Select friends</string>
     <string name="add_transaction_submit">Submit</string>
+    <string name="exception">Exception: %1$s</string>
 </resources>

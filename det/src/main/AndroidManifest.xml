@@ -38,6 +38,9 @@
             android:name="com.jab.det.UserHomeActivity"
             android:label="@string/title_activity_user_home" >
         </activity>
+        <activity android:name="SelectFriendsActivity"
+                  android:label="Select Friends">
+        </activity>
         <activity
             android:name="com.jab.det.AddTransactionActivity"
             android:label="@string/title_activity_add_transaction"

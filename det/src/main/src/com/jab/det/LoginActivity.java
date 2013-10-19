@@ -11,6 +11,7 @@ import com.parse.LogInCallback;
 import com.parse.ParseException;
 import com.parse.ParseFacebookUtils;
 import com.parse.ParseUser;
+import com.parse.ParseFacebookUtils.Permissions;
 
 import android.os.Bundle;
 import android.app.Activity;
@@ -72,7 +73,7 @@ public class LoginActivity extends Activity {
 		// It's unclear to me right now what a user row added through a transaction looks like
 		LoginActivity.this.progressDialog = ProgressDialog.show(
 				LoginActivity.this, "", "Logging in...", true);
-		List<String> permissions = Arrays.asList("email", "basic_info");
+		List<String> permissions = Arrays.asList(Permissions.User.ABOUT_ME, Permissions.Friends.ABOUT_ME);
 		ParseFacebookUtils.logIn(permissions, this, new LogInCallback() {
 			@Override
 			public void done(final ParseUser parseUser, ParseException err) {
