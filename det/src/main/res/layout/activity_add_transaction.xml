@@ -5,9 +5,57 @@
     android:layout_height="match_parent"
 	android:orientation="vertical" >
 
-    <TextView
+    <LinearLayout
+        android:layout_marginTop="50dp"
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"
+		android:orientation="horizontal" >
+	    <TextView
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:text="@string/add_transaction_amount" />
+	    <EditText android:id="@+id/edit_transaction_amount"
+	        android:layout_weight="1"
+	        android:layout_width="0dp"
+	        android:layout_height="wrap_content"
+	        android:inputType="numberDecimal"
+	        android:hint="@string/add_transaction_amount_hint" />
+    </LinearLayout>
+
+    <LinearLayout
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"
+		android:orientation="horizontal" >
+	    <TextView
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:text="@string/add_transaction_description" />
+	    <EditText android:id="@+id/edit_transaction_description"
+	        android:layout_weight="1"
+	        android:layout_width="0dp"
+	        android:layout_height="wrap_content"
+	        android:singleLine="true"
+	        android:hint="@string/add_transaction_description_hint" />
+    </LinearLayout>
+    
+	<LinearLayout
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"
+		android:orientation="horizontal" >
+	    <TextView
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:text="@string/add_transaction_add_friends" />
+	    <Button android:id="@+id/add_transaction_add_friends"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:text="@string/add_transaction_add_friends_button" />
+    </LinearLayout>
+    
+    <Button android:id="@+id/add_transaction_submit"
+        android:layout_marginTop="50dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/add_transaction_intro" />
-
+        android:text="@string/add_transaction_submit" />
+	
 </LinearLayout>
