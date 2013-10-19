@@ -1,5 +1,6 @@
 package com.jab.det;
 
+import java.util.ArrayList;
 import com.parse.ParseUser;
 
 import android.os.Bundle;
@@ -8,21 +9,30 @@ import android.content.Intent;
 import android.util.Log;
 import android.view.Menu;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ListView;
 import android.widget.TextView;
 
 public class UserHomeActivity extends Activity {
 
 	private Button logoutButton;
 	private TextView userIntroView;
+	private ListView debtListView;
+	private ArrayAdapter<String> debtListAdapter;
+	private DTUser currentUser;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_home);
-        
-        userIntroView = (TextView) findViewById(R.id.user_home_intro);
-        
+        getCurrentUser();
+		setupLogoutButton();
+		displayDebts();
+    }
+
+    // Adds onClick listener for logout button
+    private void setupLogoutButton() {
     	logoutButton = (Button) findViewById(R.id.logoutButton);
 		logoutButton.setOnClickListener(new View.OnClickListener() {
 			@Override
@@ -30,26 +40,44 @@ public class UserHomeActivity extends Activity {
 				onLogoutButtonClicked();
 			}
 		});
-		
-		// TODO: Fetch all debts for current user and display them on this activity
     }
-
-	@Override
-	public void onResume() {
-		super.onResume();
-
-		//ParseUser currentUser = ParseUser.getCurrentUser();
-		DTUser currentUser = DTUser.getCurrentUser();
+    
+    // Gets current user and checks success
+    private void getCurrentUser() {
+    	currentUser = DTUser.getCurrentUser();
 		if (currentUser != null) {
-			userIntroView.setText("Hi " + currentUser.name);
-			// Pull user's transactions and display them
-			Log.d(DetApplication.TAG, "Failed to retrieve current user on UserHomeActivity resume");
+			// Current user successfully retrieved
+			Log.d(DetApplication.TAG, "Successfully retrieved current user");
 		} else {
-			// If the user is not logged in, go to the
-			// activity showing the login view.
+			// Failed to retrieve current user
+			Log.d(DetApplication.TAG, "Failed to retrieve current user");
 			startLoginActivity();
 		}
-	}
+
+    }
+    
+    // Gets all of current user's associated debts and writes them to the ListView
+    private void displayDebts() {
+    	// Dispay intro message
+        userIntroView = (TextView) findViewById(R.id.user_home_intro);
+		userIntroView.setText("Hi " + currentUser.name + ", add a transaction or view your debts below");
+		
+		// Populate debtsList ListView with debts
+		debtListView = (ListView) findViewById(R.id.debt_list);
+		ArrayList<String> debtList = new ArrayList<String>();  
+		
+		for (DTDebt debt : currentUser.getDebts()) {
+			debtList.add(debt.toString());
+		}
+		
+		if (debtList.size() == 0) {
+			debtList.add("You are not involved in any debts");
+		}
+		
+		// Writes debts to view
+		debtListAdapter = new ArrayAdapter<String>(this, R.layout.debt_row, debtList);
+		debtListView.setAdapter(debtListAdapter);
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -64,11 +92,13 @@ public class UserHomeActivity extends Activity {
     	startAddTransactionActivity();
     }
     
+	// Starts AddTransactionActivity
 	private void startAddTransactionActivity() {
 		Intent intent = new Intent(this, AddTransactionActivity.class);
 		startActivity(intent);
 	}
 	
+	// Logs the user out and starts LoginActivity
 	private void onLogoutButtonClicked() {
 		// Log the user out
 		ParseUser.logOut();
@@ -77,6 +107,7 @@ public class UserHomeActivity extends Activity {
 		startLoginActivity();
 	}
 
+	// Starts LoginActivity
 	private void startLoginActivity() {
 		Intent intent = new Intent(this, LoginActivity.class);
 		intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);

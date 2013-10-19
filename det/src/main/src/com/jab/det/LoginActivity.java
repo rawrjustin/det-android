@@ -30,25 +30,28 @@ public class LoginActivity extends Activity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-
 		setContentView(R.layout.activity_login);
-
-		loginButton = (Button) findViewById(R.id.loginButton);
+		setupLoginButton();
+		
+		// Check if user is logged in and linked to facebook
+		ParseUser currentUser = ParseUser.getCurrentUser();
+		if ((currentUser != null) && ParseFacebookUtils.isLinked(currentUser)) {
+			// Go to the user info activity
+			startUserHomeActivity();
+		}
+	}
+	
+    // Adds onClick listener for login button
+    private void setupLoginButton() {
+    	loginButton = (Button) findViewById(R.id.loginButton);
 		loginButton.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
 				onLoginButtonClicked();
 			}
 		});
+    }
 
-		// Check if there is a currently logged in user
-		// and they are linked to a Facebook account.
-		ParseUser currentUser = ParseUser.getCurrentUser();
-		if ((currentUser != null) && ParseFacebookUtils.isLinked(currentUser)) {
-			// Go to the user info activity
-			showUserHomeActivity();
-		}
-	}
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
@@ -63,13 +66,13 @@ public class LoginActivity extends Activity {
 		ParseFacebookUtils.finishAuthentication(requestCode, resultCode, data);
 	}
 
-	/* Gets run when user clicks log in with facebook button */
+	// Gets run when user clicks log in button
 	private void onLoginButtonClicked() {
 		// TODO: Link new user with existing parse row if exists
+		// It's unclear to me right now what a user row added through a transaction looks like
 		LoginActivity.this.progressDialog = ProgressDialog.show(
 				LoginActivity.this, "", "Logging in...", true);
-		List<String> permissions = Arrays.asList("email", "basic_info", "user_about_me",
-				"user_relationships", "user_birthday", "user_location");
+		List<String> permissions = Arrays.asList("email", "basic_info");
 		ParseFacebookUtils.logIn(permissions, this, new LogInCallback() {
 			@Override
 			public void done(final ParseUser parseUser, ParseException err) {
@@ -79,8 +82,6 @@ public class LoginActivity extends Activity {
 				} else if (parseUser.isNew()) {
 					Log.d(DetApplication.TAG,
 							"User signed up and logged in through Facebook!");
-
-					// TODO: Populate user properties
 					// Request me request
 				    Request.executeMeRequestAsync(Session.getActiveSession(), new Request.GraphUserCallback() {
 
@@ -93,29 +94,28 @@ public class LoginActivity extends Activity {
 				            	parseUser.put("email", graphUser.getProperty("email"));
 				            	try {
 					            	parseUser.save();
-				            	} catch (Exception e)
-				            	{
+				            	} catch (Exception e) {
 				            		// TODO: Handle save exception
 				            	}
 				            	
 				            	Log.d(DetApplication.TAG, "User properties saved");
 				            	LoginActivity.this.progressDialog.dismiss();
-								showUserHomeActivity();
+				            	startUserHomeActivity();
 				            } else {
 				            	// TODO: Handle error
 				            }
 				        }
 				    });
 				} else {
-					Log.d(DetApplication.TAG,
-							"User logged in through Facebook!");
-					showUserHomeActivity();
+					Log.d(DetApplication.TAG, "User logged in through Facebook!");
+					startUserHomeActivity();
 				}
 			}
 		});
 	}
 	
-	private void showUserHomeActivity() {
+	// Starts UserHomeActivity
+	private void startUserHomeActivity() {
 		Intent intent = new Intent(this, UserHomeActivity.class);
 		startActivity(intent);
 	}
