@@ -38,6 +38,14 @@
             android:name="com.jab.det.UserHomeActivity"
             android:label="@string/title_activity_user_home" >
         </activity>
+        <activity
+            android:name="com.jab.det.AddTransactionActivity"
+            android:label="@string/title_activity_add_transaction"
+            android:parentActivityName="UserHomeActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="UserHomeActivity" />
+        </activity>
     </application>
 
 </manifest>

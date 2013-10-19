@@ -30,15 +30,18 @@ public class UserHomeActivity extends Activity {
 				onLogoutButtonClicked();
 			}
 		});
+		
+		// TODO: Fetch all debts for current user and display them on this activity
     }
 
 	@Override
 	public void onResume() {
 		super.onResume();
 
-		ParseUser currentUser = ParseUser.getCurrentUser();
+		//ParseUser currentUser = ParseUser.getCurrentUser();
+		DTUser currentUser = DTUser.getCurrentUser();
 		if (currentUser != null) {
-			userIntroView.setText("Hi user " + currentUser.getUsername());
+			userIntroView.setText("Hi " + currentUser.name);
 			// Pull user's transactions and display them
 			Log.d(DetApplication.TAG, "Failed to retrieve current user on UserHomeActivity resume");
 		} else {
@@ -55,6 +58,17 @@ public class UserHomeActivity extends Activity {
         return true;
     }
     
+    // Called when user clicks add transaction button
+	public void addTransaction(View view) {
+    	Log.d(DetApplication.TAG, "Add transaction button clicked");
+    	startAddTransactionActivity();
+    }
+    
+	private void startAddTransactionActivity() {
+		Intent intent = new Intent(this, AddTransactionActivity.class);
+		startActivity(intent);
+	}
+	
 	private void onLogoutButtonClicked() {
 		// Log the user out
 		ParseUser.logOut();
