@@ -1,7 +1,10 @@
 package com.jab.det;
 
+import android.util.Log;
+
 import com.parse.ParseException;
 import com.parse.ParseObject;
+import com.parse.ParseUser;
 
 public class DTDebt {
 	
@@ -13,27 +16,30 @@ public class DTDebt {
 	private ParseObject parseObject;
 	
 	public DTDebt(ParseObject parseObject) {
+		try {
+			parseObject.fetchIfNeeded();
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 		this.objectId = parseObject.getObjectId();
 		this.amount = parseObject.getNumber("amount");
-		this.creditor = DTUser.getUserFromObjectId(parseObject.getString("creditor"));
-		this.debtor = DTUser.getUserFromObjectId(parseObject.getString("debtor"));
-		this.transaction = new DTTransaction(parseObject.getString("transaction"));
+		this.creditor = DTUser.getUserFromParseUser(parseObject.getParseUser("creditor"));
+		this.debtor = DTUser.getUserFromParseUser(parseObject.getParseUser("debtor"));
+		ParseObject parseTransaction = parseObject.getParseObject("transaction");
+		this.transaction = new DTTransaction(parseTransaction);
 		this.parseObject = parseObject;
 	}
 	
-	public DTDebt(DTUser creditor, DTUser debtor, Number amount, DTTransaction transaction) {
+	public DTDebt(DTUser creditor, DTUser debtor, Number amount) {
 		this.creditor = creditor;
 		this.debtor = debtor;
 		this.amount = amount;
-		this.transaction = transaction;
-		
 		this.parseObject = new ParseObject("Debt");
 		this.parseObject.put("creditor", creditor.getParseUser());
 		this.parseObject.put("debtor", debtor.getParseUser());
 		this.parseObject.put("amount", amount);
-		this.parseObject.put("transaction", transaction);
-		
-		// When to save DTDebt object?
 	}
 	
 	public ParseObject getParseObject() {
@@ -41,7 +47,7 @@ public class DTDebt {
 	}
 
 	public String toString() {
-		return this.debtor.toString() + " owes " + this.creditor.toString() + " $" + this.amount;
+		return String.format("%s owes %s $%s for %s", this.debtor.toString(), this.creditor.toString(), this.amount.toString(), this.transaction.getDescription());
 	}
 	
 	// Saves the debt to Parse, including the relationship to the transaction

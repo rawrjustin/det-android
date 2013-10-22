@@ -1,5 +1,7 @@
 package com.jab.det;
 
+import java.math.BigInteger;
+import java.security.SecureRandom;
 import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.List;
@@ -8,6 +10,7 @@ import android.util.Log;
 
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
+import com.parse.ParseRelation;
 import com.parse.ParseUser;
 import com.parse.ParseException;
 
@@ -19,6 +22,7 @@ public class DTUser {
     private String username;
     private String password;
     private String name;
+    public static ParseUser currentParseUser;
     
     // Constructs DTUser with fields
     public DTUser(String objectId, String email, String facebookID, String username, String password, String name) {
@@ -53,44 +57,58 @@ public class DTUser {
     
     // Returns a DTUser representing the current user.
     public static DTUser getCurrentUser() {
-        return getUserFromParseUser(ParseUser.getCurrentUser());
+    	currentParseUser = currentParseUser == null ? ParseUser.getCurrentUser() : currentParseUser;
+        return getUserFromParseUser(currentParseUser);
     }
 
     // Returns a DTUser given a ParseUser object
     public static DTUser getUserFromParseUser(ParseUser parseUser) {
-		if (parseUser == null) {
+    	if (parseUser == null) {
 			return null;
 		}
 		
-		String objectId = parseUser.getObjectId();
-		String email = parseUser.getString("email");
-		String facebookID = parseUser.getString("fbID");
-		String username = parseUser.getUsername();
-		String password = "";
-		String name = parseUser.getString("name");
+    	try {
+			parseUser.fetch();
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+    	
+		String objectId = null, facebookID = null, name = null, email = null, username = null, password = generatePassword();
+		objectId = parseUser.getObjectId();
+		name = parseUser.getString("name");
+		facebookID = parseUser.getString("fbID");
+		username = parseUser.getUsername();
+		
+		if (parseUser.isAuthenticated()) {
+			email = parseUser.getString("email");
+		} else {
+			email = "";
+		}
 		
 		return new DTUser(objectId, email, facebookID, username, password, name);
 	}
-    // return consolidated debts as a list of user integer pairs, representing users and how much they owe currentUser
+    
+    // Returns consolidated debts as a list of user integer pairs, representing users and how much they owe currentUser
     public List<AbstractMap.SimpleEntry<DTUser, Integer>> getConsolidatedDebts() {
 		return null;
     }
     
     // Returns a DTDebt array of all debts user is a part of
     public DTDebt[] getDebts() {
-    	List<DTDebt> debts = new ArrayList<DTDebt>();
-    	
+    	ArrayList<DTDebt> debts = new ArrayList<DTDebt>();
+    	    	
     	// Query debts where user is creditor
     	try {
 	    	ParseQuery<ParseObject> creditorsQuery = ParseQuery.getQuery("Debt");
-	    	creditorsQuery.whereEqualTo("creditor", objectId);
+	    	creditorsQuery.whereEqualTo("creditor", DTUser.currentParseUser);
 	    	for (ParseObject queryResult : creditorsQuery.find()) {
 	    		debts.add(new DTDebt(queryResult));
 	    	}
-	
+	    		    		
 	    	// Query debts where user is creditor
 	    	ParseQuery<ParseObject> debtorsQuery = ParseQuery.getQuery("Debt");
-	    	debtorsQuery.whereEqualTo("creditor", objectId);
+	    	debtorsQuery.whereEqualTo("debtor", DTUser.currentParseUser);
 	    	for (ParseObject queryResult : debtorsQuery.find()) {
 	    		debts.add(new DTDebt(queryResult));
 	    	}
@@ -103,7 +121,34 @@ public class DTUser {
     
     // Returns the user with given facebook id. If the user did not already exist, a default DTUser with the facebook id will be created.
     public static DTUser getOrCreateUser(String fbID, String name) {
-        return null;
+    	// Query ParseUser table for entry for fbID.
+    	ParseQuery<ParseUser> query = ParseUser.getQuery();
+		query.whereEqualTo("fbID", fbID);
+		List<ParseUser> queryResult = null;
+		try {
+			queryResult = query.find();
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		if (queryResult.size() == 1) {
+			return getUserFromParseUser(queryResult.get(0));
+		}
+		
+		ParseUser parseUser = new ParseUser();
+		parseUser.put("fbID", fbID);
+		parseUser.put("name", name);
+		parseUser.setUsername(fbID);
+		parseUser.setPassword(generatePassword());
+		
+		try {
+			parseUser.signUp();
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+        return getUserFromParseUser(parseUser);
     }
 
     // Creates new user in the Parse database
@@ -118,6 +163,11 @@ public class DTUser {
 	// Gets DTUser name
 	public String getName() {
 		return this.name;
+	}
+	
+	// Gets ObjectId
+	public String getObjectId() {
+		return this.objectId;
 	}
 	
 	// Gets ParseUser
@@ -139,5 +189,9 @@ public class DTUser {
 		}
 		
 		return parseUser;
+	}
+	
+	public static String generatePassword() {
+		return new BigInteger(130, new SecureRandom()).toString(32);
 	}
 }

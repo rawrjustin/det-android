@@ -71,8 +71,7 @@ public class LoginActivity extends Activity {
 	private void onLoginButtonClicked() {
 		// TODO: Link new user with existing parse row if exists
 		// It's unclear to me right now what a user row added through a transaction looks like
-		LoginActivity.this.progressDialog = ProgressDialog.show(
-				LoginActivity.this, "", "Logging in...", true);
+		LoginActivity.this.progressDialog = ProgressDialog.show(LoginActivity.this, "", "Logging in...", true);
 		List<String> permissions = Arrays.asList(Permissions.User.ABOUT_ME, Permissions.Friends.ABOUT_ME);
 		ParseFacebookUtils.logIn(permissions, this, new LogInCallback() {
 			@Override

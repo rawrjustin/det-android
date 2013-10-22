@@ -20,13 +20,13 @@ public class UserHomeActivity extends Activity {
 	private TextView userIntroView;
 	private ListView debtListView;
 	private ArrayAdapter<String> debtListAdapter;
-	private DTUser currentUser;
+	private static DTUser currentUser;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_home);
-        getCurrentUser();
+        setCurrentUser();
 		setupLogoutButton();
 		displayDebts();
     }
@@ -43,17 +43,15 @@ public class UserHomeActivity extends Activity {
     }
     
     // Gets current user and checks success
-    private void getCurrentUser() {
-    	currentUser = DTUser.getCurrentUser();
-		if (currentUser != null) {
-			// Current user successfully retrieved
-			Log.d(DetApplication.TAG, "Successfully retrieved current user");
-		} else {
-			// Failed to retrieve current user
-			Log.d(DetApplication.TAG, "Failed to retrieve current user");
-			startLoginActivity();
-		}
-
+    private void setCurrentUser() {
+    	currentUser = currentUser == null ? DTUser.getCurrentUser() : currentUser;
+//    	if (currentUser == null) {
+//    		startLoginActivity();
+//    	}
+    }
+    
+    public static DTUser getCurrentUser() {
+    	return currentUser;
     }
     
     // Gets all of current user's associated debts and writes them to the ListView

@@ -3,6 +3,9 @@ package com.jab.det;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import android.util.Log;
+
+import com.parse.ParseException;
 import com.parse.ParseObject;
 
 public class DTTransaction {
@@ -24,21 +27,41 @@ public class DTTransaction {
 		this.parseObject = new ParseObject("Transaction");
 		this.parseObject.put("description", this.description);
 		for (DTUser user : otherUsers) {
-			this.debts.add(new DTDebt(currentUser, user, amount.doubleValue()/(otherUsers.size()+1), this));
+			this.debts.add(new DTDebt(currentUser, user, trimDecimals(amount.doubleValue()/(otherUsers.size()+1))));
 		}
 	}
 	
-	// Create a transaction using debts
-	public DTTransaction(DTUser currentUser, Collection<DTDebt> debts, String description) {
-		this.currentUser = currentUser;
-		this.debts = debts;
-		this.description = description;
+	public DTTransaction(ParseObject parseObject) {
+		try {
+			parseObject.fetchIfNeeded();
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		this.description = parseObject.getString("description");
+		// TODO: Get debts
 	}
-	
+
 	// Saves transaction (and corresponding debts) to Parse
 	public void save() {
 		for (DTDebt debt : this.debts) {
 			debt.save(this.parseObject);
 		}
+	}
+	
+	// Trims decimal to at most two places
+	private static Double trimDecimals(Double input) {
+		String inputStr = input.toString();
+		if (inputStr.contains(".") && inputStr.length() - 1 - inputStr.indexOf(".") > 2) {
+			inputStr = inputStr.substring(0, inputStr.indexOf(".") + 2);
+		}
+		
+		return Double.valueOf(inputStr);
+	}
+	
+	// Gets description
+	public String getDescription() {
+		return this.description;
 	}
 }
