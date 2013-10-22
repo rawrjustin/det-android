@@ -60,7 +60,7 @@ public class UserHomeActivity extends Activity {
     private void displayDebts() {
     	// Dispay intro message
         userIntroView = (TextView) findViewById(R.id.user_home_intro);
-		userIntroView.setText("Hi " + currentUser.name + ", add a transaction or view your debts below");
+		userIntroView.setText("Hi " + currentUser.getName() + ", add a transaction or view your debts below");
 		
 		// Populate debtsList ListView with debts
 		debtListView = (ListView) findViewById(R.id.debt_list);
@@ -89,6 +89,7 @@ public class UserHomeActivity extends Activity {
     // Called when user clicks add transaction button
 	public void addTransaction(View view) {
     	Log.d(DetApplication.TAG, "Add transaction button clicked");
+    	AddTransactionActivity.setSelectedUsers(null);
     	startAddTransactionActivity();
     }
     

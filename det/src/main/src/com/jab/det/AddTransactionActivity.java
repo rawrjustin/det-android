@@ -22,6 +22,7 @@ public class AddTransactionActivity extends Activity {
 	private static Collection<GraphUser> selectedFriends;
 	private TextView addFriendsResultTextView;
 	private Button selectFriendsButton;
+	private Button submitTransactionButton;
 	
     public static Collection<GraphUser> getSelectedUsers() {
         return selectedFriends;
@@ -43,6 +44,15 @@ public class AddTransactionActivity extends Activity {
                 onClickSelectFriends();
             }
         });
+        
+        submitTransactionButton = (Button) findViewById(R.id.add_transaction_submit);
+        submitTransactionButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View view) {
+            	onClickSubmitTransaction();
+            }
+        });
+        
+        //add_transaction_submit
         // Show the Up button in the action bar.
         setupActionBar();
     }
@@ -53,6 +63,22 @@ public class AddTransactionActivity extends Activity {
 
         // Update the display every time we are started.
         displaySelectedFriends();
+    }
+    
+    // Runs when submit transaction is clicked
+    private void onClickSubmitTransaction() {
+    	// TODO
+    	
+    	// Check fields
+    	// Amount must be less than int max and to two decimal points
+    	// Description must be nonempty
+    	// Selected friends must be nonempty
+    	
+    	// "getOrAdd" all selected friends (call DTUser method)
+    	
+    	// Pass to DTTransaction
+    	
+    	// Save DTTransaction (saves all debts)
     }
     
     // Display selected friends
@@ -71,7 +97,7 @@ public class AddTransactionActivity extends Activity {
         addFriendsResultTextView.setText(results);
     }
 
-    // Runs when 
+    // Runs when select friends is clicked
     private void onClickSelectFriends() {
         startPickFriendsActivity();
     }

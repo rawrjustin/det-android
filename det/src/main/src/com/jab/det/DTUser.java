@@ -4,6 +4,8 @@ import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.List;
 
+import android.util.Log;
+
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
@@ -11,50 +13,64 @@ import com.parse.ParseException;
 
 public class DTUser {
 
-    public String objectId;
-    public String email;
-    public String facebookID;
-    public String username;
-    public String password;
-    public String name;
+    private String objectId;
+    private String email;
+    private String facebookID;
+    private String username;
+    private String password;
+    private String name;
     
-    // Constructs DTUser object with ParseUser object
-    public DTUser(ParseUser parseUser) {
-		if (parseUser == null) {
-			return;
-		}
-		
-		this.objectId = parseUser.getObjectId();
-		this.email = parseUser.getString("email");
-		this.facebookID = parseUser.getString("fbID");
-		this.username = parseUser.getUsername();
-		this.password = "";
-		this.name = parseUser.getString("name");
-	}
+    // Constructs DTUser with fields
+    public DTUser(String objectId, String email, String facebookID, String username, String password, String name) {
+    	this.objectId = objectId;
+    	this.email = email;
+    	this.facebookID = facebookID;
+    	this.username = username;
+    	this.password = password;
+    	this.name = name;
+    }
 
     // Constructs DTUser object with objectId
-    public DTUser(String objectId) {
+    public static DTUser getUserFromObjectId(String objectIdParam) {
     	ParseQuery<ParseObject> query = ParseQuery.getQuery("user");
 		ParseObject parseObject;
+		String objectId = null, email = null, facebookID = null, username = null, password = null, name = null;
 		try {
-			parseObject = query.get(objectId);
-			this.objectId = parseObject.getObjectId();
-			this.email = parseObject.getString("email");
-			this.facebookID = parseObject.getString("fbID");
-			this.username = parseObject.getString(username);
-			this.password = "";
-			this.name = parseObject.getString("name");
+			parseObject = query.get(objectIdParam);
+			objectId = parseObject.getObjectId();
+			email = parseObject.getString("email");
+			facebookID = parseObject.getString("fbID");
+			username = parseObject.getString("username");
+			password = "";
+			name = parseObject.getString("name");
 
 		} catch (ParseException e) {
 			e.printStackTrace();
 		}
+		
+		return new DTUser(objectId, email, facebookID, username, password, name);
     }
     
     // Returns a DTUser representing the current user.
     public static DTUser getCurrentUser() {
-        return new DTUser(ParseUser.getCurrentUser());
+        return getUserFromParseUser(ParseUser.getCurrentUser());
     }
 
+    // Returns a DTUser given a ParseUser object
+    public static DTUser getUserFromParseUser(ParseUser parseUser) {
+		if (parseUser == null) {
+			return null;
+		}
+		
+		String objectId = parseUser.getObjectId();
+		String email = parseUser.getString("email");
+		String facebookID = parseUser.getString("fbID");
+		String username = parseUser.getUsername();
+		String password = "";
+		String name = parseUser.getString("name");
+		
+		return new DTUser(objectId, email, facebookID, username, password, name);
+	}
     // return consolidated debts as a list of user integer pairs, representing users and how much they owe currentUser
     public List<AbstractMap.SimpleEntry<DTUser, Integer>> getConsolidatedDebts() {
 		return null;
@@ -96,6 +112,32 @@ public class DTUser {
     
     // Implements toString() behavior
     public String toString() {
-    	return name;
+    	return getName();
     }
+
+	// Gets DTUser name
+	public String getName() {
+		return this.name;
+	}
+	
+	// Gets ParseUser
+	public ParseUser getParseUser() {
+		// TODO: Change this to a field and add logic to constructors
+		ParseQuery<ParseUser> query = ParseUser.getQuery();
+		query.whereEqualTo("fbID", this.facebookID);
+		ParseUser parseUser = null;
+		try {
+			List<ParseUser> queryResult = query.find();
+			if (queryResult.size() != 1) {
+				Log.e(DetApplication.TAG, "DTUser query for parse user using facebook ID did not return one element");
+			} else {
+				parseUser = queryResult.get(0);
+			}
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return parseUser;
+	}
 }
