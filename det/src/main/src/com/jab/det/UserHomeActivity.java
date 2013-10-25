@@ -1,10 +1,14 @@
 package com.jab.det;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+
 import com.parse.ParseUser;
 
 import android.os.Bundle;
 import android.app.Activity;
+import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.util.Log;
 import android.view.Menu;
@@ -28,7 +32,18 @@ public class UserHomeActivity extends Activity {
         setContentView(R.layout.activity_user_home);
         setCurrentUser();
 		setupLogoutButton();
-		displayDebts();
+
+		// Set loading message
+		debtListView = (ListView) findViewById(R.id.debt_list);
+		debtListAdapter = new ArrayAdapter<String>(this, R.layout.debt_row, new ArrayList<String>(Arrays.asList("Loading debts...")));
+		debtListView.setAdapter(debtListAdapter);
+		Thread thread = new Thread() {
+			public void run() {
+				displayDebts();
+			}
+		};
+		
+		thread.start();
     }
 
     // Adds onClick listener for logout button
@@ -45,6 +60,10 @@ public class UserHomeActivity extends Activity {
     // Gets current user and checks success
     private void setCurrentUser() {
     	currentUser = currentUser == null ? DTUser.getCurrentUser() : currentUser;
+    	
+    	// Dispay intro message
+        userIntroView = (TextView) findViewById(R.id.user_home_intro);
+		userIntroView.setText("Hi " + currentUser.getName() + ", add a transaction or view your debts below");
 //    	if (currentUser == null) {
 //    		startLoginActivity();
 //    	}
@@ -56,10 +75,6 @@ public class UserHomeActivity extends Activity {
     
     // Gets all of current user's associated debts and writes them to the ListView
     private void displayDebts() {
-    	// Dispay intro message
-        userIntroView = (TextView) findViewById(R.id.user_home_intro);
-		userIntroView.setText("Hi " + currentUser.getName() + ", add a transaction or view your debts below");
-		
 		// Populate debtsList ListView with debts
 		debtListView = (ListView) findViewById(R.id.debt_list);
 		ArrayList<String> debtList = new ArrayList<String>();  
