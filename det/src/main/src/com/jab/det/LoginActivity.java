@@ -1,5 +1,6 @@
 package com.jab.det;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -7,11 +8,15 @@ import com.facebook.Request;
 import com.facebook.Response;
 import com.facebook.Session;
 import com.facebook.model.GraphUser;
+import com.parse.FindCallback;
 import com.parse.LogInCallback;
 import com.parse.ParseException;
 import com.parse.ParseFacebookUtils;
+import com.parse.ParseObject;
+import com.parse.ParseQuery;
 import com.parse.ParseUser;
 import com.parse.ParseFacebookUtils.Permissions;
+import com.parse.SaveCallback;
 
 import android.os.Bundle;
 import android.app.Activity;
@@ -27,6 +32,7 @@ public class LoginActivity extends Activity {
 
 	private Button loginButton;
 	private Dialog progressDialog;
+	private String fbID, email;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -69,36 +75,45 @@ public class LoginActivity extends Activity {
 
 	// Gets run when user clicks log in button
 	private void onLoginButtonClicked() {
-		// TODO: Link new user with existing parse row if exists
-		// It's unclear to me right now what a user row added through a transaction looks like
 		LoginActivity.this.progressDialog = ProgressDialog.show(LoginActivity.this, "", "Logging in...", true);
 		List<String> permissions = Arrays.asList(Permissions.User.ABOUT_ME, Permissions.Friends.ABOUT_ME);
 		ParseFacebookUtils.logIn(permissions, this, new LogInCallback() {
 			@Override
-			public void done(final ParseUser parseUser, ParseException err) {
-				if (parseUser == null) {
-					Log.d(DetApplication.TAG,
-							"Uh oh. The user cancelled the Facebook login.");
-				} else if (parseUser.isNew()) {
-					Log.d(DetApplication.TAG,
-							"User signed up and logged in through Facebook!");
-					// Request me request
-				    Request.executeMeRequestAsync(Session.getActiveSession(), new Request.GraphUserCallback() {
-
-				        @Override
+			public void done(final ParseUser newlyCreatedUser, ParseException err) {
+				if (newlyCreatedUser == null) {
+					Log.d(DetApplication.TAG, "Uh oh. The user cancelled the Facebook login.");
+				} else if (newlyCreatedUser.isNew()) {
+					Request.executeMeRequestAsync(Session.getActiveSession(), new Request.GraphUserCallback() {
+						@Override
 				        public void onCompleted(GraphUser graphUser, Response response) {
 				            if (graphUser != null) {
-				                // Display the parsed user info
-				            	parseUser.put("name", graphUser.getName());
-				            	parseUser.put("fbID", graphUser.getId());
-				            	parseUser.put("email", graphUser.getProperty("email"));
-				            	try {
-					            	parseUser.save();
-				            	} catch (Exception e) {
-				            		// TODO: Handle save exception
-				            	}
-				            	
-				            	Log.d(DetApplication.TAG, "User properties saved");
+				                // Get the parse user info
+				            	LoginActivity.this.fbID = graphUser.getId();
+				            	LoginActivity.this.email = (String) graphUser.getProperty("email");
+				            	// Check if there is existing user row and authenticate it
+				        		ParseQuery<ParseUser> query = ParseUser.getQuery();
+				        		query.whereEqualTo("fbID", LoginActivity.this.fbID);       		
+				        		try {
+				        			List<ParseUser> queryResult = query.find();
+				        			// If user row already exists
+				        			if (queryResult.size() > 0) {
+				        				// Delete newly created user
+						        		ParseUser.deleteAllInBackground(new ArrayList<ParseObject>(Arrays.asList(newlyCreatedUser)), null);
+						        		// Authenticate existing user row
+					        			ParseUser userToAuthenticate = queryResult.get(0);
+						        		ParseUser.logIn(userToAuthenticate.getUsername(), DTUser.defaultPassword);
+						        		// Set random password
+						        		userToAuthenticate.setPassword(DTUser.generatePassword(true));
+						        		ParseFacebookUtils.link(userToAuthenticate, LoginActivity.this);
+						        		userToAuthenticate.put("email", LoginActivity.this.email);
+						        		userToAuthenticate.put("fbID", LoginActivity.this.fbID);
+						        		userToAuthenticate.saveInBackground();
+				        			}
+				        		} catch (ParseException e) {
+				        			// TODO Auto-generated catch block
+				        			e.printStackTrace();
+				        		}
+
 				            	LoginActivity.this.progressDialog.dismiss();
 				            	startUserHomeActivity();
 				            } else {
@@ -106,6 +121,17 @@ public class LoginActivity extends Activity {
 				            }
 				        }
 				    });
+					if (!ParseFacebookUtils.isLinked(newlyCreatedUser)) {
+						ParseFacebookUtils.link(newlyCreatedUser, LoginActivity.this, new SaveCallback() {
+							@Override
+							public void done(ParseException ex) {
+								if (ParseFacebookUtils.isLinked(newlyCreatedUser)) {
+									Log.d("MyApp", "Woohoo, user logged in with Facebook!");
+								}
+						    }
+						});
+					}
+					Log.d(DetApplication.TAG, "User signed up and logged in through Facebook!");
 				} else {
 					Log.d(DetApplication.TAG, "User logged in through Facebook!");
 					startUserHomeActivity();
