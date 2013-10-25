@@ -1,66 +1,76 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
 	android:orientation="vertical" >
-
+	<!-- How much did you pay -->
     <LinearLayout
-        android:layout_marginTop="50dp"
-	    android:layout_width="wrap_content"
+        android:id="@+id/submit_how_much_did_you_pay"
+	    android:layout_width="fill_parent"
 	    android:layout_height="wrap_content"
 		android:orientation="horizontal" >
 	    <TextView
 	        android:layout_width="wrap_content"
 	        android:layout_height="wrap_content"
+	        android:layout_weight="0"
 	        android:text="@string/add_transaction_amount" />
 	    <EditText android:id="@+id/edit_transaction_amount"
-	        android:layout_weight="1"
-	        android:layout_width="0dp"
+	        android:layout_width="wrap_content"
 	        android:layout_height="wrap_content"
+	        android:layout_weight="1"
 	        android:inputType="numberDecimal"
 	        android:hint="@string/add_transaction_amount_hint" />
     </LinearLayout>
-
+	<!-- What did you pay for -->
     <LinearLayout
-	    android:layout_width="wrap_content"
+        android:id="@+id/submit_what_did_you_pay_for"
+	    android:layout_width="fill_parent"
 	    android:layout_height="wrap_content"
 		android:orientation="horizontal" >
 	    <TextView
 	        android:layout_width="wrap_content"
 	        android:layout_height="wrap_content"
+	        android:layout_weight="0"
 	        android:text="@string/add_transaction_description" />
 	    <EditText android:id="@+id/edit_transaction_description"
 	        android:layout_weight="1"
-	        android:layout_width="0dp"
+	        android:layout_width="wrap_content"
 	        android:layout_height="wrap_content"
 	        android:singleLine="true"
 	        android:hint="@string/add_transaction_description_hint" />
     </LinearLayout>
-    
-	<LinearLayout
-	    android:layout_width="wrap_content"
+    <!-- Who did you pay for -->
+    <LinearLayout
+        android:id="@+id/submit_whom_did_you_pay_for"
+        android:layout_width="fill_parent"
 	    android:layout_height="wrap_content"
-		android:orientation="horizontal" >
-	    <TextView
-	        android:layout_width="wrap_content"
-	        android:layout_height="wrap_content"
-	        android:text="@string/select_friends_text" />
-	    <Button android:id="@+id/select_friends"
-	        android:layout_width="wrap_content"
-	        android:layout_height="wrap_content"
-	        android:text="@string/select_friends_button" />
-    </LinearLayout>
-    
-    <TextView
+	    android:orientation="vertical" >
+        <LinearLayout
+		    android:layout_width="wrap_content"
+		    android:layout_height="wrap_content"
+			android:orientation="horizontal" >
+		    <TextView
+		        android:layout_width="wrap_content"
+		        android:layout_height="wrap_content"
+		        android:text="@string/select_friends_text" />
+		    <Button android:id="@+id/select_friends"
+		        android:layout_width="wrap_content"
+		        android:layout_height="wrap_content"
+		        android:text="@string/select_friends_button" />
+		</LinearLayout>
+		<TextView
             android:id="@+id/select_friends_result"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content" />
-	
-    <Button android:id="@+id/add_transaction_submit"
-        android:layout_marginTop="50dp"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/add_transaction_submit" />
-	
-</LinearLayout>
+		<LinearLayout
+		    android:layout_width="fill_parent"
+		    android:layout_height="wrap_content" >
+			<Button android:id="@+id/add_transaction_submit"
+		        android:layout_width="fill_parent"
+		        android:layout_height="wrap_content"
+		        android:gravity="center"
+		        android:text="@string/add_transaction_submit" />
+    	</LinearLayout>
+    </LinearLayout>
+</FrameLayout>

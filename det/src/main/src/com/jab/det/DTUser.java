@@ -23,6 +23,7 @@ public class DTUser {
     private String password;
     private String name;
     public static ParseUser currentParseUser;
+    public static String defaultPassword = "password";
     
     // Constructs DTUser with fields
     public DTUser(String objectId, String email, String facebookID, String username, String password, String name) {
@@ -74,7 +75,7 @@ public class DTUser {
 			e.printStackTrace();
 		}
     	
-		String objectId = null, facebookID = null, name = null, email = null, username = null, password = generatePassword();
+		String objectId = null, facebookID = null, name = null, email = null, username = null, password = generatePassword(false);
 		objectId = parseUser.getObjectId();
 		name = parseUser.getString("name");
 		facebookID = parseUser.getString("fbID");
@@ -140,7 +141,7 @@ public class DTUser {
 		parseUser.put("fbID", fbID);
 		parseUser.put("name", name);
 		parseUser.setUsername(fbID);
-		parseUser.setPassword(generatePassword());
+		parseUser.setPassword(generatePassword(false));
 		
 		try {
 			parseUser.signUp();
@@ -195,8 +196,7 @@ public class DTUser {
 		return parseUser;
 	}
 	
-	public static String generatePassword() {
-		return "password";
-		//return new BigInteger(130, new SecureRandom()).toString(32);
+	public static String generatePassword(Boolean random) {
+		return random ? new BigInteger(130, new SecureRandom()).toString(32) : defaultPassword;
 	}
 }

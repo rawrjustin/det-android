@@ -77,13 +77,6 @@ public class UserHomeActivity extends Activity {
 		debtListView.setAdapter(debtListAdapter);
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.user_home, menu);
-        return true;
-    }
-    
     // Called when user clicks add transaction button
 	public void addTransaction(View view) {
     	Log.d(DetApplication.TAG, "Add transaction button clicked");

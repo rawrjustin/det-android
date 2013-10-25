@@ -1,0 +1,11 @@
+{
+    "applications": {
+        "_default": {
+            "link": "det"
+        }, 
+        "det": {
+            "applicationId": "SnZIklEaMlecec0zVwMgEgXDgeDWgM458xCUXPqU", 
+            "masterKey": "x7Eryd1DklEkv08nshUofoIHVvAmrO6k6KU6LQGJ"
+        }
+    }
+}
