@@ -10,7 +10,8 @@
         android:layout_marginTop="100dp"
         android:layout_gravity="center_horizontal"
         android:text="@string/login_intro"
-        android:textSize="18sp" />
+        android:textSize="18sp" 
+        />  
     
     <Button
         android:id="@+id/loginButton"
@@ -22,5 +23,14 @@
         android:textColor="#fff"
         android:layout_gravity="center_horizontal"
         android:background="@drawable/button_login"
+        />
+ 	
+ 	<Button 
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="100dp"
+        android:text="@string/about"
+        android:layout_gravity="center_horizontal"
+        android:onClick="aboutButtonClicked"
         />
 </LinearLayout>

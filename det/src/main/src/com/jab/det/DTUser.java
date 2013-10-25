@@ -166,6 +166,10 @@ public class DTUser {
 		return this.name;
 	}
 	
+	public String getFacebookId() {
+		return this.facebookID;
+	}
+	
 	// Gets ObjectId
 	public String getObjectId() {
 		return this.objectId;

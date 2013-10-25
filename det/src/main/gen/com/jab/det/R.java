@@ -217,7 +217,7 @@ containing a value of this type.
         public static final int table_round_shape=0x7f020024;
     }
     public static final class id {
-        public static final int action_settings=0x7f040026;
+        public static final int action_settings=0x7f040027;
         public static final int add_transaction_submit=0x7f04000a;
         public static final int com_facebook_login_activity_progress_bar=0x7f040011;
         public static final int com_facebook_picker_activity_circle=0x7f040010;
@@ -238,16 +238,17 @@ containing a value of this type.
         public static final int com_facebook_usersettingsfragment_login_button=0x7f040023;
         public static final int com_facebook_usersettingsfragment_logo_image=0x7f040021;
         public static final int com_facebook_usersettingsfragment_profile_name=0x7f040022;
-        public static final int debtRow=0x7f040024;
         public static final int debt_list=0x7f04000d;
+        public static final int debt_text=0x7f040025;
         public static final int edit_transaction_amount=0x7f040004;
         public static final int edit_transaction_description=0x7f040006;
-        public static final int friend_picker_fragment=0x7f040025;
+        public static final int friend_picker_fragment=0x7f040026;
         public static final int large=0x7f040002;
         public static final int loginButton=0x7f04000b;
         public static final int logoutButton=0x7f04000e;
         public static final int normal=0x7f040001;
         public static final int picker_subtitle=0x7f040020;
+        public static final int profile_pic=0x7f040024;
         public static final int search_box=0x7f04001f;
         public static final int select_friends=0x7f040008;
         public static final int select_friends_result=0x7f040009;
@@ -283,6 +284,7 @@ containing a value of this type.
         public static final int user_home=0x7f090002;
     }
     public static final class string {
+        public static final int about=0x7f05002c;
         public static final int action_settings=0x7f05001a;
         public static final int add_transaction=0x7f050022;
         public static final int add_transaction_amount=0x7f050023;
@@ -326,6 +328,7 @@ containing a value of this type.
         public static final int parse_client_key=0x7f050020;
         public static final int select_friends_button=0x7f050028;
         public static final int select_friends_text=0x7f050027;
+        public static final int title_activity_about_page=0x7f05002b;
     }
     public static final class style {
         /** 

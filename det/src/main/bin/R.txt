@@ -72,7 +72,7 @@ int drawable login_button_focused 0x7f020021
 int drawable login_button_normal 0x7f020022
 int drawable login_button_pressed 0x7f020023
 int drawable table_round_shape 0x7f020024
-int id action_settings 0x7f040026
+int id action_settings 0x7f040027
 int id add_transaction_submit 0x7f04000a
 int id com_facebook_login_activity_progress_bar 0x7f040011
 int id com_facebook_picker_activity_circle 0x7f040010
@@ -93,16 +93,17 @@ int id com_facebook_placepickerfragment_search_box_stub 0x7f04001e
 int id com_facebook_usersettingsfragment_login_button 0x7f040023
 int id com_facebook_usersettingsfragment_logo_image 0x7f040021
 int id com_facebook_usersettingsfragment_profile_name 0x7f040022
-int id debtRow 0x7f040024
 int id debt_list 0x7f04000d
+int id debt_text 0x7f040025
 int id edit_transaction_amount 0x7f040004
 int id edit_transaction_description 0x7f040006
-int id friend_picker_fragment 0x7f040025
+int id friend_picker_fragment 0x7f040026
 int id large 0x7f040002
 int id loginButton 0x7f04000b
 int id logoutButton 0x7f04000e
 int id normal 0x7f040001
 int id picker_subtitle 0x7f040020
+int id profile_pic 0x7f040024
 int id search_box 0x7f04001f
 int id select_friends 0x7f040008
 int id select_friends_result 0x7f040009
@@ -132,6 +133,7 @@ int layout select_friends_activity 0x7f030011
 int menu add_transaction 0x7f090000
 int menu main 0x7f090001
 int menu user_home 0x7f090002
+int string about 0x7f05002c
 int string action_settings 0x7f05001a
 int string add_transaction 0x7f050022
 int string add_transaction_amount 0x7f050023
@@ -175,6 +177,7 @@ int string parse_app_id 0x7f05001f
 int string parse_client_key 0x7f050020
 int string select_friends_button 0x7f050028
 int string select_friends_text 0x7f050027
+int string title_activity_about_page 0x7f05002b
 int style AppBaseTheme 0x7f080002
 int style AppTheme 0x7f080003
 int style com_facebook_loginview_default_style 0x7f080000

@@ -23,7 +23,7 @@ public class UserHomeActivity extends Activity {
 	private Button logoutButton;
 	private TextView userIntroView;
 	private ListView debtListView;
-	private ArrayAdapter<String> debtListAdapter;
+	private ArrayAdapter<DTDebt> debtListAdapter;
 	private static DTUser currentUser;
 
     @Override
@@ -35,8 +35,8 @@ public class UserHomeActivity extends Activity {
 
 		// Set loading message
 		debtListView = (ListView) findViewById(R.id.debt_list);
-		debtListAdapter = new ArrayAdapter<String>(this, R.layout.debt_row, new ArrayList<String>(Arrays.asList("Loading debts...")));
-		debtListView.setAdapter(debtListAdapter);
+		//debtListAdapter = new ArrayAdapter<String>(this, R.layout.debt_row, new ArrayList<String>(Arrays.asList("Loading debts...")));
+		//debtListView.setAdapter(debtListAdapter);
 		Thread thread = new Thread() {
 			public void run() {
 				displayDebts();
@@ -88,8 +88,8 @@ public class UserHomeActivity extends Activity {
 		}
 		
 		// Writes debts to view
-		debtListAdapter = new ArrayAdapter<String>(this, R.layout.debt_row, debtList);
-		debtListView.setAdapter(debtListAdapter);
+		//debtListAdapter = new DisplayDebtsAdapter(this, R.layout.debt_row, currentUser.getDebts());
+		//debtListView.setAdapter(debtListAdapter);
     }
 
     // Called when user clicks add transaction button
