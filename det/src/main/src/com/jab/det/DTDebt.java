@@ -32,6 +32,10 @@ public class DTDebt {
 		this.parseObject = parseObject;
 	}
 	
+	public DTUser getDebtor() {
+		return debtor;
+	}
+	
 	public DTDebt(DTUser creditor, DTUser debtor, Number amount) {
 		this.creditor = creditor;
 		this.debtor = debtor;
