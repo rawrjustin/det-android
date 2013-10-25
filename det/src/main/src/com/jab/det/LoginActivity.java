@@ -41,6 +41,12 @@ public class LoginActivity extends Activity {
 			startUserHomeActivity();
 		}
 	}
+
+	// Handles About button clicked
+	public void aboutButtonClicked(View view) {
+		Intent intent = new Intent(this, AboutPage.class);
+		startActivity(intent);
+	}
 	
     // Adds onClick listener for login button
     private void setupLoginButton() {

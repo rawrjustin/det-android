@@ -165,6 +165,10 @@ public class DTUser {
 		return this.name;
 	}
 	
+	public String getFacebookId() {
+		return this.facebookID;
+	}
+	
 	// Gets ObjectId
 	public String getObjectId() {
 		return this.objectId;
@@ -192,6 +196,7 @@ public class DTUser {
 	}
 	
 	public static String generatePassword() {
-		return new BigInteger(130, new SecureRandom()).toString(32);
+		return "password";
+		//return new BigInteger(130, new SecureRandom()).toString(32);
 	}
 }

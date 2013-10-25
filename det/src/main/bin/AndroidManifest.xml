@@ -38,8 +38,9 @@
             android:name="com.jab.det.UserHomeActivity"
             android:label="@string/title_activity_user_home" >
         </activity>
-        <activity android:name="SelectFriendsActivity"
-                  android:label="Select Friends">
+        <activity
+            android:name="com.jab.det.SelectFriendsActivity"
+            android:label="Select Friends" >
         </activity>
         <activity
             android:name="com.jab.det.AddTransactionActivity"
@@ -48,6 +49,10 @@
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="UserHomeActivity" />
+        </activity>
+        <activity
+            android:name="com.jab.det.AboutPage"
+            android:label="@string/title_activity_about_page" >
         </activity>
     </application>
 

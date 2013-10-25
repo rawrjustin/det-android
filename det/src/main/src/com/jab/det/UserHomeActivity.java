@@ -19,7 +19,7 @@ public class UserHomeActivity extends Activity {
 	private Button logoutButton;
 	private TextView userIntroView;
 	private ListView debtListView;
-	private ArrayAdapter<String> debtListAdapter;
+	private ArrayAdapter<DTDebt> debtListAdapter;
 	private static DTUser currentUser;
 
     @Override
@@ -73,7 +73,7 @@ public class UserHomeActivity extends Activity {
 		}
 		
 		// Writes debts to view
-		debtListAdapter = new ArrayAdapter<String>(this, R.layout.debt_row, debtList);
+		debtListAdapter = new DisplayDebtsAdapter(this, R.layout.debt_row, currentUser.getDebts());
 		debtListView.setAdapter(debtListAdapter);
     }
 
