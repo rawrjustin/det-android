@@ -14,7 +14,16 @@
 	    android:id="@+id/debt_text" 
  		android:layout_width="wrap_content" 
  		android:layout_height="wrap_content"
+ 		android:layout_gravity="fill"
 		android:layout_weight="1"
  		android:textSize="18sp" >
 	</TextView>
+	<Button 
+	    android:id="@+id/resolveDebtButton"
+	    style="?android:attr/borderlessButtonStyle"
+	    android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/resolve_debt"
+        android:maxHeight="20dip"
+        android:layout_weight="0" />        <!-- style="?android:attr/buttonStyleSmall" -->
 </LinearLayout>

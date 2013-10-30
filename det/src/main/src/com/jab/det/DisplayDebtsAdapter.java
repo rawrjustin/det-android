@@ -4,6 +4,7 @@ import com.facebook.widget.ProfilePictureView;
 
 import android.app.Activity;
 import android.content.Context;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;

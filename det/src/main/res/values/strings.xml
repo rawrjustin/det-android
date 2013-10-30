@@ -20,6 +20,7 @@
     <string name="add_transaction_submit">Submit</string>
     <string name="exception">Exception: %1$s</string>
     <string name="title_activity_about_page">AboutPage</string>
+    <string name="resolve_debt">Resolve</string>
     <string name="about">About</string>
     
 
