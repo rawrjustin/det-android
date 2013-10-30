@@ -112,7 +112,7 @@ int id normal 0x7f040001
 int id picker_subtitle 0x7f040023
 int id profile_pic 0x7f040027
 int id refreshDebtsButton 0x7f040010
-int id resolveDebtButton 0x7f040029
+int id resolve_debt_button 0x7f040029
 int id search_box 0x7f040022
 int id select_friends 0x7f040008
 int id select_friends_result 0x7f040009
@@ -186,6 +186,7 @@ int string hello_world 0x7f05001b
 int string login 0x7f05001c
 int string login_intro 0x7f050021
 int string logout 0x7f05001d
+int string no_debts 0x7f05002f
 int string parse_app_id 0x7f05001f
 int string parse_client_key 0x7f050020
 int string refresh_debts 0x7f05002e

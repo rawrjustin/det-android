@@ -263,7 +263,7 @@ containing a value of this type.
         public static final int picker_subtitle=0x7f040023;
         public static final int profile_pic=0x7f040027;
         public static final int refreshDebtsButton=0x7f040010;
-        public static final int resolveDebtButton=0x7f040029;
+        public static final int resolve_debt_button=0x7f040029;
         public static final int search_box=0x7f040022;
         public static final int select_friends=0x7f040008;
         public static final int select_friends_result=0x7f040009;
@@ -343,6 +343,7 @@ containing a value of this type.
         public static final int login=0x7f05001c;
         public static final int login_intro=0x7f050021;
         public static final int logout=0x7f05001d;
+        public static final int no_debts=0x7f05002f;
         public static final int parse_app_id=0x7f05001f;
         public static final int parse_client_key=0x7f050020;
         public static final int refresh_debts=0x7f05002e;

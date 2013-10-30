@@ -19,7 +19,7 @@
  		android:textSize="18sp" >
 	</TextView>
 	<Button 
-	    android:id="@+id/resolveDebtButton"
+	    android:id="@+id/resolve_debt_button"
 	    style="?android:attr/borderlessButtonStyle"
 	    android:layout_width="wrap_content"
         android:layout_height="wrap_content"

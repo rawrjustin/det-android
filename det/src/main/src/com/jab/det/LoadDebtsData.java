@@ -33,17 +33,17 @@ public class LoadDebtsData extends AsyncTask<Void, Void, DTDebt[]>{
 		this.refreshButton.setEnabled(false);
 		this.loadingDebtsTextView.setVisibility(View.VISIBLE);
 		this.loadingDebtsTextView.setText("Loading debts...");
-		this.debtListAdapter = new DisplayDebtsAdapter(this.context, R.layout.debt_row, new DTDebt[0]);
+		this.debtListAdapter = new DisplayDebtsAdapter(this.context, R.layout.debt_row, new ArrayList<DTDebt>());
 		this.debtListView.setAdapter(debtListAdapter);
 	}
 	
 	protected void onPostExecute(DTDebt[] debts) {
 		if (debts.length == 0) {
-			loadingDebtsTextView.setText("You are not involved in any debts");
+			loadingDebtsTextView.setText(this.rootView.getResources().getString(R.string.no_debts));
 		} else {
 			// Writes debts to view
 			this.loadingDebtsTextView.setVisibility(View.GONE);
-			this.debtListAdapter = new DisplayDebtsAdapter(this.context, R.layout.debt_row, debts);
+			this.debtListAdapter = new DisplayDebtsAdapter(this.context, R.layout.debt_row, new ArrayList<DTDebt>(Arrays.asList(debts)));
 			debtListView.setAdapter(this.debtListAdapter);
 		}
 		
