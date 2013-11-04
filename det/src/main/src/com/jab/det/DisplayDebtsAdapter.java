@@ -1,10 +1,10 @@
 package com.jab.det;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
 
 import com.facebook.widget.ProfilePictureView;
-
-import org.apache.commons.lang3.*;
 
 import com.parse.DeleteCallback;
 import com.parse.ParseException;
@@ -13,17 +13,15 @@ import com.parse.ParseQuery;
 
 import android.app.Activity;
 import android.content.Context;
-import android.util.Log;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
 
 public class DisplayDebtsAdapter extends ArrayAdapter<DTDebt> {
+	
 	private Context context;
 	private ArrayList<DTDebt> debts;
 	public DisplayDebtsAdapter(Context context, int resource, ArrayList<DTDebt> debts) {
@@ -37,6 +35,12 @@ public class DisplayDebtsAdapter extends ArrayAdapter<DTDebt> {
 		TextView textView;
 		Button resolveButton;
 	}
+	
+	public void addToView(ArrayList<DTDebt> debts){
+		this.debts.addAll(debts);
+		this.notifyDataSetChanged();
+	}
+	
 	@Override
 	public View getView(final int position, View convertView, final ViewGroup parent) {
 		ViewHolder holder = null;
@@ -47,7 +51,6 @@ public class DisplayDebtsAdapter extends ArrayAdapter<DTDebt> {
             holder = new ViewHolder();
             holder.profilePictureView = (ProfilePictureView) convertView.findViewById(R.id.profile_pic);
             holder.textView = (TextView) convertView.findViewById(R.id.debt_text);
-            //holder.resolveButton = (Button) convertView.findViewById(R.id.refreshDebtsButton);
             holder.resolveButton = (Button) convertView.findViewById(R.id.resolve_debt_button);
             holder.resolveButton.setOnClickListener(new View.OnClickListener() {
     			@Override
@@ -79,7 +82,8 @@ public class DisplayDebtsAdapter extends ArrayAdapter<DTDebt> {
 									currentDebt.getTransaction().getParseObject().deleteInBackground(new DeleteCallback() {
 										@Override
 										public void done(ParseException e) {
-											Toast.makeText(parent.getContext(), "Transaction deleted from parse", Toast.LENGTH_SHORT).show();
+											DetApplication.showToast(parent.getContext(), "Transaction deleted from parse");
+											//Toast.makeText(parent.getContext(), , Toast.LENGTH_SHORT).show();
 										}
 									});
 								}
@@ -88,7 +92,8 @@ public class DisplayDebtsAdapter extends ArrayAdapter<DTDebt> {
 								e1.printStackTrace();
 							}
 							
-							Toast.makeText(parent.getContext(), "Debt deleted from parse", Toast.LENGTH_SHORT).show();
+							DetApplication.showToast(parent.getContext(), "Debt deleted from parse");
+							//Toast.makeText(parent.getContext(), "Debt deleted from parse", Toast.LENGTH_SHORT).show();
 						}
     				});
     			}

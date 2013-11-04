@@ -2,27 +2,27 @@ package com.jab.det;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 
-import com.facebook.model.GraphUser;
-import android.os.Bundle;
 import android.app.Activity;
 import android.app.Dialog;
-import android.app.ProgressDialog;
-import android.view.Menu;
-import android.view.MenuItem;
+import android.content.Intent;
+import android.os.Bundle;
+import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
-import android.support.v4.app.NavUtils;
-import android.text.TextUtils;
-import android.annotation.TargetApi;
-import android.content.Intent;
-import android.os.Build;
+
+import com.facebook.model.GraphUser;
+import com.parse.FunctionCallback;
+import com.parse.ParseCloud;
+import com.parse.ParseException;
 
 public class AddTransactionActivity extends Activity {
 
+	public final static String EXTRA_DEBTS = "com.jab.det.addTransaction";
 	private static Collection<GraphUser> selectedFriends;
 	private Dialog progressDialog;
 	private TextView addFriendsResultTextView;
@@ -72,8 +72,6 @@ public class AddTransactionActivity extends Activity {
     
     // Runs when submit transaction is clicked
     private void onClickSubmitTransaction() {
-    	// TODO
-    	
     	// Check fields
     	this.transactionAmountEditText = (EditText) findViewById(R.id.edit_transaction_amount);
     	this.transactionDescriptionEditText = (EditText) findViewById(R.id.edit_transaction_description);
@@ -82,45 +80,47 @@ public class AddTransactionActivity extends Activity {
     	
     	// Amount must be valid
     	if (transactionAmount.trim().isEmpty() || !isValidAmount(transactionAmount)) {
-    		showToast("Invalid amount");
+    		DetApplication.showToast(this.getApplicationContext(), "Invalid amount");
     		return;
     	}
     	
     	// Description must be nonempty
     	if (transactionDescription.trim().isEmpty()) {
-    		showToast("Description must be nonempty");
+    		DetApplication.showToast(this.getApplicationContext(), "Description must be nonempty");
     		return;
     	}
     	
     	// Selected friends must be nonempty
     	if (selectedFriends == null || selectedFriends.size() == 0) {
-    		showToast("No friends selected");
+    		DetApplication.showToast(this.getApplicationContext(), "No friends selected");
     		return;
     	}
+    	    	
+    	// Get all selected friends as DTUser objects
+    	ArrayList<DTUser> otherUsers = new ArrayList<DTUser>();
+    	for (GraphUser user : selectedFriends) {
+    		otherUsers.add(DTUser.getOrCreateUser(user.getId(), user.getName()));
+    	}
+
+    	// Initialize and save transaction (note: this also saves all corresponding debts)
+    	DTTransaction transaction = new DTTransaction(UserHomeActivity.getCurrentUser(), otherUsers, Double.valueOf(transactionAmount), transactionDescription);
     	
-		progressDialog = ProgressDialog.show(AddTransactionActivity.this, "", "Submitting transaction...", true);
-
-		Thread thread = new Thread() {
-			public void run() {
-		    	// Get all selected friends as DTUser objects
-		    	ArrayList<DTUser> otherUsers = new ArrayList<DTUser>();
-		    	for (GraphUser user : selectedFriends) {
-		    		otherUsers.add(DTUser.getOrCreateUser(user.getId(), user.getName()));
-		    	}
-
-		    	// Initialize and save transaction (note: this also saves all corresponding debts)
-		    	DTTransaction transaction = new DTTransaction(UserHomeActivity.getCurrentUser(), otherUsers, Double.valueOf(transactionAmount), transactionDescription);
-		    	transaction.save();
-				progressDialog.dismiss();
-			}
-		};
-		
-		thread.start();
-		try {
-			thread.join();
-		} catch (InterruptedException e) {
-		}
-		startUserHomeActivity();
+    	ParseCloud.callFunctionInBackground("createTransaction", transaction.getCloudCodeRequestObject(), new FunctionCallback<String>() {
+    		public void done(String result, ParseException e) {
+    			if (e != null) {
+    				Log.d(DetApplication.TAG, "DETAPP " + e.toString());
+    		    }
+    			
+    			DetApplication.showToast(getApplicationContext(), "Transaction added to Parse");
+    		}
+    	});
+    	
+    	Intent intent = new Intent(this, UserHomeActivity.class);
+    	Bundle extras = new Bundle();
+    	extras.putSerializable(EXTRA_DEBTS, transaction);
+    	intent.putExtras(extras);
+    	setResult(RESULT_OK, intent);
+		finish();
     }
     
     // Display selected friends
@@ -169,26 +169,12 @@ public class AddTransactionActivity extends Activity {
 	}
 	
 	// Starts UserHomeActivity
-	private void startUserHomeActivity() {
-		Intent intent = new Intent(this, UserHomeActivity.class);
+	private void startUserHomeActivity(Intent intent) {
+		intent = intent == null ? new Intent(this, UserHomeActivity.class) : intent;
 		intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 		intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 		startActivity(intent);
 	}
-    
-    @Override
-    public void onDestroy(){
-        super.onDestroy();
-        if (progressDialog != null && progressDialog.isShowing()){
-            progressDialog.cancel();
-        }
-    }
-
-    // Show toast message
-    private void showToast(String message) {
-    	Toast toast = Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT);
-    	toast.show();
-    }
     
     // Returns whether user inputted amount is valid. 
     // Valid amount is no more than nine digits before the decimal and to no more than two decimal points

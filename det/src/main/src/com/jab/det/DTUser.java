@@ -1,5 +1,6 @@
 package com.jab.det;
 
+import java.io.Serializable;
 import java.math.BigInteger;
 import java.security.SecureRandom;
 import java.util.AbstractMap;
@@ -8,26 +9,24 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Map.Entry;
 
 import android.util.Log;
 
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
-import com.parse.ParseRelation;
 import com.parse.ParseUser;
 import com.parse.ParseException;
 
-public class DTUser {
+public class DTUser implements Serializable {
 
-    private String objectId;
+	private String objectId;
     private String email;
     private String facebookID;
     private String username;
     private String password;
     private String name;
-    public static ParseUser currentParseUser;
+    public static transient ParseUser currentParseUser;
     public static String defaultPassword = "password";
     
     // Constructs DTUser with fields
@@ -109,16 +108,10 @@ public class DTUser {
     		// Query debts where user is debtor
 	    	ParseQuery<ParseObject> creditorsQuery = ParseQuery.getQuery("Debt");
 	    	creditorsQuery.whereEqualTo("creditor", DTUser.currentParseUser);
-//	    	for (ParseObject queryResult : creditorsQuery.find()) {
-//	    		debts.add(new DTDebt(queryResult));
-//	    	}
 	    		    		
 	    	// Query debts where user is creditor
 	    	ParseQuery<ParseObject> debtorsQuery = ParseQuery.getQuery("Debt");
 	    	debtorsQuery.whereEqualTo("debtor", DTUser.currentParseUser);
-//	    	for (ParseObject queryResult : debtorsQuery.find()) {
-//	    		debts.add(new DTDebt(queryResult));
-//	    	}
 	    	
 	    	// Main query to query for debts where the user is the creditor or debtor
 	    	List<ParseQuery<ParseObject>> queries = new ArrayList<ParseQuery<ParseObject>>();
@@ -232,5 +225,9 @@ public class DTUser {
 	
 	public static String generatePassword(Boolean random) {
 		return random ? new BigInteger(130, new SecureRandom()).toString(32) : defaultPassword;
+	}
+
+	public String getEmail() {
+		return this.email;
 	}
 }

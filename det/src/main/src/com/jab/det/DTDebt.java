@@ -1,19 +1,21 @@
 package com.jab.det;
 
-import android.util.Log;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.HashMap;
 
 import com.parse.ParseException;
 import com.parse.ParseObject;
-import com.parse.ParseUser;
 
-public class DTDebt {
+public class DTDebt implements Serializable {
 	
 	private String objectId;
 	private Number amount;
 	private DTUser creditor;
 	private DTUser debtor;
 	private DTTransaction transaction;
-	private ParseObject parseObject;
+	private transient ParseObject parseObject;
+	private String toString;
 	
 	public DTDebt(ParseObject parseObject) {
 		try {
@@ -30,6 +32,7 @@ public class DTDebt {
 		ParseObject parseTransaction = parseObject.getParseObject("transaction");
 		this.transaction = new DTTransaction(parseTransaction);
 		this.parseObject = parseObject;
+		this.toString = String.format("%s owes %s $%s for %s", this.debtor.toString(), this.creditor.toString(), this.amount.toString(), this.transaction.getDescription());
 	}
 	
 	public DTUser getDebtor() {
@@ -71,5 +74,13 @@ public class DTDebt {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+	}
+
+	public static ArrayList<DTDebt> fromDebtData(ArrayList<HashMap<String, String>> debtsFromIntent) {
+		ArrayList<DTDebt> debts = new ArrayList<DTDebt>();
+		for (HashMap<String, String> debt : debtsFromIntent) {
+			
+		}
+		return null;
 	}
 }

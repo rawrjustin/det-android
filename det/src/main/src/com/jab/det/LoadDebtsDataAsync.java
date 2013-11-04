@@ -11,16 +11,16 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 
-public class LoadDebtsData extends AsyncTask<Void, Void, DTDebt[]>{
+public class LoadDebtsDataAsync extends AsyncTask<Void, Void, DTDebt[]>{
 
 	private ListView debtListView;
 	private TextView loadingDebtsTextView;
 	private View rootView;
 	private Context context;
-	private DisplayDebtsAdapter debtListAdapter;
+	public static DisplayDebtsAdapter debtListAdapter;
 	private Button refreshButton;
 	
-	public LoadDebtsData(Context context, View rootView) {
+	public LoadDebtsDataAsync(Context context, View rootView) {
 		this.context = context;
 		this.rootView = rootView;
 		this.loadingDebtsTextView = (TextView) this.rootView.findViewById(R.id.loading_debts);

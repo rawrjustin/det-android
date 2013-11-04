@@ -1,26 +1,23 @@
 package com.jab.det;
 
+import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
-import org.apache.commons.lang3.StringUtils;
-
-import android.util.Log;
-
+import com.facebook.Session.NewPermissionsRequest;
 import com.parse.ParseException;
 import com.parse.ParseObject;
 
-public class DTTransaction {
+public class DTTransaction implements Serializable {
 
 	private String description;
-	private Collection<DTDebt> debts;
+	private ArrayList<DTDebt> debts;
 	private DTUser currentUser;
-	private ParseObject parseObject;
+	private transient ParseObject parseObject;
 	private String objectId;
-	
-	public DTTransaction(String objectId) {
-		// TODO Auto-generated constructor stub
-	}
 	
 	// Create a transaction split evenly
 	public DTTransaction(DTUser currentUser, Collection<DTUser> otherUsers, Number amount, String description) {
@@ -78,7 +75,7 @@ public class DTTransaction {
 		return this.parseObject;
 	}
 	
-	public Collection<DTDebt> getDebts() {
+	public ArrayList<DTDebt> getDebts() {
 		return this.debts;
 	}
 	
@@ -103,5 +100,22 @@ public class DTTransaction {
 	@Override
 	public int hashCode() {
 		return this.objectId.hashCode();
+	}
+
+	public HashMap<String, Object> getCloudCodeRequestObject() {
+		HashMap<String, Object> requestObject = new HashMap<String, Object>();
+		ArrayList<String> fbIds = new ArrayList<String>(); 
+		requestObject.put("creditor", UserHomeActivity.getCurrentUser().getObjectId());
+		requestObject.put("description", this.description);
+		for (DTDebt debt : this.debts) {
+			HashMap<String, Object> debtorMap = new HashMap<String, Object>();
+			debtorMap.put("name", debt.getDebtor().getName());
+			debtorMap.put("email", debt.getDebtor().getEmail());
+			requestObject.put(debt.getDebtor().getFacebookId(), debtorMap);
+			fbIds.add(debt.getDebtor().getFacebookId());
+		}
+		
+		requestObject.put("fbIdentifiers", fbIds.toArray(new String[fbIds.size()]));
+		return requestObject;
 	}
 }

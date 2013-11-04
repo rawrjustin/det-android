@@ -2,10 +2,13 @@ package com.jab.det;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashMap;
 
 import com.parse.ParseUser;
 
 import android.os.Bundle;
+import android.R.integer;
 import android.app.Activity;
 import android.app.Dialog;
 import android.app.ProgressDialog;
@@ -26,11 +29,11 @@ public class UserHomeActivity extends Activity {
 	private TextView userIntroView;
 	private ListView debtListView;
 	private static DTUser currentUser;
-	private LoadDebtsData loadDebtsData;
+	private LoadDebtsDataAsync loadDebtsData;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+    	super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_home);
         this.debtListView = (ListView) findViewById(R.id.debt_list);
         setCurrentUser();
@@ -40,6 +43,13 @@ public class UserHomeActivity extends Activity {
 		displayDebts();
     }
    
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
+		//ArrayList<HashMap<String, String>> debtsFromIntent = (ArrayList<HashMap<String, String>>) intent.getExtras().get(AddTransactionActivity.EXTRA_DEBTS);
+		DTTransaction transactionFromIntent = (DTTransaction) intent.getExtras().get(AddTransactionActivity.EXTRA_DEBTS);
+    	//LoadDebtsDataAsync.debtListAdapter.addToView(transactionFromIntent.getDebts());
+    }
+    
     private void setupRefreshButton() {
     	this.refreshButton = (Button) findViewById(R.id.refreshDebtsButton);
 		this.refreshButton.setOnClickListener(new View.OnClickListener() {
@@ -51,7 +61,7 @@ public class UserHomeActivity extends Activity {
     }
     
 	private void onRefreshButtonClicked() {
-		this.loadDebtsData = new LoadDebtsData(this, getWindow().getDecorView().getRootView());
+		this.loadDebtsData = new LoadDebtsDataAsync(this, getWindow().getDecorView().getRootView());
 		this.loadDebtsData.execute();
 	}
     
@@ -85,7 +95,7 @@ public class UserHomeActivity extends Activity {
     // Gets all of current user's associated debts and writes them to the ListView
     private void displayDebts() {
 		// Populate debtsList ListView with debts
-		this.loadDebtsData = new LoadDebtsData(this, getWindow().getDecorView().getRootView());
+		this.loadDebtsData = new LoadDebtsDataAsync(this, getWindow().getDecorView().getRootView());
 		loadDebtsData.execute();
     }
 
@@ -98,7 +108,7 @@ public class UserHomeActivity extends Activity {
 	// Starts AddTransactionActivity
 	private void startAddTransactionActivity() {
 		Intent intent = new Intent(this, AddTransactionActivity.class);
-		startActivity(intent);
+		startActivityForResult(intent, 1);
 	}
 
     private void setupAddTransactionButton() {

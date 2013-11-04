@@ -1,9 +1,11 @@
 package com.jab.det;
 
+import android.app.Application;
+import android.content.Context;
+import android.widget.Toast;
+
 import com.parse.Parse;
 import com.parse.ParseFacebookUtils;
-
-import android.app.Application;
 
 public class DetApplication extends Application {
 
@@ -18,4 +20,9 @@ public class DetApplication extends Application {
 		super.onCreate();
 	}
 
+    // Show toast message
+    public static void showToast(Context context, String message) {
+    	Toast toast = Toast.makeText(context, message, Toast.LENGTH_SHORT);
+    	toast.show();
+    }
 }
