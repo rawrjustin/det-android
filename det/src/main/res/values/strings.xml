@@ -10,7 +10,7 @@
     <string name="parse_app_id">SnZIklEaMlecec0zVwMgEgXDgeDWgM458xCUXPqU</string>
     <string name="parse_client_key">TLNJj6cz7SquDWwPlNHRg79YGHWpftHbh0WoEyLx</string>
     <string name="login_intro">Please log in to use Det</string>
-    <string name="add_transaction">Add transaction</string>
+    <string name="add_transaction">New</string>
     <string name="add_transaction_amount">How much did you pay?</string>
     <string name="add_transaction_description">What did you pay for?</string>
     <string name="add_transaction_amount_hint">Enter amount.</string>
@@ -20,7 +20,8 @@
     <string name="add_transaction_submit">Submit</string>
     <string name="exception">Exception: %1$s</string>
     <string name="title_activity_about_page">AboutPage</string>
+    <string name="resolve_debt">Resolve</string>
     <string name="about">About</string>
-    
-
+    <string name="refresh_debts">Refresh</string>
+    <string name="no_debts">You are not involved in any debts</string>
 </resources>

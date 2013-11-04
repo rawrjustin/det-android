@@ -4,7 +4,12 @@ import java.math.BigInteger;
 import java.security.SecureRandom;
 import java.util.AbstractMap;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import android.util.Log;
 
@@ -101,22 +106,51 @@ public class DTUser {
     	    	
     	// Query debts where user is creditor
     	try {
+    		// Query debts where user is debtor
 	    	ParseQuery<ParseObject> creditorsQuery = ParseQuery.getQuery("Debt");
 	    	creditorsQuery.whereEqualTo("creditor", DTUser.currentParseUser);
-	    	for (ParseObject queryResult : creditorsQuery.find()) {
-	    		debts.add(new DTDebt(queryResult));
-	    	}
+//	    	for (ParseObject queryResult : creditorsQuery.find()) {
+//	    		debts.add(new DTDebt(queryResult));
+//	    	}
 	    		    		
 	    	// Query debts where user is creditor
 	    	ParseQuery<ParseObject> debtorsQuery = ParseQuery.getQuery("Debt");
 	    	debtorsQuery.whereEqualTo("debtor", DTUser.currentParseUser);
-	    	for (ParseObject queryResult : debtorsQuery.find()) {
+//	    	for (ParseObject queryResult : debtorsQuery.find()) {
+//	    		debts.add(new DTDebt(queryResult));
+//	    	}
+	    	
+	    	// Main query to query for debts where the user is the creditor or debtor
+	    	List<ParseQuery<ParseObject>> queries = new ArrayList<ParseQuery<ParseObject>>();
+	    	queries.add(creditorsQuery);
+	    	queries.add(debtorsQuery);
+	    	ParseQuery<ParseObject> mainQuery = ParseQuery.or(queries);
+	    	
+	    	for (ParseObject queryResult : mainQuery.find()) {
 	    		debts.add(new DTDebt(queryResult));
 	    	}
     	} catch (ParseException e) {
     		e.printStackTrace();
     	}
-
+    	
+    	// Map transactions to their debts
+    	HashMap<DTTransaction, HashSet<DTDebt>> transactionsMap = new HashMap<DTTransaction, HashSet<DTDebt>>();
+    	for (DTDebt debt : debts) {
+    		if (!transactionsMap.containsKey(debt.getTransaction())) {
+    			transactionsMap.put(debt.getTransaction(), new HashSet<DTDebt>(Arrays.asList(debt)));
+    		} else {
+    			transactionsMap.get(debt.getTransaction()).add(debt);
+    		}
+    	}
+    	
+    	// Associate DTTransaction objects with their debts
+    	for (Entry<DTTransaction, HashSet<DTDebt>> keyValuePair : transactionsMap.entrySet()) {
+    		for (DTDebt debt : keyValuePair.getValue()) {
+    			debt.getTransaction().setDebts(new ArrayList<DTDebt>(keyValuePair.getValue()));
+    		}
+    		Log.d(DetApplication.TAG, "DETAPP " + keyValuePair.getKey().toString());
+    	}
+    	
     	return debts.toArray(new DTDebt[debts.size()]);
     }
     

@@ -19,7 +19,7 @@
         android:theme="@style/AppTheme" >
         <activity
             android:name="com.jab.det.LoginActivity"
-            android:theme="@android:style/Theme.Holo.Light.NoActionBar.Fullscreen" >
+            android:theme="@android:style/Theme.Holo.Light.NoActionBar" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -36,15 +36,16 @@
 
         <activity
             android:name="com.jab.det.UserHomeActivity"
-            android:theme="@android:style/Theme.Holo.Light.NoActionBar.Fullscreen" >
+            android:theme="@android:style/Theme.Holo.Light.NoActionBar" >
         </activity>
         <activity
             android:name="com.jab.det.SelectFriendsActivity"
+            android:theme="@android:style/Theme.Holo.Light.NoActionBar.Fullscreen"
             android:label="Select Friends" >
         </activity>
         <activity
             android:name="com.jab.det.AddTransactionActivity"
-            android:theme="@android:style/Theme.Holo.Light.NoActionBar.Fullscreen"
+            android:theme="@android:style/Theme.Holo.Light.NoActionBar"
             android:parentActivityName="UserHomeActivity" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"

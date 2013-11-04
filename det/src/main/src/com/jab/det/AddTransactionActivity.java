@@ -169,12 +169,12 @@ public class AddTransactionActivity extends Activity {
 	}
 	
 	// Starts UserHomeActivity
-		private void startUserHomeActivity() {
-			Intent intent = new Intent(this, UserHomeActivity.class);
-			intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-			intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-			startActivity(intent);
-		}
+	private void startUserHomeActivity() {
+		Intent intent = new Intent(this, UserHomeActivity.class);
+		intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+		intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+		startActivity(intent);
+	}
     
     @Override
     public void onDestroy(){

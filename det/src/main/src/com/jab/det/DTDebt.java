@@ -54,6 +54,14 @@ public class DTDebt {
 		return String.format("%s owes %s $%s for %s", this.debtor.toString(), this.creditor.toString(), this.amount.toString(), this.transaction.getDescription());
 	}
 	
+	public DTTransaction getTransaction() {
+		return this.transaction;
+	}
+	
+	public String getObjectId() {
+		return this.objectId;
+	}
+	
 	// Saves the debt to Parse, including the relationship to the transaction
 	public void save(ParseObject transaction) {
 		this.parseObject.put("transaction", transaction);
