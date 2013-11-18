@@ -3,6 +3,9 @@ package com.jab.det;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Map;
+
+import org.json.JSONObject;
 
 import android.app.Activity;
 import android.app.Dialog;
@@ -105,17 +108,20 @@ public class AddTransactionActivity extends Activity {
     	// Initialize and save transaction (note: this also saves all corresponding debts)
     	DTTransaction transaction = new DTTransaction(UserHomeActivity.getCurrentUser(), otherUsers, Double.valueOf(transactionAmount), transactionDescription);
     	
-    	ParseCloud.callFunctionInBackground("createTransaction", transaction.getCloudCodeRequestObject(), new FunctionCallback<String>() {
-    		public void done(String result, ParseException e) {
+    	ParseCloud.callFunctionInBackground("createTransaction", transaction.getCloudCodeRequestObject(), new FunctionCallback<JSONObject>() {
+    		@Override
+    		public void done(JSONObject mapObject, ParseException e) {
     			if (e != null) {
     				Log.e(DetApplication.TAG, "DETAPP Error calling cloud function" + e.toString());
     		    }
     			
-    			Log.e(DetApplication.TAG, "DETAPP: Result is " + result);
+    			Log.e(DetApplication.TAG, "DETAPP: Result is " + mapObject.toString());
     			DetApplication.showToast(getApplicationContext(), "Transaction added to Parse");
     		}
     	});
     	
+//    	ParseCloud.callFunctionInBackground("createTransaction", transaction.getCloudCodeRequestObject(), null);
+    			
 //    	try {
 //			ParseCloud.callFunction("createTransaction", transaction.getCloudCodeRequestObject());
 //		} catch (ParseException e1) {
