@@ -46,8 +46,8 @@ public class UserHomeActivity extends Activity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
 		//ArrayList<HashMap<String, String>> debtsFromIntent = (ArrayList<HashMap<String, String>>) intent.getExtras().get(AddTransactionActivity.EXTRA_DEBTS);
-		//DTTransaction transactionFromIntent = (DTTransaction) intent.getExtras().get(AddTransactionActivity.EXTRA_DEBTS);
-    	//LoadDebtsDataAsync.debtListAdapter.addToView(transactionFromIntent.getDebts());
+//		DTTransaction transactionFromIntent = (DTTransaction) intent.getExtras().get(AddTransactionActivity.EXTRA_DEBTS);
+//    	LoadDebtsDataAsync.debtListAdapter.addToView(transactionFromIntent.getDebts());
     }
     
     private void setupRefreshButton() {
