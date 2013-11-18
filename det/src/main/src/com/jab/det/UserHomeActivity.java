@@ -37,6 +37,7 @@ public class UserHomeActivity extends Activity {
 	public static double amountOwedToYou = 0;
 	public static HashMap<DTTransaction, HashSet<DTDebt>> transactionsMap;
 	public static HashMap<String, DTTransaction> transactionsObjectIdToDTTransaction;
+	// populated when user.getDebts is called.
 	public static HashMap<DTUser, HashSet<DTDebt>> usersMap;
 
     @Override
