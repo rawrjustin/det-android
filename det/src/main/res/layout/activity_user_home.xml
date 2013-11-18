@@ -12,6 +12,11 @@
         android:textSize="18sp" 
         android:background="@color/background"/>
     <TextView
+        android:id="@+id/user_home_aggregate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+		android:textSize="18sp" />
+    <TextView
         android:id="@+id/loading_debts"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
