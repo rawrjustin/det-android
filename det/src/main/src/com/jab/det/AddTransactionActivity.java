@@ -108,18 +108,27 @@ public class AddTransactionActivity extends Activity {
     	ParseCloud.callFunctionInBackground("createTransaction", transaction.getCloudCodeRequestObject(), new FunctionCallback<String>() {
     		public void done(String result, ParseException e) {
     			if (e != null) {
-    				Log.e(DetApplication.TAG, "DETAPP " + e.toString());
+    				Log.e(DetApplication.TAG, "DETAPP Error calling cloud function" + e.toString());
     		    }
     			
+    			Log.e(DetApplication.TAG, "DETAPP: Result is " + result);
     			DetApplication.showToast(getApplicationContext(), "Transaction added to Parse");
     		}
     	});
     	
-    	Intent intent = new Intent(this, UserHomeActivity.class);
-    	Bundle extras = new Bundle();
-    	extras.putSerializable(EXTRA_DEBTS, transaction);
-    	intent.putExtras(extras);
-    	setResult(RESULT_OK, intent);
+//    	try {
+//			ParseCloud.callFunction("createTransaction", transaction.getCloudCodeRequestObject());
+//		} catch (ParseException e1) {
+//			// TODO Auto-generated catch block
+//			e1.printStackTrace();
+//			Log.e(DetApplication.TAG, "Error calling parse cloud code: " + EXTRA_DEBTS.toString());
+//		}
+    	
+//    	Intent intent = new Intent(this, UserHomeActivity.class);
+//    	Bundle extras = new Bundle();
+//    	extras.putSerializable(EXTRA_DEBTS, transaction);
+//    	intent.putExtras(extras);
+//    	setResult(RESULT_OK, intent);
 		finish();
     }
     
