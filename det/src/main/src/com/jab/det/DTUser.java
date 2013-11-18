@@ -27,7 +27,7 @@ public class DTUser implements Serializable {
     private String password;
     private String name;
     public static transient ParseUser currentParseUser;
-    public static String defaultPassword = "password";
+    private static String defaultPassword = "password";
     
     // Constructs DTUser with fields
     public DTUser(String objectId, String email, String facebookID, String username, String password, String name) {

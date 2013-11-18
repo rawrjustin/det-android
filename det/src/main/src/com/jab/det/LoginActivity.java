@@ -32,7 +32,7 @@ public class LoginActivity extends Activity {
 
 	private Button loginButton;
 	private Dialog progressDialog;
-	private String fbID, email;
+	private String fbID, email, name;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -41,11 +41,11 @@ public class LoginActivity extends Activity {
 		setupLoginButton();
 		
 		// Check if user is logged in and linked to facebook
-		ParseUser currentUser = ParseUser.getCurrentUser();
-		if ((currentUser != null) && ParseFacebookUtils.isLinked(currentUser)) {
-			// Go to the user info activity
-			startUserHomeActivity();
-		}
+//		ParseUser currentUser = ParseUser.getCurrentUser();
+//		if ((currentUser != null) && ParseFacebookUtils.isLinked(currentUser)) {
+//			// Go to the user info activity
+//			startUserHomeActivity();
+//		}
 	}
 
 	// Handles About button clicked
@@ -64,14 +64,6 @@ public class LoginActivity extends Activity {
 			}
 		});
     }
-
-
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.main, menu);
-		return true;
-	}
 
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -96,6 +88,7 @@ public class LoginActivity extends Activity {
 				                // Get the parse user info
 				            	LoginActivity.this.fbID = graphUser.getId();
 				            	LoginActivity.this.email = (String) graphUser.getProperty("email");
+				            	LoginActivity.this.name = (String) graphUser.getName(); 
 				            	// Check if there is existing user row and authenticate it
 				        		ParseQuery<ParseUser> query = ParseUser.getQuery();
 				        		query.whereEqualTo("fbID", LoginActivity.this.fbID);       		
@@ -107,23 +100,32 @@ public class LoginActivity extends Activity {
 						        		ParseUser.deleteAllInBackground(new ArrayList<ParseObject>(Arrays.asList(newlyCreatedUser)), null);
 						        		// Authenticate existing user row
 					        			ParseUser userToAuthenticate = queryResult.get(0);
-						        		ParseUser.logIn(userToAuthenticate.getUsername(), DTUser.defaultPassword);
+						        		ParseUser.logIn(userToAuthenticate.getUsername(), DTUser.generatePassword(false));
 						        		// Set random password
 						        		userToAuthenticate.setPassword(DTUser.generatePassword(true));
 						        		ParseFacebookUtils.link(userToAuthenticate, LoginActivity.this);
 						        		userToAuthenticate.put("email", LoginActivity.this.email);
 						        		userToAuthenticate.put("fbID", LoginActivity.this.fbID);
 						        		userToAuthenticate.saveInBackground();
+				        			} else {
+				        				newlyCreatedUser.setEmail(LoginActivity.this.email);
+				        				newlyCreatedUser.setUsername(LoginActivity.this.fbID);
+				        				newlyCreatedUser.put("fbID", LoginActivity.this.fbID);
+				        				newlyCreatedUser.put("name", LoginActivity.this.name);
+				        				newlyCreatedUser.setPassword(DTUser.generatePassword(false));
+				        				newlyCreatedUser.save();
 				        			}
 				        		} catch (ParseException e) {
 				        			// TODO Auto-generated catch block
 				        			e.printStackTrace();
+				        			Log.e(DetApplication.TAG, e.toString());
 				        		}
 
 				            	LoginActivity.this.progressDialog.dismiss();
 				            	startUserHomeActivity();
 				            } else {
 				            	// TODO: Handle error
+				            	throw new org.apache.http.ParseException();
 				            }
 				        }
 				    });
