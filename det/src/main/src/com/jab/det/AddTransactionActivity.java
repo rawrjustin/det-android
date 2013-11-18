@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.commons.lang3.time.StopWatch;
 import org.json.JSONObject;
 
 import android.app.Activity;
@@ -75,6 +76,10 @@ public class AddTransactionActivity extends Activity {
     
     // Runs when submit transaction is clicked
     private void onClickSubmitTransaction() {
+    	StopWatch stopWatch = new StopWatch();
+    	stopWatch.reset();
+    	stopWatch.start();
+    	
     	// Check fields
     	this.transactionAmountEditText = (EditText) findViewById(R.id.edit_transaction_amount);
     	this.transactionDescriptionEditText = (EditText) findViewById(R.id.edit_transaction_description);
@@ -86,7 +91,7 @@ public class AddTransactionActivity extends Activity {
     		DetApplication.showToast(this.getApplicationContext(), "Invalid amount");
     		return;
     	}
-    	
+
     	// Description must be nonempty
     	if (transactionDescription.trim().isEmpty()) {
     		DetApplication.showToast(this.getApplicationContext(), "Description must be nonempty");
@@ -98,15 +103,30 @@ public class AddTransactionActivity extends Activity {
     		DetApplication.showToast(this.getApplicationContext(), "No friends selected");
     		return;
     	}
+    	
+    	stopWatch.stop();
+    	Log.d(DetApplication.TAG, "DETAPP: Time elapsed for checking: " + stopWatch.getTime());
+    	stopWatch.reset();
+    	stopWatch.start();
     	    	
     	// Get all selected friends as DTUser objects
     	ArrayList<DTUser> otherUsers = new ArrayList<DTUser>();
     	for (GraphUser user : selectedFriends) {
-    		otherUsers.add(DTUser.getOrCreateUser(user.getId(), user.getName()));
+    		otherUsers.add(new DTUser(user.getId(), user.getName()));
     	}
 
+    	stopWatch.stop();
+    	Log.d(DetApplication.TAG, "DETAPP: Time elapsed for creating DTUsers: " + stopWatch.getTime());
+    	stopWatch.reset();
+    	stopWatch.start();
+    	
     	// Initialize and save transaction (note: this also saves all corresponding debts)
     	DTTransaction transaction = new DTTransaction(UserHomeActivity.getCurrentUser(), otherUsers, Double.valueOf(transactionAmount), transactionDescription);
+    	
+    	stopWatch.stop();
+    	Log.d(DetApplication.TAG, "DETAPP: Time elapsed for creating transaction: " + stopWatch.getTime());
+    	stopWatch.reset();
+    	stopWatch.start();
     	
     	ParseCloud.callFunctionInBackground("createTransaction", transaction.getCloudCodeRequestObject(), new FunctionCallback<HashMap<String, Object>>() {
     		public void done(HashMap<String, Object> mapObject, ParseException e) {
@@ -118,6 +138,9 @@ public class AddTransactionActivity extends Activity {
     		}
     	});
     	
+    	stopWatch.stop();
+    	Log.d(DetApplication.TAG, "DETAPP: Time elapsed for calling cloud code: " + stopWatch.getTime());
+
 //    	Intent intent = new Intent(this, UserHomeActivity.class);
 //    	Bundle extras = new Bundle();
 //    	extras.putSerializable(EXTRA_DEBTS, transaction);

@@ -51,6 +51,7 @@ public class DisplayDebtsAdapter extends ArrayAdapter<DTDebt> {
             holder = new ViewHolder();
             holder.profilePictureView = (ProfilePictureView) convertView.findViewById(R.id.profile_pic);
             holder.textView = (TextView) convertView.findViewById(R.id.debt_text);
+            // TODO: Fix resolve button onclick
             //holder.resolveButton = (Button) convertView.findViewById(R.id.resolve_debt_button);
             //holder.resolveButton.setOnClickListener(new View.OnClickListener() {
     		//	@Override

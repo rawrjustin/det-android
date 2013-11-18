@@ -28,13 +28,18 @@ public class UserHomeActivity extends Activity {
 	private Button refreshButton;
 	private Button addTransactionButton;
 	private TextView userIntroView;
+	private ListView debtListView;
+	private static TextView aggregateTextView;
 	private static DTUser currentUser;
 	private LoadDebtsDataAsync loadDebtsData;
+	public static double amountOwedToOthers = 0;
+	public static double amountOwedToYou = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
     	super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_home);
+        this.aggregateTextView = (TextView) findViewById(R.id.user_home_aggregate);
         setCurrentUser();
         setupAddTransactionButton();
         setupRefreshButton();
@@ -47,6 +52,13 @@ public class UserHomeActivity extends Activity {
 		//ArrayList<HashMap<String, String>> debtsFromIntent = (ArrayList<HashMap<String, String>>) intent.getExtras().get(AddTransactionActivity.EXTRA_DEBTS);
 //		DTTransaction transactionFromIntent = (DTTransaction) intent.getExtras().get(AddTransactionActivity.EXTRA_DEBTS);
 //    	LoadDebtsDataAsync.debtListAdapter.addToView(transactionFromIntent.getDebts());
+    }
+    
+    public static void resetAggregateTotals() {
+    	amountOwedToOthers = Math.round(amountOwedToOthers * 100.0)/100.0;
+    	amountOwedToYou = Math.round(amountOwedToYou * 100.0)/100.0;
+    	aggregateTextView.setText(String.format("Balance: %s\nYou owe others %s\nOthers owe you %s", 
+    			amountOwedToYou - amountOwedToOthers, amountOwedToOthers, amountOwedToYou));
     }
     
     private void setupRefreshButton() {
@@ -77,14 +89,14 @@ public class UserHomeActivity extends Activity {
     
     // Gets current user and checks success
     private void setCurrentUser() {
-    	currentUser = currentUser == null ? DTUser.getCurrentUser() : currentUser;
+    	currentUser = DTUser.getCurrentUser();
+    	if (currentUser == null) {
+    		startLoginActivity();
+    	}
     	
     	// Dispay intro message
-        userIntroView = (TextView) findViewById(R.id.user_home_intro);
-		userIntroView.setText("Hi " + currentUser.getName() + ", add a transaction or view your debts below");
-//    	if (currentUser == null) {
-//    		startLoginActivity();
-//    	}
+//        userIntroView = (TextView) findViewById(R.id.user_home_intro);
+//		userIntroView.setText("Hi " + currentUser.getName() + ", add a transaction or view your debts below");
     }
     
     public static DTUser getCurrentUser() {

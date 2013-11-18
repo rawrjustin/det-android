@@ -24,4 +24,5 @@
     <string name="about">About</string>
     <string name="refresh_debts">Refresh</string>
     <string name="no_debts">You are not involved in any debts</string>
+    <string name="user_home_intro">det</string>
 </resources>
