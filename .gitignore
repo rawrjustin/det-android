@@ -32,3 +32,6 @@ proguard/
 *.ipr
 *.iws
 .idea/
+
+# Ecilpse settings
+facebook/.settings/*

@@ -65,6 +65,10 @@ public class DTDebt implements Serializable {
 		return this.objectId;
 	}
 	
+	public Number getAmount() {
+		return this.amount;
+	}
+	
 	// Saves the debt to Parse, including the relationship to the transaction
 	public void save(ParseObject transaction) {
 		this.parseObject.put("transaction", transaction);

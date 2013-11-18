@@ -108,7 +108,7 @@ public class AddTransactionActivity extends Activity {
     	ParseCloud.callFunctionInBackground("createTransaction", transaction.getCloudCodeRequestObject(), new FunctionCallback<String>() {
     		public void done(String result, ParseException e) {
     			if (e != null) {
-    				Log.d(DetApplication.TAG, "DETAPP " + e.toString());
+    				Log.e(DetApplication.TAG, "DETAPP " + e.toString());
     		    }
     			
     			DetApplication.showToast(getApplicationContext(), "Transaction added to Parse");

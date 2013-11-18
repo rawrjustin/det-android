@@ -7,6 +7,8 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
+import android.util.Log;
+
 import com.facebook.Session.NewPermissionsRequest;
 import com.parse.ParseException;
 import com.parse.ParseObject;
@@ -104,18 +106,21 @@ public class DTTransaction implements Serializable {
 
 	public HashMap<String, Object> getCloudCodeRequestObject() {
 		HashMap<String, Object> requestObject = new HashMap<String, Object>();
-		ArrayList<String> fbIds = new ArrayList<String>(); 
+		ArrayList<Object> fbIds = new ArrayList<Object>(); 
 		requestObject.put("creditor", UserHomeActivity.getCurrentUser().getObjectId());
 		requestObject.put("description", this.description);
 		for (DTDebt debt : this.debts) {
 			HashMap<String, Object> debtorMap = new HashMap<String, Object>();
 			debtorMap.put("name", debt.getDebtor().getName());
 			debtorMap.put("email", debt.getDebtor().getEmail());
+			debtorMap.put("amount", debt.getAmount());
 			requestObject.put(debt.getDebtor().getFacebookId(), debtorMap);
 			fbIds.add(debt.getDebtor().getFacebookId());
 		}
 		
-		requestObject.put("fbIdentifiers", fbIds.toArray(new String[fbIds.size()]));
+		//requestObject.put("fbIdentifiers", fbIds.toArray(new Object[fbIds.size()]));
+		requestObject.put("fbIdentifiers", fbIds);
+		
 		return requestObject;
 	}
 }
