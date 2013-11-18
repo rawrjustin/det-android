@@ -55,6 +55,14 @@ public class DisplayDebtsAdapter extends ArrayAdapter<DTDebt> {
             holder.resolveButton.setOnClickListener(new View.OnClickListener() {
     			@Override
     			public void onClick(View v) {
+    				// Recalculate aggregate totals
+    				if (DisplayDebtsAdapter.this.debts.get(position).getDebtor().equals(UserHomeActivity.getCurrentUser())) {
+    					UserHomeActivity.amountOwedToOthers -= DisplayDebtsAdapter.this.debts.get(position).getAmount().doubleValue();
+    				} else {
+    					UserHomeActivity.amountOwedToYou -= DisplayDebtsAdapter.this.debts.get(position).getAmount().doubleValue();
+    				}
+    				UserHomeActivity.resetAggregateTotals();
+    				
     				// Remove row
     				DisplayDebtsAdapter.this.debts.remove(position);
     	            DisplayDebtsAdapter.this.notifyDataSetChanged();

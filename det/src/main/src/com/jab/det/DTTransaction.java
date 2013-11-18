@@ -28,8 +28,8 @@ public class DTTransaction implements Serializable {
 		// Note: Implementation assumes current user is the creditor
 		this.description = description;
 		this.debts = new ArrayList<DTDebt>();
-		this.parseObject = new ParseObject("Transaction");
-		this.parseObject.put("description", this.description);
+//		this.parseObject = new ParseObject("Transaction");
+//		this.parseObject.put("description", this.description);
 		for (DTUser user : otherUsers) {
 			this.debts.add(new DTDebt(currentUser, user, trimDecimals(amount.doubleValue()/(otherUsers.size()+1))));
 		}
@@ -37,7 +37,7 @@ public class DTTransaction implements Serializable {
 	
 	public DTTransaction(ParseObject parseObject) {
 		try {
-			parseObject.fetchIfNeeded();
+			parseObject = parseObject.fetchIfNeeded();
 		} catch (ParseException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -114,7 +114,7 @@ public class DTTransaction implements Serializable {
 		for (DTDebt debt : this.debts) {
 			HashMap<String, Object> debtorMap = new HashMap<String, Object>();
 			debtorMap.put("name", debt.getDebtor().getName());
-			debtorMap.put("email", debt.getDebtor().getEmail());
+			//debtorMap.put("email", debt.getDebtor().getEmail());
 			debtorMap.put("amount", debt.getAmount());
 			requestObject.put(debt.getDebtor().getFacebookId(), debtorMap);
 			fbIds.add(debt.getDebtor().getFacebookId());

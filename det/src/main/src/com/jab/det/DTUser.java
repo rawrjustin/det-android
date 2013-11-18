@@ -38,6 +38,11 @@ public class DTUser implements Serializable {
     	this.password = password;
     	this.name = name;
     }
+    
+    public DTUser(String facebookID, String name) {
+    	this.facebookID = facebookID;
+    	this.name = name;
+    }
 
     // Constructs DTUser object with objectId
     public static DTUser getUserFromObjectId(String objectIdParam) {
@@ -148,6 +153,7 @@ public class DTUser implements Serializable {
     }
     
     // Returns the user with given facebook id. If the user did not already exist, a default DTUser with the facebook id will be created.
+    @Deprecated // Functionality replaced by cloud code
     public static DTUser getOrCreateUser(String fbID, String name) {
     	// Query ParseUser table for entry for fbID.
     	ParseQuery<ParseUser> query = ParseUser.getQuery();
@@ -229,5 +235,10 @@ public class DTUser implements Serializable {
 
 	public String getEmail() {
 		return this.email;
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		return !(o instanceof DTUser) || o.equals(null) ? false : this.objectId.equals(((DTUser) o).getObjectId());
 	}
 }
