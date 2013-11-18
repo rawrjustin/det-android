@@ -41,11 +41,11 @@ public class LoginActivity extends Activity {
 		setupLoginButton();
 		
 		// Check if user is logged in and linked to facebook
-//		ParseUser currentUser = ParseUser.getCurrentUser();
-//		if ((currentUser != null) && ParseFacebookUtils.isLinked(currentUser)) {
-//			// Go to the user info activity
-//			startUserHomeActivity();
-//		}
+		ParseUser currentUser = ParseUser.getCurrentUser();
+		if ((currentUser != null) && ParseFacebookUtils.isLinked(currentUser)) {
+			// Go to the user info activity
+			startUserHomeActivity();
+		}
 	}
 
 	// Handles About button clicked

@@ -146,12 +146,15 @@ public class DTUser implements Serializable {
 //    	}
     	
     	// Associate DTTransaction objects with their debts
-//    	for (Entry<DTTransaction, HashSet<DTDebt>> keyValuePair : UserHomeActivity.transactionsMap.entrySet()) {
+    	for (Entry<DTTransaction, HashSet<DTDebt>> keyValuePair : UserHomeActivity.transactionsMap.entrySet()) {
+    		// All debts in a transaction refer to the same DTTransaction object now, so we only need to set debts once
+    		keyValuePair.getKey().setDebts(new ArrayList<DTDebt>(keyValuePair.getValue()));
 //    		for (DTDebt debt : keyValuePair.getValue()) {
 //    			debt.getTransaction().setDebts(new ArrayList<DTDebt>(keyValuePair.getValue()));
+//    			break;
 //    		}
-//    		Log.d(DetApplication.TAG, "DETAPP " + keyValuePair.getKey().toString());
-//    	}
+    		Log.d(DetApplication.TAG, "DETAPP " + keyValuePair.getKey().toString());
+    	}
     	
     	return debts.toArray(new DTDebt[debts.size()]);
     }
