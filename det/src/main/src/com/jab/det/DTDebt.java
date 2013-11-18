@@ -3,6 +3,7 @@ package com.jab.det;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 
 import com.parse.ParseException;
 import com.parse.ParseObject;
@@ -15,8 +16,8 @@ public class DTDebt implements Serializable {
 	private DTUser debtor;
 	private DTTransaction transaction;
 	private transient ParseObject parseObject;
-	private String toString;
 	
+	// Added from DTUser.getDebts
 	public DTDebt(ParseObject parseObject) {
 		try {
 			parseObject.fetchIfNeeded();
@@ -29,10 +30,31 @@ public class DTDebt implements Serializable {
 		this.amount = parseObject.getNumber("amount");
 		this.creditor = DTUser.getUserFromParseUser(parseObject.getParseUser("creditor"));
 		this.debtor = DTUser.getUserFromParseUser(parseObject.getParseUser("debtor"));
+		
+		// Add to users map
+		DTUser userThatIsNotCurrentUser = this.creditor.equals(UserHomeActivity.getCurrentUser()) ? this.debtor : this.creditor;
+		if (!UserHomeActivity.usersMap.containsKey(userThatIsNotCurrentUser)) {
+			UserHomeActivity.usersMap.put(userThatIsNotCurrentUser, new HashSet<DTDebt>());
+		}
+		
+		// Transaction setup
 		ParseObject parseTransaction = parseObject.getParseObject("transaction");
-		this.transaction = new DTTransaction(parseTransaction);
+		String parseTransactionObjectId = parseTransaction.getObjectId();
+		
+		// Save to transaction maps
+		if (UserHomeActivity.transactionsObjectIdToDTTransaction.containsKey(parseTransactionObjectId)) {
+			this.transaction = UserHomeActivity.transactionsObjectIdToDTTransaction.get(parseTransactionObjectId);
+		} else {
+			this.transaction = new DTTransaction(parseTransaction);
+			UserHomeActivity.transactionsObjectIdToDTTransaction.put(parseTransactionObjectId, this.transaction);
+			UserHomeActivity.transactionsMap.put(this.transaction, new HashSet<DTDebt>());
+		}
+
 		this.parseObject = parseObject;
-		this.toString = String.format("%s owes %s $%s for %s", this.debtor.toString(), this.creditor.toString(), this.amount.toString(), this.transaction.getDescription());
+		
+		
+		UserHomeActivity.transactionsMap.get(this.transaction).add(this);
+		UserHomeActivity.usersMap.get(userThatIsNotCurrentUser).add(this);
 	}
 	
 	public DTUser getDebtor() {

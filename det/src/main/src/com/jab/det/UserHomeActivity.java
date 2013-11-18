@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 
 import com.parse.ParseUser;
 
@@ -34,6 +35,9 @@ public class UserHomeActivity extends Activity {
 	private LoadDebtsDataAsync loadDebtsData;
 	public static double amountOwedToOthers = 0;
 	public static double amountOwedToYou = 0;
+	public static HashMap<DTTransaction, HashSet<DTDebt>> transactionsMap;
+	public static HashMap<String, DTTransaction> transactionsObjectIdToDTTransaction;
+	public static HashMap<DTUser, HashSet<DTDebt>> usersMap;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
