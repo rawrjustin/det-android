@@ -12,7 +12,7 @@
             facebook:preset_size="large" />
 	<TextView  		
 	    android:id="@+id/debt_text" 
- 		android:layout_width="150dp" 
+ 		android:layout_width="160dp" 
  		android:layout_height="wrap_content"
  		android:layout_centerHorizontal="true"
  		android:background="@color/transparentTextBackground"
