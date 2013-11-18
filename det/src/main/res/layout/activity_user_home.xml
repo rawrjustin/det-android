@@ -5,12 +5,13 @@
 	android:orientation="vertical"  >
     <TextView
         android:id="@+id/user_home_intro"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="fill_parent"
+        android:layout_height="55dp"
 		android:layout_marginBottom="18dp"
-        android:layout_gravity="center_horizontal"
-        android:textSize="18sp" 
+		android:gravity="center"
+        android:textSize="28sp" 
         android:textColor="@android:color/white"
+        android:text="@string/user_home_intro"
         android:background="@color/background"/>
     <TextView
         android:id="@+id/user_home_aggregate"

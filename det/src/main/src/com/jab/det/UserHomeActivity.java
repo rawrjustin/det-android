@@ -95,8 +95,8 @@ public class UserHomeActivity extends Activity {
     	}
     	
     	// Dispay intro message
-        userIntroView = (TextView) findViewById(R.id.user_home_intro);
-		userIntroView.setText("Hi " + currentUser.getName() + ", add a transaction or view your debts below");
+//        userIntroView = (TextView) findViewById(R.id.user_home_intro);
+//		userIntroView.setText("Hi " + currentUser.getName() + ", add a transaction or view your debts below");
     }
     
     public static DTUser getCurrentUser() {
