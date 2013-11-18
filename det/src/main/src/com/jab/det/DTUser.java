@@ -106,6 +106,10 @@ public class DTUser implements Serializable {
     
     // Returns a DTDebt array of all debts user is a part of
     public DTDebt[] getDebts() {
+    	UserHomeActivity.transactionsMap = new HashMap<DTTransaction, HashSet<DTDebt>>();
+    	UserHomeActivity.transactionsObjectIdToDTTransaction = new HashMap<String, DTTransaction>();	
+    	UserHomeActivity.usersMap = new HashMap<DTUser, HashSet<DTDebt>>();
+    	
     	ArrayList<DTDebt> debts = new ArrayList<DTDebt>();
     	    	
     	// Query debts where user is creditor
@@ -132,22 +136,22 @@ public class DTUser implements Serializable {
     	}
     	
     	// Map transactions to their debts
-    	HashMap<DTTransaction, HashSet<DTDebt>> transactionsMap = new HashMap<DTTransaction, HashSet<DTDebt>>();
-    	for (DTDebt debt : debts) {
-    		if (!transactionsMap.containsKey(debt.getTransaction())) {
-    			transactionsMap.put(debt.getTransaction(), new HashSet<DTDebt>(Arrays.asList(debt)));
-    		} else {
-    			transactionsMap.get(debt.getTransaction()).add(debt);
-    		}
-    	}
+//    	UserHomeActivity.transactionsMap = new HashMap<DTTransaction, HashSet<DTDebt>>();
+//    	for (DTDebt debt : debts) {
+//    		if (!UserHomeActivity.transactionsMap.containsKey(debt.getTransaction())) {
+//    			UserHomeActivity.transactionsMap.put(debt.getTransaction(), new HashSet<DTDebt>(Arrays.asList(debt)));
+//    		} else {
+//    			UserHomeActivity.transactionsMap.get(debt.getTransaction()).add(debt);
+//    		}
+//    	}
     	
     	// Associate DTTransaction objects with their debts
-    	for (Entry<DTTransaction, HashSet<DTDebt>> keyValuePair : transactionsMap.entrySet()) {
-    		for (DTDebt debt : keyValuePair.getValue()) {
-    			debt.getTransaction().setDebts(new ArrayList<DTDebt>(keyValuePair.getValue()));
-    		}
-    		Log.d(DetApplication.TAG, "DETAPP " + keyValuePair.getKey().toString());
-    	}
+//    	for (Entry<DTTransaction, HashSet<DTDebt>> keyValuePair : UserHomeActivity.transactionsMap.entrySet()) {
+//    		for (DTDebt debt : keyValuePair.getValue()) {
+//    			debt.getTransaction().setDebts(new ArrayList<DTDebt>(keyValuePair.getValue()));
+//    		}
+//    		Log.d(DetApplication.TAG, "DETAPP " + keyValuePair.getKey().toString());
+//    	}
     	
     	return debts.toArray(new DTDebt[debts.size()]);
     }
@@ -240,5 +244,10 @@ public class DTUser implements Serializable {
 	@Override
 	public boolean equals(Object o) {
 		return !(o instanceof DTUser) || o.equals(null) ? false : this.objectId.equals(((DTUser) o).getObjectId());
+	}
+	
+	@Override
+	public int hashCode() {
+		return this.facebookID.hashCode();
 	}
 }
