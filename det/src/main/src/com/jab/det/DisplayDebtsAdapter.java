@@ -51,53 +51,53 @@ public class DisplayDebtsAdapter extends ArrayAdapter<DTDebt> {
             holder = new ViewHolder();
             holder.profilePictureView = (ProfilePictureView) convertView.findViewById(R.id.profile_pic);
             holder.textView = (TextView) convertView.findViewById(R.id.debt_text);
-            holder.resolveButton = (Button) convertView.findViewById(R.id.resolve_debt_button);
-            holder.resolveButton.setOnClickListener(new View.OnClickListener() {
-    			@Override
-    			public void onClick(View v) {
-    				// Remove row
-    				DisplayDebtsAdapter.this.debts.remove(position);
-    	            DisplayDebtsAdapter.this.notifyDataSetChanged();
-    	            
-    	            // If debt list is empty, show no debts text
-    	            if (DisplayDebtsAdapter.this.debts.isEmpty()) {
-    	            	TextView noDebtTextView = (TextView) v.getRootView().findViewById(R.id.loading_debts);
-    	            	noDebtTextView.setVisibility(View.VISIBLE);
-    	            	noDebtTextView.setText(v.getResources().getString(R.string.no_debts));
-    	            }
-    	            
-    	            // Delete parse object from parse
-    				currentDebt.getParseObject().deleteInBackground(new DeleteCallback() {
-						@Override
-						public void done(ParseException e) {
-							ParseQuery<ParseObject> query = ParseQuery.getQuery("Debt");
-							ArrayList<String> objectIds = new ArrayList<String>();
-							for (DTDebt debt : currentDebt.getTransaction().getDebts()) {
-								objectIds.add(debt.getObjectId());
-							}
-							
-							query.whereContainedIn("objectId", objectIds);
-							try {
-								if (query.find().isEmpty()) {
-									currentDebt.getTransaction().getParseObject().deleteInBackground(new DeleteCallback() {
-										@Override
-										public void done(ParseException e) {
-											DetApplication.showToast(parent.getContext(), "Transaction deleted from parse");
-											//Toast.makeText(parent.getContext(), , Toast.LENGTH_SHORT).show();
-										}
-									});
-								}
-							} catch (ParseException e1) {
-								// TODO Auto-generated catch block
-								e1.printStackTrace();
-							}
-							
-							DetApplication.showToast(parent.getContext(), "Debt deleted from parse");
-							//Toast.makeText(parent.getContext(), "Debt deleted from parse", Toast.LENGTH_SHORT).show();
-						}
-    				});
-    			}
-    		});
+            //holder.resolveButton = (Button) convertView.findViewById(R.id.resolve_debt_button);
+            //holder.resolveButton.setOnClickListener(new View.OnClickListener() {
+    		//	@Override
+    		//	public void onClick(View v) {
+    		//		// Remove row
+    		//		DisplayDebtsAdapter.this.debts.remove(position);
+    	    //        DisplayDebtsAdapter.this.notifyDataSetChanged();
+    	    //        
+    	    //        // If debt list is empty, show no debts text
+    	    //        if (DisplayDebtsAdapter.this.debts.isEmpty()) {
+    	    //        	TextView noDebtTextView = (TextView) v.getRootView().findViewById(R.id.loading_debts);
+    	    //        	noDebtTextView.setVisibility(View.VISIBLE);
+    	    //        	noDebtTextView.setText(v.getResources().getString(R.string.no_debts));
+    	    //        }
+    	    //        
+    	    //        // Delete parse object from parse
+    		//		currentDebt.getParseObject().deleteInBackground(new DeleteCallback() {
+			//			@Override
+			//			public void done(ParseException e) {
+			//				ParseQuery<ParseObject> query = ParseQuery.getQuery("Debt");
+			//				ArrayList<String> objectIds = new ArrayList<String>();
+			//				for (DTDebt debt : currentDebt.getTransaction().getDebts()) {
+			//					objectIds.add(debt.getObjectId());
+			//				}
+			//				
+			//				query.whereContainedIn("objectId", objectIds);
+			//				try {
+			//					if (query.find().isEmpty()) {
+			//						currentDebt.getTransaction().getParseObject().deleteInBackground(new DeleteCallback() {
+			//							@Override
+			//							public void done(ParseException e) {
+			//								DetApplication.showToast(parent.getContext(), "Transaction deleted from parse");
+			//								//Toast.makeText(parent.getContext(), , Toast.LENGTH_SHORT).show();
+			//							}
+			//						});
+			//					}
+			//				} catch (ParseException e1) {
+			//					// TODO Auto-generated catch block
+			//					e1.printStackTrace();
+			//				}
+			//				
+			//				DetApplication.showToast(parent.getContext(), "Debt deleted from parse");
+			//				//Toast.makeText(parent.getContext(), "Debt deleted from parse", Toast.LENGTH_SHORT).show();
+			//			}
+    		//		});
+    		//	}
+    		//});
 
             convertView.setTag(holder);
         } else {

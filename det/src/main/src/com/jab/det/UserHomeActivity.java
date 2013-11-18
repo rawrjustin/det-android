@@ -18,6 +18,7 @@ import android.view.Menu;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.GridView;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -27,7 +28,6 @@ public class UserHomeActivity extends Activity {
 	private Button refreshButton;
 	private Button addTransactionButton;
 	private TextView userIntroView;
-	private ListView debtListView;
 	private static DTUser currentUser;
 	private LoadDebtsDataAsync loadDebtsData;
 
@@ -35,7 +35,6 @@ public class UserHomeActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
     	super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_home);
-        this.debtListView = (ListView) findViewById(R.id.debt_list);
         setCurrentUser();
         setupAddTransactionButton();
         setupRefreshButton();
