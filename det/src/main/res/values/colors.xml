@@ -5,6 +5,6 @@
   <!-- A COLOR NAMED mycolor with value #FFF in #RGB value-->
   <color name="mycolor">#FFF</color>
   <!-- A COLOR NAMED mycolor2 with value #00FFFFFF in #ARGB [A= ALPHA]value-->
-  <color name="mycolor2">#00FFFFFF</color>
+  <color name="transparentTextBackground">#80000000</color>
   <color name="dividerColor">#666666</color>
 </resources>

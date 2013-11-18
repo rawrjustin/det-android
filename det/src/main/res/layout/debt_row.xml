@@ -1,29 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:facebook="http://schemas.android.com/apk/res-auto"
     android:layout_width="fill_parent"
-    android:layout_height="wrap_content"
-    android:orientation="horizontal" >
+    android:layout_height="wrap_content">
 	<com.facebook.widget.ProfilePictureView
             android:id="@+id/profile_pic"
-            android:layout_height="wrap_content"
-            android:layout_width="wrap_content"
-	        android:layout_weight="0"
-            facebook:preset_size="small" />
+            android:layout_height="160dp"
+            android:layout_width="160dp"
+            android:layout_centerInParent="true" 
+            android:scaleType="centerCrop"
+            facebook:preset_size="large" />
 	<TextView  		
 	    android:id="@+id/debt_text" 
- 		android:layout_width="wrap_content" 
+ 		android:layout_width="160dp" 
  		android:layout_height="wrap_content"
- 		android:layout_gravity="fill"
-		android:layout_weight="1"
+ 		android:layout_centerHorizontal="true"
+ 		android:background="@color/transparentTextBackground"
+ 	    android:textColor="@android:color/white"
+		android:layout_alignBottom="@id/profile_pic" 		
  		android:textSize="18sp" >
 	</TextView>
-	<Button 
+<!-- <Button 
 	    android:id="@+id/resolve_debt_button"
 	    style="?android:attr/borderlessButtonStyle"
 	    android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/resolve_debt"
-        android:maxHeight="20dip"
-        android:layout_weight="0" />        <!-- style="?android:attr/buttonStyleSmall" -->
-</LinearLayout>
+        android:maxHeight="20dip" /> style="?android:attr/buttonStyleSmall" -->
+</RelativeLayout>

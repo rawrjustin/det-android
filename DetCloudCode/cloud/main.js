@@ -52,7 +52,7 @@ Parse.Cloud.define("createTransaction", function(request, response) {
 						  success: function(debt) {
 						  	debtsLeftToSave--;
 						  	if (debtsLeftToSave == 0) {
-						  		response.success();
+						  		response.success({});
 						  	}
 						  },
 						  error: function(debt, error) {
@@ -95,7 +95,7 @@ Parse.Cloud.define("createTransaction", function(request, response) {
 								  success: function(debt) {
 								  	debtsLeftToSave--;
 								  	if (debtsLeftToSave == 0) {
-								  		response.success();
+								  		response.success({});
 								  	}
 								  },
 								  error: function(debt, error) {

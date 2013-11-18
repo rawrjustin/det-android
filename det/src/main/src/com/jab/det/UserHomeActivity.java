@@ -18,6 +18,7 @@ import android.view.Menu;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.GridView;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -38,7 +39,6 @@ public class UserHomeActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
     	super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_home);
-        this.debtListView = (ListView) findViewById(R.id.debt_list);
         this.aggregateTextView = (TextView) findViewById(R.id.user_home_aggregate);
         setCurrentUser();
         setupAddTransactionButton();
