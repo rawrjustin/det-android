@@ -3,65 +3,71 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
 	android:orientation="vertical"  >
-    <TextView
-        android:id="@+id/user_home_intro"
-        android:layout_width="fill_parent"
-        android:layout_height="55dp"
-		android:layout_marginBottom="18dp"
-		android:gravity="center"
-        android:textSize="28sp" 
-        android:textColor="@android:color/white"
-        android:text="@string/user_home_intro"
-        android:background="@color/background"/>
+	<RelativeLayout
+	    android:id="@+id/user_home_menu_bar"
+	    android:layout_width="fill_parent"
+		android:layout_height="wrap_content" 
+		android:background="@color/det_green" >
+		<TextView
+		    android:id="@+id/refreshDebtsButton"
+		    android:layout_width="wrap_content"
+	        android:layout_height="55dp"
+	        android:paddingLeft="10dp"
+	        android:layout_alignParentLeft="true"
+	        android:gravity="center_vertical"
+	        android:textColor="@android:color/white"
+			android:textSize="28sp" 
+			android:text="@string/refresh_debts"
+	         />
+		<TextView
+	        android:id="@+id/user_home_intro"
+	        android:layout_width="wrap_content"
+	        android:layout_height="55dp"
+			android:layout_marginBottom="18dp"
+			android:gravity="center_vertical"
+			android:layout_centerHorizontal="true"
+	        android:textSize="28sp" 
+	        android:textColor="@android:color/white"
+	        android:text="@string/user_home_intro" />
+		<TextView
+		    android:id="@+id/addTransactionButton"
+		    android:layout_width="wrap_content"
+	        android:layout_height="55dp"
+	        android:paddingRight="10dp"
+	        android:layout_alignParentRight="true"
+	        android:gravity="center_vertical"
+	        android:textColor="@android:color/white"
+			android:textSize="28sp" 
+			android:text="@string/add_transaction"
+	         />
+	</RelativeLayout>>
     <TextView
         android:id="@+id/user_home_aggregate"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+    	android:layout_below="@id/user_home_menu_bar"
         android:lines="3"
 		android:textSize="18sp" />
     <TextView
         android:id="@+id/loading_debts"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
+    	android:layout_below="@id/user_home_aggregate"
+        android:layout_centerHorizontal="true"
         android:textSize="18sp" />
+    <View
+        android:id="@+id/home_bottom_padding"
+        android:layout_width="fill_parent"
+        android:layout_height="10dp"
+        android:layout_alignParentBottom="true"
+        />
     <GridView 
         android:id="@+id/debt_grid"
     	android:layout_width="fill_parent" 
     	android:layout_height="fill_parent"
-    	android:layout_below="@id/user_home_intro"
+    	android:layout_below="@id/user_home_aggregate"
+    	android:layout_above="@id/home_bottom_padding"
         android:verticalSpacing="10dp"
         android:numColumns="2">
     </GridView>
-    <LinearLayout
-	    android:layout_width="fill_parent"
-		android:layout_height="wrap_content" 
-	    android:divider="@drawable/divider"
-	    android:dividerPadding="12dip"
-	    android:showDividers="middle"
-		android:orientation="horizontal" 
-		android:layout_alignParentBottom="true">	
-        <Button
-	        android:id="@+id/logoutButton"
-	        style="?android:attr/borderlessButtonStyle"
-	        android:layout_weight="1"
-	        android:layout_width="0dp"
-	        android:layout_height="wrap_content"
-	        android:text="@string/logout" />
-			<!--android:textColor="#fff" android:textStyle="bold" android:background="@drawable/button_login"-->
-		<Button
-	        android:id="@+id/refreshDebtsButton"
-	        style="?android:attr/borderlessButtonStyle"
-	        android:layout_weight="1"
-	        android:layout_width="0dp"
-	        android:layout_height="wrap_content"
-	        android:text="@string/refresh_debts" />
-		<Button
-		    android:id="@+id/addTransactionButton"
-		    style="?android:attr/borderlessButtonStyle"
-		    android:layout_weight="1"
-		    android:layout_width="0dp"
-	        android:layout_height="wrap_content"
-	        android:text="@string/add_transaction" />
-    </LinearLayout>
 </RelativeLayout>

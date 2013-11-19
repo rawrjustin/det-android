@@ -22,14 +22,14 @@ public class LoadDebtsDataAsync extends AsyncTask<Void, Void, DTDebt[]>{
 	private View rootView;
 	private Context context;
 	public static DisplayDebtsAdapter debtListAdapter;
-	private Button refreshButton;
+	private TextView refreshButton;
 	private StopWatch stopWatch;
 	
 	public LoadDebtsDataAsync(Context context, View rootView) {
 		this.context = context;
 		this.rootView = rootView;
 		this.loadingDebtsTextView = (TextView) this.rootView.findViewById(R.id.loading_debts);
-		this.refreshButton = (Button) this.rootView.findViewById(R.id.refreshDebtsButton);
+		this.refreshButton = (TextView) this.rootView.findViewById(R.id.refreshDebtsButton);
 		this.stopWatch = new StopWatch();
 		this.debtGridView = (GridView) this.rootView.findViewById(R.id.debt_grid);
 	}

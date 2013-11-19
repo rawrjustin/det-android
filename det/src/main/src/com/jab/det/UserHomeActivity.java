@@ -25,9 +25,9 @@ import android.widget.TextView;
 
 public class UserHomeActivity extends Activity {
 
-	private Button logoutButton;
-	private Button refreshButton;
-	private Button addTransactionButton;
+	private TextView logoutButton;
+	private TextView refreshButton;
+	private TextView addTransactionButton;
 	private TextView userIntroView;
 	private ListView debtListView;
 	private static TextView aggregateTextView;
@@ -60,14 +60,15 @@ public class UserHomeActivity extends Activity {
     }
     
     public static void resetAggregateTotals() {
-    	amountOwedToOthers = Math.round(amountOwedToOthers * 100.0)/100.0;
-    	amountOwedToYou = Math.round(amountOwedToYou * 100.0)/100.0;
+    	amountOwedToOthers = Math.round(amountOwedToOthers*100.0)/100.0;
+    	amountOwedToYou = Math.round(amountOwedToYou*100.0)/100.0;
+    	double balance = Math.round((amountOwedToYou - amountOwedToOthers)*100.0)/100.0;
     	aggregateTextView.setText(String.format("Balance: %s\nYou owe others %s\nOthers owe you %s", 
-    			amountOwedToYou - amountOwedToOthers, amountOwedToOthers, amountOwedToYou));
+    			balance, amountOwedToOthers, amountOwedToYou));
     }
     
     private void setupRefreshButton() {
-    	this.refreshButton = (Button) findViewById(R.id.refreshDebtsButton);
+    	this.refreshButton = (TextView) findViewById(R.id.refreshDebtsButton);
 		this.refreshButton.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
@@ -83,7 +84,7 @@ public class UserHomeActivity extends Activity {
     
     // Adds onClick listener for logout button
     private void setupLogoutButton() {
-    	this.logoutButton = (Button) findViewById(R.id.logoutButton);
+    	this.logoutButton = (TextView) findViewById(R.id.user_home_intro);
 		this.logoutButton.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
@@ -128,7 +129,7 @@ public class UserHomeActivity extends Activity {
 	}
 
     private void setupAddTransactionButton() {
-    	this.addTransactionButton = (Button) findViewById(R.id.addTransactionButton);
+    	this.addTransactionButton = (TextView) findViewById(R.id.addTransactionButton);
     	this.addTransactionButton.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {

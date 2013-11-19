@@ -61,6 +61,8 @@ public class DisplayDebtsAdapter extends ArrayAdapter<DTDebt> {
     				DisplayDebtsAdapter.this.debts.remove(position);
     	            DisplayDebtsAdapter.this.notifyDataSetChanged();
     	            
+					DetApplication.showToast(parent.getContext(), "Debt deleted from parse");
+
     	            // If debt list is empty, show no debts text
     	            if (DisplayDebtsAdapter.this.debts.isEmpty()) {
     	            	TextView noDebtTextView = (TextView) v.getRootView().findViewById(R.id.loading_debts);
@@ -85,7 +87,6 @@ public class DisplayDebtsAdapter extends ArrayAdapter<DTDebt> {
 										@Override
 										public void done(ParseException e) {
 											DetApplication.showToast(parent.getContext(), "Transaction deleted from parse");
-											//Toast.makeText(parent.getContext(), , Toast.LENGTH_SHORT).show();
 										}
 									});
 								}
@@ -93,9 +94,6 @@ public class DisplayDebtsAdapter extends ArrayAdapter<DTDebt> {
 								// TODO Auto-generated catch block
 								e1.printStackTrace();
 							}
-							
-							DetApplication.showToast(parent.getContext(), "Debt deleted from parse");
-							//Toast.makeText(parent.getContext(), "Debt deleted from parse", Toast.LENGTH_SHORT).show();
 						}
     				});
     			}
