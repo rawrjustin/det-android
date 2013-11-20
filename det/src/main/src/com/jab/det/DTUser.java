@@ -5,7 +5,6 @@ import java.math.BigInteger;
 import java.security.SecureRandom;
 import java.util.AbstractMap;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -17,14 +16,13 @@ import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
 import com.parse.ParseException;
+import com.parse.codec.binary.StringUtils;
 
 public class DTUser implements Serializable {
 
 	private String objectId;
     private String email;
     private String facebookID;
-    private String username;
-    private String password;
     private String name;
     public static transient ParseUser currentParseUser;
     private static String defaultPassword = "password";
@@ -34,8 +32,6 @@ public class DTUser implements Serializable {
     	this.objectId = objectId;
     	this.email = email;
     	this.facebookID = facebookID;
-    	this.username = username;
-    	this.password = password;
     	this.name = name;
     }
     
@@ -67,8 +63,7 @@ public class DTUser implements Serializable {
     
     // Returns a DTUser representing the current user.
     public static DTUser getCurrentUser() {
-    	currentParseUser = currentParseUser == null ? ParseUser.getCurrentUser() : currentParseUser;
-        return getUserFromParseUser(currentParseUser);
+        return getUserFromParseUser(currentParseUser == null ? ParseUser.getCurrentUser() : currentParseUser);
     }
 
     // Returns a DTUser given a ParseUser object
@@ -78,9 +73,9 @@ public class DTUser implements Serializable {
 		}
 		
     	try {
-			parseUser.fetch();
+			parseUser.fetchIfNeeded();
 		} catch (ParseException e) {
-			// TODO Auto-generated catch block
+			Log.e(DetApplication.TAG, "DETAPP ERROR: " + e.toString());
 			e.printStackTrace();
 		}
     	
@@ -89,12 +84,8 @@ public class DTUser implements Serializable {
 		name = parseUser.getString("name");
 		facebookID = parseUser.getString("fbID");
 		username = parseUser.getUsername();
+		email = parseUser.isAuthenticated() ? parseUser.getString("email") : "";
 		
-		if (parseUser.isAuthenticated()) {
-			email = parseUser.getString("email");
-		} else {
-			email = "";
-		}
 		
 		return new DTUser(objectId, email, facebookID, username, password, name);
 	}
@@ -132,27 +123,39 @@ public class DTUser implements Serializable {
 	    		debts.add(new DTDebt(queryResult));
 	    	}
     	} catch (ParseException e) {
+    		Log.e(DetApplication.TAG, "DETAPP ERROR: " + e.toString());
     		e.printStackTrace();
     	}
+    	    	
+    	// Setup maps and add to aggregate totals
+    	for (DTDebt debt : debts) {
+    		// Find out whether current user is debtor or creditor
+    		DTUser userThatIsNotCurrentUser = null;
+    		
+    		// Increment aggregate totals
+    		if (debt.getCreditor().equals(UserHomeActivity.getCurrentUser())) {
+    			userThatIsNotCurrentUser = debt.getDebtor();
+        		Log.d(DetApplication.TAG, "DETAPP: Inside DTUser:138");
+
+    			Log.d(DetApplication.TAG, String.format("Adding %s to amountOwedToYou", debt.getAmount().toString()));
+    			UserHomeActivity.amountOwedToYou += debt.getAmount().doubleValue();
+    		} else {
+    			userThatIsNotCurrentUser = debt.getCreditor();
+    			Log.d(DetApplication.TAG, String.format("Adding %s to amountOwedToOthers", debt.getAmount().doubleValue()));
+    			UserHomeActivity.amountOwedToOthers += debt.getAmount().doubleValue();
+    		}
+    		
+    		// Add to users map
+    		if (!UserHomeActivity.usersMap.containsKey(userThatIsNotCurrentUser)) {
+    			UserHomeActivity.usersMap.put(userThatIsNotCurrentUser, new HashSet<DTDebt>());
+    		}
+
+    		UserHomeActivity.usersMap.get(userThatIsNotCurrentUser).add(debt);
+    	}
     	
-    	// Map transactions to their debts
-//    	UserHomeActivity.transactionsMap = new HashMap<DTTransaction, HashSet<DTDebt>>();
-//    	for (DTDebt debt : debts) {
-//    		if (!UserHomeActivity.transactionsMap.containsKey(debt.getTransaction())) {
-//    			UserHomeActivity.transactionsMap.put(debt.getTransaction(), new HashSet<DTDebt>(Arrays.asList(debt)));
-//    		} else {
-//    			UserHomeActivity.transactionsMap.get(debt.getTransaction()).add(debt);
-//    		}
-//    	}
-    	
-    	// Associate DTTransaction objects with their debts
+    	// Associate DTTransaction objects with their respective debts
     	for (Entry<DTTransaction, HashSet<DTDebt>> keyValuePair : UserHomeActivity.transactionsMap.entrySet()) {
-    		// All debts in a transaction refer to the same DTTransaction object now, so we only need to set debts once
     		keyValuePair.getKey().setDebts(new ArrayList<DTDebt>(keyValuePair.getValue()));
-//    		for (DTDebt debt : keyValuePair.getValue()) {
-//    			debt.getTransaction().setDebts(new ArrayList<DTDebt>(keyValuePair.getValue()));
-//    			break;
-//    		}
     		Log.d(DetApplication.TAG, "DETAPP " + keyValuePair.getKey().toString());
     	}
     	
@@ -169,7 +172,7 @@ public class DTUser implements Serializable {
 		try {
 			queryResult = query.find();
 		} catch (ParseException e) {
-			// TODO Auto-generated catch block
+			Log.e(DetApplication.TAG, "DETAPP ERROR: " + e.toString());
 			e.printStackTrace();
 		}
 		
@@ -186,14 +189,10 @@ public class DTUser implements Serializable {
 		try {
 			parseUser.signUp();
 		} catch (ParseException e) {
-			// TODO Auto-generated catch block
+			Log.e(DetApplication.TAG, "DETAPP ERROR: " + e.toString());
 			e.printStackTrace();
 		}
         return getUserFromParseUser(parseUser);
-    }
-
-    // Creates new user in the Parse database
-    public void registerUser() {
     }
     
     // Implements toString() behavior
@@ -229,7 +228,7 @@ public class DTUser implements Serializable {
 				parseUser = queryResult.get(0);
 			}
 		} catch (ParseException e) {
-			// TODO Auto-generated catch block
+			Log.e(DetApplication.TAG, "DETAPP ERROR: " + e.toString());
 			e.printStackTrace();
 		}
 		

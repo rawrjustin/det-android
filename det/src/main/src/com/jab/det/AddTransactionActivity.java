@@ -3,13 +3,8 @@ package com.jab.det;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.Map;
-
 import org.apache.commons.lang3.time.StopWatch;
-import org.json.JSONObject;
-
 import android.app.Activity;
-import android.app.Dialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -28,7 +23,6 @@ public class AddTransactionActivity extends Activity {
 
 	public final static String EXTRA_DEBTS = "com.jab.det.addTransaction";
 	private static Collection<GraphUser> selectedFriends;
-	private Dialog progressDialog;
 	private TextView addFriendsResultTextView;
 	private Button selectFriendsButton;
 	private Button submitTransactionButton;
@@ -194,15 +188,7 @@ public class AddTransactionActivity extends Activity {
 		startActivity(intent);
 	}
 	
-	// Starts UserHomeActivity
-	private void startUserHomeActivity(Intent intent) {
-		intent = intent == null ? new Intent(this, UserHomeActivity.class) : intent;
-		intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-		intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-		startActivity(intent);
-	}
-    
-    // Returns whether user inputted amount is valid. 
+	// Returns whether user inputted amount is valid. 
     // Valid amount is no more than nine digits before the decimal and to no more than two decimal points
     private Boolean isValidAmount(String amount) {
     	return amount.contains(".") ? amount.length() - 1 - amount.indexOf(".") <= 2 && amount.indexOf(".") <= 9 : amount.indexOf(".") <= 9;

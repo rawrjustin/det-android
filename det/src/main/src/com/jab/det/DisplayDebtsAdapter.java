@@ -1,9 +1,6 @@
 package com.jab.det;
 
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-
 import com.facebook.widget.ProfilePictureView;
 
 import com.parse.DeleteCallback;
@@ -13,11 +10,11 @@ import com.parse.ParseQuery;
 
 import android.app.Activity;
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -52,7 +49,6 @@ public class DisplayDebtsAdapter extends ArrayAdapter<DTDebt> {
             holder = new ViewHolder();
             holder.profilePictureView = (ProfilePictureView) convertView.findViewById(R.id.profile_pic);
             holder.textView = (TextView) convertView.findViewById(R.id.debt_text);
-            // TODO: Fix resolve button onclick
             holder.resolveButton = (RelativeLayout) convertView.findViewById(R.id.grid_element);
             holder.resolveButton.setOnClickListener(new View.OnClickListener() {
     			@Override
@@ -91,7 +87,7 @@ public class DisplayDebtsAdapter extends ArrayAdapter<DTDebt> {
 									});
 								}
 							} catch (ParseException e1) {
-								// TODO Auto-generated catch block
+								Log.e(DetApplication.TAG, "DETAPP ERROR: " + e1.toString());
 								e1.printStackTrace();
 							}
 						}

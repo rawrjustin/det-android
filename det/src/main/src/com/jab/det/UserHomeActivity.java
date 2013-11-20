@@ -1,35 +1,21 @@
 package com.jab.det;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 
-import com.parse.ParseUser;
-
-import android.os.Bundle;
-import android.R.integer;
 import android.app.Activity;
-import android.app.Dialog;
-import android.app.ProgressDialog;
 import android.content.Intent;
-import android.util.Log;
-import android.view.Menu;
+import android.os.Bundle;
 import android.view.View;
-import android.widget.ArrayAdapter;
-import android.widget.Button;
-import android.widget.GridView;
-import android.widget.ListView;
 import android.widget.TextView;
+
+import com.parse.ParseUser;
 
 public class UserHomeActivity extends Activity {
 
 	private TextView logoutButton;
 	private TextView refreshButton;
 	private TextView addTransactionButton;
-	private TextView userIntroView;
-	private ListView debtListView;
 	private static TextView aggregateTextView;
 	private static DTUser currentUser;
 	private LoadDebtsDataAsync loadDebtsData;
@@ -37,14 +23,14 @@ public class UserHomeActivity extends Activity {
 	public static double amountOwedToYou = 0;
 	public static HashMap<DTTransaction, HashSet<DTDebt>> transactionsMap;
 	public static HashMap<String, DTTransaction> transactionsObjectIdToDTTransaction;
-	// populated when user.getDebts is called.
+	// Populated when DTUser.getDebts() is called.
 	public static HashMap<DTUser, HashSet<DTDebt>> usersMap;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
     	super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_home);
-        this.aggregateTextView = (TextView) findViewById(R.id.user_home_aggregate);
+        UserHomeActivity.aggregateTextView = (TextView) findViewById(R.id.user_home_aggregate);
         setCurrentUser();
         setupAddTransactionButton();
         setupRefreshButton();
@@ -99,10 +85,6 @@ public class UserHomeActivity extends Activity {
     	if (currentUser == null) {
     		startLoginActivity();
     	}
-    	
-    	// Dispay intro message
-//        userIntroView = (TextView) findViewById(R.id.user_home_intro);
-//		userIntroView.setText("Hi " + currentUser.getName() + ", add a transaction or view your debts below");
     }
     
     public static DTUser getCurrentUser() {
