@@ -63,7 +63,9 @@ public class DTUser implements Serializable {
     
     // Returns a DTUser representing the current user.
     public static DTUser getCurrentUser() {
-        return getUserFromParseUser(currentParseUser == null ? ParseUser.getCurrentUser() : currentParseUser);
+        DTUser user = getUserFromParseUser(currentParseUser == null ? ParseUser.getCurrentUser() : currentParseUser);
+        Log.d(DetApplication.TAG, "CURRENT USER IS: " + user.name + " " + user.facebookID); 
+        return user;
     }
 
     // Returns a DTUser given a ParseUser object
@@ -106,6 +108,7 @@ public class DTUser implements Serializable {
     	
     	ArrayList<DTDebt> debts = new ArrayList<DTDebt>();
     	    	
+        Log.d(DetApplication.TAG, "In getDebts CURRENT USER IS: " + DTUser.currentParseUser.getString("fbID")); 
     	// Query debts where user is creditor
     	try {
     		// Query debts where user is debtor

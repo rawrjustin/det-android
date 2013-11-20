@@ -139,6 +139,8 @@ public class LoginActivity extends Activity {
 					Log.d(DetApplication.TAG, "User signed up and logged in through Facebook!");
 				} else {
 					Log.d(DetApplication.TAG, "User logged in through Facebook!");
+					Log.d(DetApplication.TAG, "USER ID: " + newlyCreatedUser.getString("fbID"));
+
 					startUserHomeActivity();
 				}
 			}
