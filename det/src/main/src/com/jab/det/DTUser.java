@@ -247,7 +247,7 @@ public class DTUser implements Serializable {
 
 	@Override
 	public boolean equals(Object o) {
-		return !(o instanceof DTUser) || o.equals(null) ? false : this.objectId.equals(((DTUser) o).getObjectId());
+		return !(o instanceof DTUser) || o.equals(null) ? false : this.facebookID.equals(((DTUser) o).getFacebookId());
 	}
 	
 	@Override

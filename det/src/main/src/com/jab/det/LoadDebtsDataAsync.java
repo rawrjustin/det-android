@@ -33,20 +33,14 @@ public class LoadDebtsDataAsync extends AsyncTask<Void, Void, DTDebt[]>{
 	
 	@Override
 	protected void onPreExecute() {
-		stopWatch.start();
 		this.refreshButton.setEnabled(false);
 		this.loadingDebtsTextView.setVisibility(View.VISIBLE);
 		this.loadingDebtsTextView.setText("Loading debts...");
 		LoadDebtsDataAsync.debtListAdapter = new DisplayDebtsAdapter(this.context, R.layout.debt_row, new ArrayList<DTDebt>());
-		stopWatch.stop();
-		Log.d(DetApplication.TAG, "DETAPP: Time elapsed for preexecute: " + stopWatch.getTime());
 		this.debtGridView.setAdapter(debtListAdapter);
 	}
 	
 	protected void onPostExecute(DTDebt[] debts) {
-		stopWatch.reset();
-		stopWatch.start();
-		
 		// Set text for aggregates
 		UserHomeActivity.resetAggregateTotals();
 		
@@ -60,9 +54,6 @@ public class LoadDebtsDataAsync extends AsyncTask<Void, Void, DTDebt[]>{
 		}
 		
 		this.refreshButton.setEnabled(true);
-		
-		stopWatch.stop();
-		Log.d(DetApplication.TAG, "DETAPP: Time elapsed for postExecute: " + stopWatch.getTime());
 	}
 
 	@Override

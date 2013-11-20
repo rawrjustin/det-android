@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import android.app.Activity;
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -84,6 +85,7 @@ public class DisplayDebtsAdapter extends ArrayAdapter<DTDebt> {
 							// Remove debt from users map
 							DTUser userThatIsNotCurrentUser = currentDebt.getCreditor().equals(UserHomeActivity.getCurrentUser()) ?
 									currentDebt.getDebtor() : currentDebt.getCreditor();
+							Log.d(DetApplication.TAG, "DisplayDebtsAdapater, user that is not current user is " + userThatIsNotCurrentUser.toString());
 							UserHomeActivity.usersMap.get(userThatIsNotCurrentUser).remove(currentDebt);
 							if (UserHomeActivity.usersMap.get(userThatIsNotCurrentUser).isEmpty()) {
 								UserHomeActivity.usersMap.remove(userThatIsNotCurrentUser);
@@ -100,27 +102,6 @@ public class DisplayDebtsAdapter extends ArrayAdapter<DTDebt> {
 									}
 								});
 							}
-							
-//							ParseQuery<ParseObject> query = ParseQuery.getQuery("Debt");
-//							ArrayList<String> objectIds = new ArrayList<String>();
-//							for (DTDebt debt : currentDebt.getTransaction().getDebts()) {
-//								objectIds.add(debt.getObjectId());
-//							}
-//							
-//							query.whereContainedIn("objectId", objectIds);
-//							try {
-//								if (query.find().isEmpty()) {
-//									currentDebt.getTransaction().getParseObject().deleteInBackground(new DeleteCallback() {
-//										@Override
-//										public void done(ParseException e) {
-//											DetApplication.showToast(parent.getContext(), "Transaction deleted from parse");
-//										}
-//									});
-//								}
-//							} catch (ParseException e1) {
-//								Log.e(DetApplication.TAG, "DETAPP ERROR: " + e1.toString());
-//								e1.printStackTrace();
-//							}
 						}
     				});
     			}
