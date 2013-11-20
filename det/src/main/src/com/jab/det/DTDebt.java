@@ -53,14 +53,11 @@ public class DTDebt implements Serializable {
 		return debtor;
 	}
 	
-	public DTDebt(DTUser creditor, DTUser debtor, Number amount) {
+	public DTDebt(DTUser creditor, DTUser debtor, Number amount, DTTransaction transaction) {
 		this.creditor = creditor;
 		this.debtor = debtor;
 		this.amount = amount;
-//		this.parseObject = new ParseObject("Debt");
-//		this.parseObject.put("creditor", creditor.getParseUser());
-//		this.parseObject.put("debtor", debtor.getParseUser());
-//		this.parseObject.put("amount", amount);
+		this.transaction = transaction;
 	}
 	
 	public ParseObject getParseObject() {

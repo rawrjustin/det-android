@@ -6,9 +6,11 @@ import java.util.HashSet;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
+import com.parse.ParseFacebookUtils;
 import com.parse.ParseUser;
 
 public class UserHomeActivity extends Activity {
@@ -40,9 +42,10 @@ public class UserHomeActivity extends Activity {
    
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
-		//ArrayList<HashMap<String, String>> debtsFromIntent = (ArrayList<HashMap<String, String>>) intent.getExtras().get(AddTransactionActivity.EXTRA_DEBTS);
-//		DTTransaction transactionFromIntent = (DTTransaction) intent.getExtras().get(AddTransactionActivity.EXTRA_DEBTS);
-//    	LoadDebtsDataAsync.debtListAdapter.addToView(transactionFromIntent.getDebts());
+		DTTransaction transactionFromIntent = (DTTransaction) intent.getExtras().get(AddTransactionActivity.EXTRA_DEBTS);
+		Log.d(DetApplication.TAG, "Received deserialized transaction from intent: " + transactionFromIntent.toString());
+    	LoadDebtsDataAsync.debtListAdapter.addToView(transactionFromIntent.getDebts());
+    	LoadDebtsDataAsync.debtListAdapter.notifyDataSetChanged();
     }
     
     public static void resetAggregateTotals() {
@@ -122,6 +125,9 @@ public class UserHomeActivity extends Activity {
     
 	// Logs the user out and starts LoginActivity
 	private void onLogoutButtonClicked() {
+		// Clear token information
+		ParseFacebookUtils.getSession().closeAndClearTokenInformation();
+		
 		// Log the user out
 		ParseUser.logOut();
 

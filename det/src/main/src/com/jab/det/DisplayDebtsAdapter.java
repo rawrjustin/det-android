@@ -65,8 +65,6 @@ public class DisplayDebtsAdapter extends ArrayAdapter<DTDebt> {
     	            }
     	            UserHomeActivity.resetAggregateTotals();
     	            
-					DetApplication.showToast(parent.getContext(), "Debt deleted from parse");
-
     	            // If debt list is empty, show no debts text
     	            if (DisplayDebtsAdapter.this.debts.isEmpty()) {
     	            	TextView noDebtTextView = (TextView) v.getRootView().findViewById(R.id.loading_debts);
@@ -78,6 +76,7 @@ public class DisplayDebtsAdapter extends ArrayAdapter<DTDebt> {
     				currentDebt.getParseObject().deleteInBackground(new DeleteCallback() {
 						@Override
 						public void done(ParseException e) {
+							DetApplication.showToast(parent.getContext(), "Debt deleted from parse");
 							ParseQuery<ParseObject> query = ParseQuery.getQuery("Debt");
 							ArrayList<String> objectIds = new ArrayList<String>();
 							for (DTDebt debt : currentDebt.getTransaction().getDebts()) {

@@ -26,7 +26,7 @@ public class DTTransaction implements Serializable {
 		this.description = description;
 		this.debts = new ArrayList<DTDebt>();
 		for (DTUser user : otherUsers) {
-			this.debts.add(new DTDebt(currentUser, user, trimDecimals(amount.doubleValue()/(otherUsers.size()+1))));
+			this.debts.add(new DTDebt(currentUser, user, trimDecimals(amount.doubleValue()/(otherUsers.size()+1)), this));
 		}
 	}
 	
@@ -82,10 +82,10 @@ public class DTTransaction implements Serializable {
 	public String toString() {
 		StringBuilder debts = new StringBuilder();
 		for (DTDebt debt : this.debts) {
-			debts.append(debt.getObjectId() + "|D:" + debt.getDebtor().getName() + "|C:" + debt.getCreditor().getName() + "|A:" + debt.getAmount() + " ");
+			debts.append("    " + debt.getObjectId() + "|D:" + debt.getDebtor().getName() + "|C:" + debt.getCreditor().getName() + "|A:" + debt.getAmount() + "\n");
 		}
 		
-		return String.format("Transaction %s has %s debts: %s", this.objectId, this.debts.size(), debts.toString());
+		return String.format("Transaction %s has %s debts:\n%s", this.objectId, this.debts.size(), debts.toString());
 	}
 	
 	public String getObjectId() {

@@ -3,6 +3,8 @@ package com.jab.det;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
+
 import org.apache.commons.lang3.time.StopWatch;
 import android.app.Activity;
 import android.content.Intent;
@@ -70,10 +72,6 @@ public class AddTransactionActivity extends Activity {
     
     // Runs when submit transaction is clicked
     private void onClickSubmitTransaction() {
-    	StopWatch stopWatch = new StopWatch();
-    	stopWatch.reset();
-    	stopWatch.start();
-    	
     	// Check fields
     	this.transactionAmountEditText = (EditText) findViewById(R.id.edit_transaction_amount);
     	this.transactionDescriptionEditText = (EditText) findViewById(R.id.edit_transaction_description);
@@ -98,17 +96,16 @@ public class AddTransactionActivity extends Activity {
     		return;
     	}
     	
-    	stopWatch.stop();
-    	Log.d(DetApplication.TAG, "DETAPP: Time elapsed for checking: " + stopWatch.getTime());
+    	StopWatch stopWatch = new StopWatch();
     	stopWatch.reset();
     	stopWatch.start();
-    	    	
+    	
     	// Get all selected friends as DTUser objects
     	ArrayList<DTUser> otherUsers = new ArrayList<DTUser>();
     	for (GraphUser user : selectedFriends) {
     		otherUsers.add(new DTUser(user.getId(), user.getName()));
     	}
-
+    	
     	stopWatch.stop();
     	Log.d(DetApplication.TAG, "DETAPP: Time elapsed for creating DTUsers: " + stopWatch.getTime());
     	stopWatch.reset();
@@ -119,27 +116,39 @@ public class AddTransactionActivity extends Activity {
     	
     	stopWatch.stop();
     	Log.d(DetApplication.TAG, "DETAPP: Time elapsed for creating transaction: " + stopWatch.getTime());
-    	stopWatch.reset();
-    	stopWatch.start();
     	
+    	// Call cloud code function that creates new users if necessary and creates debt(s) and transaction rows
     	ParseCloud.callFunctionInBackground("createTransaction", transaction.getCloudCodeRequestObject(), new FunctionCallback<HashMap<String, Object>>() {
     		public void done(HashMap<String, Object> mapObject, ParseException e) {
     			if (e != null) {
     				Log.e(DetApplication.TAG, "DETAPP Error calling cloud function" + e.toString());
     		    }
     			
-    			DetApplication.showToast(getApplicationContext(), "Transaction added to Parse");
+    			DetApplication.showToast(getApplicationContext(), "Transaction and debts added to Parse");
     		}
     	});
     	
-    	stopWatch.stop();
-    	Log.d(DetApplication.TAG, "DETAPP: Time elapsed for calling cloud code: " + stopWatch.getTime());
-
-//    	Intent intent = new Intent(this, UserHomeActivity.class);
-//    	Bundle extras = new Bundle();
-//    	extras.putSerializable(EXTRA_DEBTS, transaction);
-//    	intent.putExtras(extras);
-//    	setResult(RESULT_OK, intent);
+    	// Update aggregate totals
+    	// Note: Assumes user is the creditor
+    	for (DTDebt debt : transaction.getDebts()) {
+    		UserHomeActivity.amountOwedToYou += debt.getAmount().doubleValue();
+    	}
+    	UserHomeActivity.resetAggregateTotals();
+    	
+    	// Update users map
+    	// Note: Assumes user is the creditor
+    	for (DTDebt debt : transaction.getDebts()) {
+    		if (!UserHomeActivity.usersMap.containsKey(debt.getDebtor())) {
+    			UserHomeActivity.usersMap.put(debt.getDebtor(), new HashSet<DTDebt>());
+    		}
+    		UserHomeActivity.usersMap.get(debt.getDebtor()).add(debt);
+    	}
+    	
+    	Intent intent = new Intent(this, UserHomeActivity.class);
+    	Bundle extras = new Bundle();
+    	extras.putSerializable(EXTRA_DEBTS, transaction);
+    	intent.putExtras(extras);
+    	setResult(RESULT_OK, intent);
 		finish();
     }
     

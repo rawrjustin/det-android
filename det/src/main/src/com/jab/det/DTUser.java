@@ -138,13 +138,10 @@ public class DTUser implements Serializable {
     		// Increment aggregate totals
     		if (debt.getCreditor().equals(UserHomeActivity.getCurrentUser())) {
     			userThatIsNotCurrentUser = debt.getDebtor();
-    			Log.d(DetApplication.TAG, String.format("Adding %s to amountOwedToYou", debt.getAmount().toString()));
     			UserHomeActivity.amountOwedToYou += debt.getAmount().doubleValue();
     		} else {
     			userThatIsNotCurrentUser = debt.getCreditor();
-    			Log.d(DetApplication.TAG, String.format("Adding %s to amountOwedToOthers", debt.getAmount().doubleValue()));
     			UserHomeActivity.amountOwedToOthers += debt.getAmount().doubleValue();
-    			Log.d(DetApplication.TAG, "After value is " + UserHomeActivity.amountOwedToYou);
     		}
     		
     		// Add to users map
