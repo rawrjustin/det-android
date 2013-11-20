@@ -1,9 +1,6 @@
 package com.jab.det;
 
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-
 import com.facebook.widget.ProfilePictureView;
 
 import com.parse.DeleteCallback;
@@ -13,11 +10,12 @@ import com.parse.ParseQuery;
 
 import android.app.Activity;
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 public class DisplayDebtsAdapter extends ArrayAdapter<DTDebt> {
@@ -33,7 +31,7 @@ public class DisplayDebtsAdapter extends ArrayAdapter<DTDebt> {
 	private class ViewHolder {
 		ProfilePictureView profilePictureView;
 		TextView textView;
-		Button resolveButton;
+		RelativeLayout resolveButton;
 	}
 	
 	public void addToView(ArrayList<DTDebt> debts){
@@ -51,54 +49,58 @@ public class DisplayDebtsAdapter extends ArrayAdapter<DTDebt> {
             holder = new ViewHolder();
             holder.profilePictureView = (ProfilePictureView) convertView.findViewById(R.id.profile_pic);
             holder.textView = (TextView) convertView.findViewById(R.id.debt_text);
-            // TODO: Fix resolve button onclick
-            //holder.resolveButton = (Button) convertView.findViewById(R.id.resolve_debt_button);
-            //holder.resolveButton.setOnClickListener(new View.OnClickListener() {
-    		//	@Override
-    		//	public void onClick(View v) {
-    		//		// Remove row
-    		//		DisplayDebtsAdapter.this.debts.remove(position);
-    	    //        DisplayDebtsAdapter.this.notifyDataSetChanged();
-    	    //        
-    	    //        // If debt list is empty, show no debts text
-    	    //        if (DisplayDebtsAdapter.this.debts.isEmpty()) {
-    	    //        	TextView noDebtTextView = (TextView) v.getRootView().findViewById(R.id.loading_debts);
-    	    //        	noDebtTextView.setVisibility(View.VISIBLE);
-    	    //        	noDebtTextView.setText(v.getResources().getString(R.string.no_debts));
-    	    //        }
-    	    //        
-    	    //        // Delete parse object from parse
-    		//		currentDebt.getParseObject().deleteInBackground(new DeleteCallback() {
-			//			@Override
-			//			public void done(ParseException e) {
-			//				ParseQuery<ParseObject> query = ParseQuery.getQuery("Debt");
-			//				ArrayList<String> objectIds = new ArrayList<String>();
-			//				for (DTDebt debt : currentDebt.getTransaction().getDebts()) {
-			//					objectIds.add(debt.getObjectId());
-			//				}
-			//				
-			//				query.whereContainedIn("objectId", objectIds);
-			//				try {
-			//					if (query.find().isEmpty()) {
-			//						currentDebt.getTransaction().getParseObject().deleteInBackground(new DeleteCallback() {
-			//							@Override
-			//							public void done(ParseException e) {
-			//								DetApplication.showToast(parent.getContext(), "Transaction deleted from parse");
-			//								//Toast.makeText(parent.getContext(), , Toast.LENGTH_SHORT).show();
-			//							}
-			//						});
-			//					}
-			//				} catch (ParseException e1) {
-			//					// TODO Auto-generated catch block
-			//					e1.printStackTrace();
-			//				}
-			//				
-			//				DetApplication.showToast(parent.getContext(), "Debt deleted from parse");
-			//				//Toast.makeText(parent.getContext(), "Debt deleted from parse", Toast.LENGTH_SHORT).show();
-			//			}
-    		//		});
-    		//	}
-    		//});
+            holder.resolveButton = (RelativeLayout) convertView.findViewById(R.id.grid_element);
+            holder.resolveButton.setOnClickListener(new View.OnClickListener() {
+    			@Override
+    			public void onClick(View v) {
+    				// Remove row
+    				DisplayDebtsAdapter.this.debts.remove(position);
+    	            DisplayDebtsAdapter.this.notifyDataSetChanged();
+    	            
+    	            // Update aggregate total
+    	            if (currentDebt.getCreditor().equals(UserHomeActivity.getCurrentUser())) {
+    	            	UserHomeActivity.amountOwedToYou -= currentDebt.getAmount().doubleValue();
+    	            } else {
+    	            	UserHomeActivity.amountOwedToOthers -= currentDebt.getAmount().doubleValue();
+    	            }
+    	            UserHomeActivity.resetAggregateTotals();
+    	            
+    	            // If debt list is empty, show no debts text
+    	            if (DisplayDebtsAdapter.this.debts.isEmpty()) {
+    	            	TextView noDebtTextView = (TextView) v.getRootView().findViewById(R.id.loading_debts);
+    	            	noDebtTextView.setVisibility(View.VISIBLE);
+    	            	noDebtTextView.setText(v.getResources().getString(R.string.no_debts));
+    	            }
+    	            
+    	            // Delete parse object from parse
+    				currentDebt.getParseObject().deleteInBackground(new DeleteCallback() {
+						@Override
+						public void done(ParseException e) {
+							DetApplication.showToast(parent.getContext(), "Debt deleted from parse");
+							ParseQuery<ParseObject> query = ParseQuery.getQuery("Debt");
+							ArrayList<String> objectIds = new ArrayList<String>();
+							for (DTDebt debt : currentDebt.getTransaction().getDebts()) {
+								objectIds.add(debt.getObjectId());
+							}
+							
+							query.whereContainedIn("objectId", objectIds);
+							try {
+								if (query.find().isEmpty()) {
+									currentDebt.getTransaction().getParseObject().deleteInBackground(new DeleteCallback() {
+										@Override
+										public void done(ParseException e) {
+											DetApplication.showToast(parent.getContext(), "Transaction deleted from parse");
+										}
+									});
+								}
+							} catch (ParseException e1) {
+								Log.e(DetApplication.TAG, "DETAPP ERROR: " + e1.toString());
+								e1.printStackTrace();
+							}
+						}
+    				});
+    			}
+    		});
 
             convertView.setTag(holder);
         } else {

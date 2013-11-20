@@ -2,24 +2,21 @@ package com.jab.det;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.Map;
 
 import org.json.JSONArray;
 
 import android.util.Log;
 
-import com.facebook.Session.NewPermissionsRequest;
 import com.parse.ParseException;
 import com.parse.ParseObject;
 
+@SuppressWarnings("serial") // Serialized object will be deserialized in the same context
 public class DTTransaction implements Serializable {
 
 	private String description;
 	private ArrayList<DTDebt> debts;
-	private DTUser currentUser;
 	private transient ParseObject parseObject;
 	private String objectId;
 	
@@ -28,10 +25,8 @@ public class DTTransaction implements Serializable {
 		// Note: Implementation assumes current user is the creditor
 		this.description = description;
 		this.debts = new ArrayList<DTDebt>();
-//		this.parseObject = new ParseObject("Transaction");
-//		this.parseObject.put("description", this.description);
 		for (DTUser user : otherUsers) {
-			this.debts.add(new DTDebt(currentUser, user, trimDecimals(amount.doubleValue()/(otherUsers.size()+1))));
+			this.debts.add(new DTDebt(currentUser, user, trimDecimals(amount.doubleValue()/(otherUsers.size()+1)), this));
 		}
 	}
 	
@@ -39,7 +34,7 @@ public class DTTransaction implements Serializable {
 		try {
 			parseObject = parseObject.fetchIfNeeded();
 		} catch (ParseException e) {
-			// TODO Auto-generated catch block
+			Log.e(DetApplication.TAG, "DETAPP ERROR: " + e.toString());
 			e.printStackTrace();
 		}
 		
@@ -50,6 +45,7 @@ public class DTTransaction implements Serializable {
 	}
 
 	// Saves transaction (and corresponding debts) to Parse
+	@Deprecated // Functionality implemented in cloud code
 	public void save() {
 		for (DTDebt debt : this.debts) {
 			debt.save(this.parseObject);
@@ -86,10 +82,10 @@ public class DTTransaction implements Serializable {
 	public String toString() {
 		StringBuilder debts = new StringBuilder();
 		for (DTDebt debt : this.debts) {
-			debts.append(debt.getObjectId() + " ");
+			debts.append("    " + debt.getObjectId() + "|D:" + debt.getDebtor().getName() + "|C:" + debt.getCreditor().getName() + "|A:" + debt.getAmount() + "\n");
 		}
 		
-		return String.format("Transaction %s has %s debts: %s", this.objectId, this.debts.size(), debts.toString());
+		return String.format("Transaction %s has %s debts:\n%s", this.objectId, this.debts.size(), debts.toString());
 	}
 	
 	public String getObjectId() {

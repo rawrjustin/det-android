@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
   <!-- A COLOR NAMED background with value #FFFFFF in #RRGGBB hex value-->
-  <color name="background">#66CC99</color>
+  <color name="det_green">#66CC99</color>
+  <color name="det_red">#EE6267</color>
   <!-- A COLOR NAMED mycolor with value #FFF in #RGB value-->
   <color name="mycolor">#FFF</color>
   <!-- A COLOR NAMED mycolor2 with value #00FFFFFF in #ARGB [A= ALPHA]value-->

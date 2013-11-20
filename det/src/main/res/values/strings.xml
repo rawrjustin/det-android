@@ -5,12 +5,12 @@
     <string name="action_settings">Settings</string>
     <string name="hello_world">Hello world!</string>
     <string name="login">Log In</string>
-    <string name="logout">Log Out</string>
+    <string name="logout">X</string>
     <string name="app_id">115466291969343</string>
     <string name="parse_app_id">SnZIklEaMlecec0zVwMgEgXDgeDWgM458xCUXPqU</string>
     <string name="parse_client_key">TLNJj6cz7SquDWwPlNHRg79YGHWpftHbh0WoEyLx</string>
     <string name="login_intro">Please log in to use Det</string>
-    <string name="add_transaction">New</string>
+    <string name="add_transaction">+</string>
     <string name="add_transaction_amount">How much did you pay?</string>
     <string name="add_transaction_description">What did you pay for?</string>
     <string name="add_transaction_amount_hint">Enter amount.</string>
@@ -22,7 +22,7 @@
     <string name="title_activity_about_page">AboutPage</string>
     <string name="resolve_debt">Resolve</string>
     <string name="about">About</string>
-    <string name="refresh_debts">Refresh</string>
+    <string name="refresh_debts">r</string>
     <string name="no_debts">You are not involved in any debts</string>
     <string name="user_home_intro">det</string>
 </resources>

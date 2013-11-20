@@ -1,13 +1,14 @@
 package com.jab.det;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
+
+import android.util.Log;
 
 import com.parse.ParseException;
 import com.parse.ParseObject;
 
+@SuppressWarnings("serial") // Serialized object will be deserialized in the same context
 public class DTDebt implements Serializable {
 	
 	private String objectId;
@@ -22,7 +23,7 @@ public class DTDebt implements Serializable {
 		try {
 			parseObject.fetchIfNeeded();
 		} catch (ParseException e) {
-			// TODO Auto-generated catch block
+			Log.e(DetApplication.TAG, "DETAPP ERROR: " + e.toString());
 			e.printStackTrace();
 		}
 		
@@ -30,13 +31,8 @@ public class DTDebt implements Serializable {
 		this.amount = parseObject.getNumber("amount");
 		this.creditor = DTUser.getUserFromParseUser(parseObject.getParseUser("creditor"));
 		this.debtor = DTUser.getUserFromParseUser(parseObject.getParseUser("debtor"));
-		
-		// Add to users map
-		DTUser userThatIsNotCurrentUser = this.creditor.equals(UserHomeActivity.getCurrentUser()) ? this.debtor : this.creditor;
-		if (!UserHomeActivity.usersMap.containsKey(userThatIsNotCurrentUser)) {
-			UserHomeActivity.usersMap.put(userThatIsNotCurrentUser, new HashSet<DTDebt>());
-		}
-		
+		this.parseObject = parseObject;
+
 		// Transaction setup
 		ParseObject parseTransaction = parseObject.getParseObject("transaction");
 		String parseTransactionObjectId = parseTransaction.getObjectId();
@@ -50,25 +46,18 @@ public class DTDebt implements Serializable {
 			UserHomeActivity.transactionsMap.put(this.transaction, new HashSet<DTDebt>());
 		}
 
-		this.parseObject = parseObject;
-		
-		
 		UserHomeActivity.transactionsMap.get(this.transaction).add(this);
-		UserHomeActivity.usersMap.get(userThatIsNotCurrentUser).add(this);
 	}
 	
 	public DTUser getDebtor() {
 		return debtor;
 	}
 	
-	public DTDebt(DTUser creditor, DTUser debtor, Number amount) {
+	public DTDebt(DTUser creditor, DTUser debtor, Number amount, DTTransaction transaction) {
 		this.creditor = creditor;
 		this.debtor = debtor;
 		this.amount = amount;
-//		this.parseObject = new ParseObject("Debt");
-//		this.parseObject.put("creditor", creditor.getParseUser());
-//		this.parseObject.put("debtor", debtor.getParseUser());
-//		this.parseObject.put("amount", amount);
+		this.transaction = transaction;
 	}
 	
 	public ParseObject getParseObject() {
@@ -91,7 +80,12 @@ public class DTDebt implements Serializable {
 		return this.amount;
 	}
 	
+	public DTUser getCreditor() {
+		return this.creditor;
+	}
+		
 	// Saves the debt to Parse, including the relationship to the transaction
+	@Deprecated // Functionality replaced with cloud code
 	public void save(ParseObject transaction) {
 		this.parseObject.put("transaction", transaction);
 		try {
@@ -100,13 +94,5 @@ public class DTDebt implements Serializable {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-	}
-
-	public static ArrayList<DTDebt> fromDebtData(ArrayList<HashMap<String, String>> debtsFromIntent) {
-		ArrayList<DTDebt> debts = new ArrayList<DTDebt>();
-		for (HashMap<String, String> debt : debtsFromIntent) {
-			
-		}
-		return null;
 	}
 }

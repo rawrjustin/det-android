@@ -4,29 +4,27 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import com.facebook.Request;
-import com.facebook.Response;
-import com.facebook.Session;
-import com.facebook.model.GraphUser;
-import com.parse.FindCallback;
-import com.parse.LogInCallback;
-import com.parse.ParseException;
-import com.parse.ParseFacebookUtils;
-import com.parse.ParseObject;
-import com.parse.ParseQuery;
-import com.parse.ParseUser;
-import com.parse.ParseFacebookUtils.Permissions;
-import com.parse.SaveCallback;
-
-import android.os.Bundle;
 import android.app.Activity;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.os.Bundle;
 import android.util.Log;
-import android.view.Menu;
 import android.view.View;
 import android.widget.Button;
+
+import com.facebook.Request;
+import com.facebook.Response;
+import com.facebook.Session;
+import com.facebook.model.GraphUser;
+import com.parse.LogInCallback;
+import com.parse.ParseException;
+import com.parse.ParseFacebookUtils;
+import com.parse.ParseFacebookUtils.Permissions;
+import com.parse.ParseObject;
+import com.parse.ParseQuery;
+import com.parse.ParseUser;
+import com.parse.SaveCallback;
 
 public class LoginActivity extends Activity {
 
@@ -41,11 +39,11 @@ public class LoginActivity extends Activity {
 		setupLoginButton();
 		
 		// Check if user is logged in and linked to facebook
-//		ParseUser currentUser = ParseUser.getCurrentUser();
-//		if ((currentUser != null) && ParseFacebookUtils.isLinked(currentUser)) {
-//			// Go to the user info activity
-//			startUserHomeActivity();
-//		}
+		ParseUser currentUser = ParseUser.getCurrentUser();
+		if ((currentUser != null) && ParseFacebookUtils.isLinked(currentUser)) {
+			// Go to the user info activity
+			startUserHomeActivity();
+		}
 	}
 
 	// Handles About button clicked
@@ -116,15 +114,14 @@ public class LoginActivity extends Activity {
 				        				newlyCreatedUser.save();
 				        			}
 				        		} catch (ParseException e) {
-				        			// TODO Auto-generated catch block
+				        			Log.e(DetApplication.TAG, "DETAPP ERROR: " + e.toString());
 				        			e.printStackTrace();
-				        			Log.e(DetApplication.TAG, e.toString());
 				        		}
 
 				            	LoginActivity.this.progressDialog.dismiss();
 				            	startUserHomeActivity();
 				            } else {
-				            	// TODO: Handle error
+				            	Log.e(DetApplication.TAG, "DETAPP ERROR: Unable to fetch graph user object for current user");
 				            	throw new org.apache.http.ParseException();
 				            }
 				        }
