@@ -116,6 +116,9 @@ public class AddTransactionActivity extends Activity {
     	// Initialize and save transaction (note: this also saves all corresponding debts)
     	final DTTransaction transaction = new DTTransaction(UserHomeActivity.getCurrentUser(), otherUsers, Double.valueOf(transactionAmount), transactionDescription);
     	
+    	// Duplicates! >:(
+    	Log.d(DetApplication.TAG, "Duplicates test: " + transaction.toString());
+    	
     	stopWatch.stop();
     	Log.d(DetApplication.TAG, "DETAPP: Time elapsed for creating transaction: " + stopWatch.getTime());
     	

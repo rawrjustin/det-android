@@ -68,6 +68,7 @@
     	android:layout_below="@id/user_home_aggregate"
     	android:layout_above="@id/home_bottom_padding"
         android:verticalSpacing="10dp"
+		android:horizontalSpacing="-13dp"
         android:numColumns="2">
     </GridView>
 </RelativeLayout>
