@@ -119,4 +119,12 @@ public class DTTransaction implements Serializable {
 		requestObject.put("fbIdentifiers", new JSONArray(fbIds));
 		return requestObject;
 	}
+	
+	public void setParseObject(ParseObject parseObject) {
+		this.parseObject = parseObject;
+	}
+	
+	public void setObjectId(String objectId) {
+		this.objectId = objectId;
+	}
 }

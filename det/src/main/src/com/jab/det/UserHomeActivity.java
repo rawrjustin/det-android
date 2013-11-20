@@ -42,6 +42,10 @@ public class UserHomeActivity extends Activity {
    
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
+    	if (requestCode != 1 || resultCode != RESULT_OK) {
+    		return;
+    	}
+    	
 		DTTransaction transactionFromIntent = (DTTransaction) intent.getExtras().get(AddTransactionActivity.EXTRA_DEBTS);
 		Log.d(DetApplication.TAG, "Received deserialized transaction from intent: " + transactionFromIntent.toString());
     	LoadDebtsDataAsync.debtListAdapter.addToView(transactionFromIntent.getDebts());

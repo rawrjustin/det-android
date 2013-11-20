@@ -63,7 +63,11 @@ public class DTUser implements Serializable {
     
     // Returns a DTUser representing the current user.
     public static DTUser getCurrentUser() {
-        return getUserFromParseUser(currentParseUser == null ? ParseUser.getCurrentUser() : currentParseUser);
+    	if (currentParseUser == null) {
+    		currentParseUser = ParseUser.getCurrentUser();
+    	}
+    	
+        return getUserFromParseUser(currentParseUser);
     }
 
     // Returns a DTUser given a ParseUser object
