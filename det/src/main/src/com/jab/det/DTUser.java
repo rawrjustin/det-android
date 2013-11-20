@@ -63,9 +63,10 @@ public class DTUser implements Serializable {
     
     // Returns a DTUser representing the current user.
     public static DTUser getCurrentUser() {
-        DTUser user = getUserFromParseUser(currentParseUser == null ? ParseUser.getCurrentUser() : currentParseUser);
-        Log.d(DetApplication.TAG, "CURRENT USER IS: " + user.name + " " + user.facebookID); 
-        return user;
+    	if (currentParseUser == null) {
+    		currentParseUser = ParseUser.getCurrentUser();
+    	}
+        return getUserFromParseUser(currentParseUser);
     }
 
     // Returns a DTUser given a ParseUser object

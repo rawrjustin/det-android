@@ -1,3 +1,21 @@
+/*
+{
+    "123": {
+        "name": "justin",
+        "email": "justingotemail@gmail.com",
+        "amount": 50
+    },
+    “456”: {
+        ...
+        
+    }
+    "fbIdentifiers": [
+                      "123", “456”
+                      ],
+    "creditor": "9t6UZpDJnp",
+    "description": "CLOUD CODE WORKS"
+}
+*/
 
 // Use Parse.Cloud.define to define as many cloud functions as you want.
 // For example:
@@ -8,6 +26,9 @@ Parse.Cloud.define("hello", function(request, response) {
 Parse.Cloud.define("createTransaction", function(request, response) {
 	var facebookIds = request.params.fbIdentifiers;
 	var numUsers = facebookIds.length;
+	
+	// initialize an array to hold all created debts
+	var savedDebts = new Object();
 
 	// initialize a counter of debts to save
 	var debtsLeftToSave = facebookIds.length;
@@ -43,16 +64,19 @@ Parse.Cloud.define("createTransaction", function(request, response) {
 
 			    		//create debt object for this existing user
 						var debt = new Debt();
+						var userFbID = existingUser.get("fbID"); 
 
 						debt.set("debtor", existingUser);
 						debt.set("creditor", creditor);
-						debt.set("amount", request.params[existingUser.get("fbID")]["amount"]);
+						debt.set("amount", request.params[userFbID]["amount"]);
 						debt.set("transaction", transaction);
 						debt.save(null, {
 						  success: function(debt) {
+						    savedDebts[userFbID] = debt;
 						  	debtsLeftToSave--;
 						  	if (debtsLeftToSave == 0) {
-						  		response.success({});
+						  		savedDebts["transaction"] = transaction;
+								  response.success(savedDebts);
 						  	}
 						  },
 						  error: function(debt, error) {
@@ -86,16 +110,19 @@ Parse.Cloud.define("createTransaction", function(request, response) {
 							 
 					  		for (var i = 0; i < numUsers; i++) {
 								var debt = new Debt();
+								var userFbID = user.get("fbID");
 
 								debt.set("debtor", user);
 								debt.set("creditor", creditor);
-								debt.set("amount", request.params[user.get("fbID")]["amount"]);
+								debt.set("amount", request.params[userFbID]["amount"]);
 								debt.set("transaction", transaction);
 								debt.save(null, {
 								  success: function(debt) {
+                    savedDebts[userFbID] = debt;
 								  	debtsLeftToSave--;
 								  	if (debtsLeftToSave == 0) {
-								  		response.success({});
+								  	  savedDebts["transaction"] = transaction;
+								  		response.success(savedDebts);
 								  	}
 								  },
 								  error: function(debt, error) {
