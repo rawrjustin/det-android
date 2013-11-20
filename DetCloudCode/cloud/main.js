@@ -8,6 +8,9 @@ Parse.Cloud.define("hello", function(request, response) {
 Parse.Cloud.define("createTransaction", function(request, response) {
 	var facebookIds = request.params.fbIdentifiers;
 	var numUsers = facebookIds.length;
+	
+	// initialize an array to hold all created debts
+	var savedDebts = new Array();
 
 	// initialize a counter of debts to save
 	var debtsLeftToSave = facebookIds.length;
@@ -50,9 +53,10 @@ Parse.Cloud.define("createTransaction", function(request, response) {
 						debt.set("transaction", transaction);
 						debt.save(null, {
 						  success: function(debt) {
+						    savedDebts.push(debt);
 						  	debtsLeftToSave--;
 						  	if (debtsLeftToSave == 0) {
-						  		response.success({});
+								  response.success(savedDebts);
 						  	}
 						  },
 						  error: function(debt, error) {
@@ -93,9 +97,10 @@ Parse.Cloud.define("createTransaction", function(request, response) {
 								debt.set("transaction", transaction);
 								debt.save(null, {
 								  success: function(debt) {
+								    savedDebts.push(debt);
 								  	debtsLeftToSave--;
 								  	if (debtsLeftToSave == 0) {
-								  		response.success({});
+								  		response.success(savedDebts);
 								  	}
 								  },
 								  error: function(debt, error) {
