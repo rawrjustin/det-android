@@ -4,14 +4,15 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+
 import org.json.JSONArray;
 
 import android.util.Log;
 
 import com.parse.ParseException;
 import com.parse.ParseObject;
-import com.parse.codec.binary.StringUtils;
 
+@SuppressWarnings("serial") // Serialized object will be deserialized in the same context
 public class DTTransaction implements Serializable {
 
 	private String description;
@@ -44,6 +45,7 @@ public class DTTransaction implements Serializable {
 	}
 
 	// Saves transaction (and corresponding debts) to Parse
+	@Deprecated // Functionality implemented in cloud code
 	public void save() {
 		for (DTDebt debt : this.debts) {
 			debt.save(this.parseObject);

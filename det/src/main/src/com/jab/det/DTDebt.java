@@ -1,8 +1,6 @@
 package com.jab.det;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 
 import android.util.Log;
@@ -10,6 +8,7 @@ import android.util.Log;
 import com.parse.ParseException;
 import com.parse.ParseObject;
 
+@SuppressWarnings("serial") // Serialized object will be deserialized in the same context
 public class DTDebt implements Serializable {
 	
 	private String objectId;

@@ -57,6 +57,14 @@ public class DisplayDebtsAdapter extends ArrayAdapter<DTDebt> {
     				DisplayDebtsAdapter.this.debts.remove(position);
     	            DisplayDebtsAdapter.this.notifyDataSetChanged();
     	            
+    	            // Update aggregate total
+    	            if (currentDebt.getCreditor().equals(UserHomeActivity.getCurrentUser())) {
+    	            	UserHomeActivity.amountOwedToYou -= currentDebt.getAmount().doubleValue();
+    	            } else {
+    	            	UserHomeActivity.amountOwedToOthers -= currentDebt.getAmount().doubleValue();
+    	            }
+    	            UserHomeActivity.resetAggregateTotals();
+    	            
 					DetApplication.showToast(parent.getContext(), "Debt deleted from parse");
 
     	            // If debt list is empty, show no debts text

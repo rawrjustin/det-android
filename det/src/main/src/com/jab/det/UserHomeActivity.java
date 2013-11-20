@@ -19,8 +19,8 @@ public class UserHomeActivity extends Activity {
 	private static TextView aggregateTextView;
 	private static DTUser currentUser;
 	private LoadDebtsDataAsync loadDebtsData;
-	public static double amountOwedToOthers = 0;
-	public static double amountOwedToYou = 0;
+	public static double amountOwedToOthers;
+	public static double amountOwedToYou;
 	public static HashMap<DTTransaction, HashSet<DTDebt>> transactionsMap;
 	public static HashMap<String, DTTransaction> transactionsObjectIdToDTTransaction;
 	// Populated when DTUser.getDebts() is called.

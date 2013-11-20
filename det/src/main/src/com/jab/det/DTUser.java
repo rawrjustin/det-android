@@ -12,12 +12,12 @@ import java.util.Map.Entry;
 
 import android.util.Log;
 
+import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
-import com.parse.ParseException;
-import com.parse.codec.binary.StringUtils;
 
+@SuppressWarnings("serial") // Serialized object will be deserialized in the same context
 public class DTUser implements Serializable {
 
 	private String objectId;
@@ -101,6 +101,9 @@ public class DTUser implements Serializable {
     	UserHomeActivity.transactionsObjectIdToDTTransaction = new HashMap<String, DTTransaction>();	
     	UserHomeActivity.usersMap = new HashMap<DTUser, HashSet<DTDebt>>();
     	
+    	UserHomeActivity.amountOwedToOthers = 0;
+    	UserHomeActivity.amountOwedToYou = 0;
+    	
     	ArrayList<DTDebt> debts = new ArrayList<DTDebt>();
     	    	
     	// Query debts where user is creditor
@@ -135,14 +138,13 @@ public class DTUser implements Serializable {
     		// Increment aggregate totals
     		if (debt.getCreditor().equals(UserHomeActivity.getCurrentUser())) {
     			userThatIsNotCurrentUser = debt.getDebtor();
-        		Log.d(DetApplication.TAG, "DETAPP: Inside DTUser:138");
-
     			Log.d(DetApplication.TAG, String.format("Adding %s to amountOwedToYou", debt.getAmount().toString()));
     			UserHomeActivity.amountOwedToYou += debt.getAmount().doubleValue();
     		} else {
     			userThatIsNotCurrentUser = debt.getCreditor();
     			Log.d(DetApplication.TAG, String.format("Adding %s to amountOwedToOthers", debt.getAmount().doubleValue()));
     			UserHomeActivity.amountOwedToOthers += debt.getAmount().doubleValue();
+    			Log.d(DetApplication.TAG, "After value is " + UserHomeActivity.amountOwedToYou);
     		}
     		
     		// Add to users map

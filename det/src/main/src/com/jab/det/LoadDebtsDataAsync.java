@@ -47,9 +47,6 @@ public class LoadDebtsDataAsync extends AsyncTask<Void, Void, DTDebt[]>{
 		stopWatch.reset();
 		stopWatch.start();
 		
-		UserHomeActivity.amountOwedToOthers = 0;
-		UserHomeActivity.amountOwedToYou = 0;
-		
 		Log.d(DetApplication.TAG, String.format("DETAPP: owed to others is %s, owed to you is %s", UserHomeActivity.amountOwedToOthers, UserHomeActivity.amountOwedToYou));
 		// Set text for aggregates
 		UserHomeActivity.resetAggregateTotals();
