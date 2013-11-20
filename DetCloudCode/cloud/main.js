@@ -63,32 +63,32 @@ Parse.Cloud.define("createTransaction", function(request, response) {
 			    		var existingUser = results[i];
 
 			    		//create debt object for this existing user
-						var debt = new Debt();
-						var userFbID = existingUser.get("fbID"); 
-
-						debt.set("debtor", existingUser);
-						debt.set("creditor", creditor);
-						debt.set("amount", request.params[userFbID]["amount"]);
-						debt.set("transaction", transaction);
-						debt.save(null, {
-						  success: function(debt) {
-						    savedDebts[userFbID] = debt;
-						  	debtsLeftToSave--;
-						  	if (debtsLeftToSave == 0) {
-						  		savedDebts["transaction"] = transaction;
-								  response.success(savedDebts);
-						  	}
-						  },
-						  error: function(debt, error) {
-						 	response.error('failed to create debt: ' + error.description);
-						  }
-						});
+  						var debt = new Debt();
+  						var userFbID = existingUser.get("fbID"); 
+  
+  						debt.set("debtor", existingUser);
+  						debt.set("creditor", creditor);
+  						debt.set("amount", request.params[userFbID]["amount"]);
+  						debt.set("transaction", transaction);
+  						debt.save(null, {
+  						  success: function(debt) {
+  						    savedDebts[userFbID] = debt;
+  						  	debtsLeftToSave--;
+  						  	if (debtsLeftToSave == 0) {
+  						  		savedDebts["transaction"] = transaction;
+  								  response.success(savedDebts);
+  						  	}
+  						  },
+  						  error: function(debt, error) {
+  						 	 response.error('failed to create debt: ' + error.description);
+  						  }
+  						});
 
 			    		//remove user fbID from facebookIDs array
 			    		var index = facebookIds.indexOf(existingUser.get("fbID"));
 			    		if (index > -1) {
 	    					facebookIds.splice(index, 1);
-						}
+              }
 			    	}
 			    }
 			    // we now have the number of users left to signup in faecbookIds. 
@@ -97,45 +97,45 @@ Parse.Cloud.define("createTransaction", function(request, response) {
 		    	for (var i = 0; i < facebookIds.length; i++) {
 		    		var fbID = facebookIds[i];
 		    		var user = new Parse.User();
-					user.set("username", fbID.toString());
-					user.set("password", "password");
-					user.set("name", request.params[fbID]['name'])
-					user.set("email", request.params[fbID]['email']);
-					user.set("fbID", fbID.toString());
-					 
-					user.signUp(null, {
-					  success: function(user) {
-					  	numToCreate--;
-					  	if (numToCreate == 0) {
-							 
-					  		for (var i = 0; i < numUsers; i++) {
-								var debt = new Debt();
-								var userFbID = user.get("fbID");
-
-								debt.set("debtor", user);
-								debt.set("creditor", creditor);
-								debt.set("amount", request.params[userFbID]["amount"]);
-								debt.set("transaction", transaction);
-								debt.save(null, {
-								  success: function(debt) {
-                    savedDebts[userFbID] = debt;
-								  	debtsLeftToSave--;
-								  	if (debtsLeftToSave == 0) {
-								  	  savedDebts["transaction"] = transaction;
-								  		response.success(savedDebts);
-								  	}
-								  },
-								  error: function(debt, error) {
-								 	response.error('failed to create debt: ' + error.description);
-								  }
-								});
-					  		}
-					  	}
-					  },
-					  error: function(user, error) {
-					    // Show the error message somewhere and let the user try again.
-					    response.error('creating a user failed ' + error.message + ' existing user: ' + results[0].get("fbID"));
-					  }
+  					user.set("username", fbID.toString());
+  					user.set("password", "password");
+  					user.set("name", request.params[fbID]['name'])
+  					user.set("email", request.params[fbID]['email']);
+  					user.set("fbID", fbID.toString());
+  					 
+  					user.signUp(null, {
+  					  success: function(user) {
+  					  	numToCreate--;
+  					  	if (numToCreate == 0) {
+  							 
+  					  		for (var i = 0; i < facebookIds.length; i++) {
+    								var debt = new Debt();
+    								var userFbID = user.get("fbID");
+    
+    								debt.set("debtor", user);
+    								debt.set("creditor", creditor);
+    								debt.set("amount", request.params[userFbID]["amount"]);
+    								debt.set("transaction", transaction);
+    								debt.save(null, {
+    								  success: function(debt) {
+                        savedDebts[userFbID] = debt;
+    								  	debtsLeftToSave--;
+    								  	if (debtsLeftToSave == 0) {
+    								  	  savedDebts["transaction"] = transaction;
+    								  		response.success(savedDebts);
+    								  	}
+    								  },
+    								  error: function(debt, error) {
+    								 	response.error('failed to create debt: ' + error.description);
+    								  }
+    								});
+  					  		}
+  					  	}
+  					  },
+  					  error: function(user, error) {
+  					    // Show the error message somewhere and let the user try again.
+  					    response.error('creating a user failed ' + error.message + ' existing user: ' + results[0].get("fbID"));
+  					  }
 					});
 		    	}
 			},
