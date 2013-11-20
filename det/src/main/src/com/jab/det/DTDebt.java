@@ -84,6 +84,14 @@ public class DTDebt implements Serializable {
 		return this.creditor;
 	}
 		
+	public void setParseObject(ParseObject parseObject) {
+		this.parseObject = parseObject;
+	}
+	
+	public void setObjectId(String objectId) {
+		this.objectId = objectId;
+	}
+	
 	// Saves the debt to Parse, including the relationship to the transaction
 	@Deprecated // Functionality replaced with cloud code
 	public void save(ParseObject transaction) {
@@ -94,5 +102,15 @@ public class DTDebt implements Serializable {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+	}
+	
+	@Override
+	public boolean equals(Object o) {
+		return !(o instanceof DTDebt) || o.equals(null) ? false : this.objectId.equals(((DTDebt) o).getObjectId());
+	}
+	
+	@Override
+	public int hashCode() {
+		return this.objectId.hashCode();
 	}
 }
