@@ -40,6 +40,8 @@ public class LoadDebtsDataAsync extends AsyncTask<Void, Void, DTDebt[]>{
 		this.loadingDebtsTextView.setText("Loading debts...");
 		LoadDebtsDataAsync.debtListAdapter = new DisplayDebtsAdapter(this.context, R.layout.debt_row, new ArrayList<DTDebt>());
 		this.debtGridView.setAdapter(debtListAdapter);
+		UserHomeActivity.resetAggregateTotalsValues();
+		UserHomeActivity.resetAggregateTotalsDisplay();
 	}
 	
 	protected void onPostExecute(DTDebt[] debts) {

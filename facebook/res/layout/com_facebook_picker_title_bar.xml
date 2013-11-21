@@ -30,7 +30,7 @@
             android:paddingLeft="5dip"
             android:paddingRight="5dip"
             android:textColor="#ffffff"
-            android:textSize="14sp"
+            android:textSize="22sp"
             android:shadowColor="#66000000"
             android:shadowDx="1"
             android:shadowDy="1"

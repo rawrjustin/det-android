@@ -74,14 +74,7 @@ public class DisplayDebtsAdapter extends ArrayAdapter<DTDebt> {
 	            	UserHomeActivity.amountOwedToOthers -= currentDebt.getAmount().doubleValue();
 	            }
 	            UserHomeActivity.resetAggregateTotalsDisplay();
-	            
-	            // If debt list is empty, show no debts text
-	            if (DisplayDebtsAdapter.this.debts.isEmpty()) {
-	            	TextView noDebtTextView = (TextView) v.getRootView().findViewById(R.id.loading_debts);
-	            	noDebtTextView.setVisibility(View.VISIBLE);
-	            	noDebtTextView.setText(v.getResources().getString(R.string.no_debts));
-	            }
-	            
+	            	            
 	            // Delete parse object from parse
 				currentDebt.getParseObject().deleteInBackground(new DeleteCallback() {
 					@Override
@@ -118,6 +111,13 @@ public class DisplayDebtsAdapter extends ArrayAdapter<DTDebt> {
 				// Remove row
 				DisplayDebtsAdapter.this.debts.remove(position);
 	            DisplayDebtsAdapter.this.notifyDataSetChanged();
+	            
+	            // If debt list is empty, show no debts text
+	            if (DisplayDebtsAdapter.this.debts.isEmpty()) {
+	            	TextView noDebtTextView = (TextView) v.getRootView().findViewById(R.id.loading_debts);
+	            	noDebtTextView.setVisibility(View.VISIBLE);
+	            	noDebtTextView.setText(v.getResources().getString(R.string.no_debts));
+	            }
 			}
 		});
 

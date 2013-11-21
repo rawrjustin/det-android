@@ -48,6 +48,13 @@ public class UserHomeActivity extends Activity {
     	
 		DTTransaction transactionFromIntent = (DTTransaction) intent.getExtras().get(AddTransactionActivity.EXTRA_DEBTS);
 		Log.d(DetApplication.TAG, "Received deserialized transaction from intent: " + transactionFromIntent.toString());
+		
+		// If home page was empty, remove the no debts message
+		if (LoadDebtsDataAsync.debtListAdapter.getDebts().isEmpty()) {
+        	TextView noDebtTextView = (TextView) findViewById(R.id.loading_debts);
+        	noDebtTextView.setVisibility(View.INVISIBLE);
+		}
+		
     	LoadDebtsDataAsync.debtListAdapter.addToView(transactionFromIntent.getDebts());
     	LoadDebtsDataAsync.debtListAdapter.notifyDataSetChanged();
     }
