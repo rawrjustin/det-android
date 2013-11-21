@@ -5,6 +5,8 @@ import java.util.Arrays;
 
 import org.apache.commons.lang3.time.StopWatch;
 
+import com.parse.ParseException;
+
 import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
@@ -42,7 +44,7 @@ public class LoadDebtsDataAsync extends AsyncTask<Void, Void, DTDebt[]>{
 	
 	protected void onPostExecute(DTDebt[] debts) {
 		// Set text for aggregates
-		UserHomeActivity.resetAggregateTotals();
+		UserHomeActivity.resetAggregateTotalsDisplay();
 		
 		if (debts.length == 0) {
 			loadingDebtsTextView.setText(this.rootView.getResources().getString(R.string.no_debts));
@@ -60,10 +62,18 @@ public class LoadDebtsDataAsync extends AsyncTask<Void, Void, DTDebt[]>{
 	protected DTDebt[] doInBackground(Void... params) {
 		stopWatch.reset();
 		stopWatch.start();
-		//return UserHomeActivity.getCurrentUser().getDebts();
-		DTDebt[] ret = UserHomeActivity.getCurrentUser().getDebts();
+
+		DTDebt[] currentUserDebts = null;
+		try {
+			currentUserDebts = UserHomeActivity.getCurrentUser().getDebts();
+		} catch (ParseException e) {
+			Log.e(DetApplication.TAG, "Parse exception thrown: " + e.toString());
+			e.printStackTrace();
+		}
+		
 		stopWatch.stop();
 		Log.d(DetApplication.TAG, "DETAPP: Time elapsed for doInBackground: " + stopWatch.getTime());
-		return ret;
+		
+		return currentUserDebts;
 	}
 }

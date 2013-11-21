@@ -52,7 +52,7 @@ public class UserHomeActivity extends Activity {
     	LoadDebtsDataAsync.debtListAdapter.notifyDataSetChanged();
     }
     
-    public static void resetAggregateTotals() {
+    public static void resetAggregateTotalsDisplay() {
     	amountOwedToOthers = Math.round(amountOwedToOthers*100.0)/100.0;
     	amountOwedToYou = Math.round(amountOwedToYou*100.0)/100.0;
     	double balance = Math.round((amountOwedToYou - amountOwedToOthers)*100.0)/100.0;
@@ -145,5 +145,16 @@ public class UserHomeActivity extends Activity {
 		intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 		intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 		startActivity(intent);
+	}
+
+	public static void resetMaps() {
+    	UserHomeActivity.transactionsMap = new HashMap<DTTransaction, HashSet<DTDebt>>();
+    	UserHomeActivity.transactionsObjectIdToDTTransaction = new HashMap<String, DTTransaction>();	
+    	UserHomeActivity.usersMap = new HashMap<DTUser, HashSet<DTDebt>>();
+	}
+
+	public static void resetAggregateTotalsValues() {
+    	UserHomeActivity.amountOwedToOthers = 0;
+    	UserHomeActivity.amountOwedToYou = 0;
 	}
 }

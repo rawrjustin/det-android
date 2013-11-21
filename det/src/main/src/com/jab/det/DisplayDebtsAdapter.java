@@ -67,19 +67,13 @@ public class DisplayDebtsAdapter extends ArrayAdapter<DTDebt> {
 					return;
 				}
 				
-				Log.d(DetApplication.TAG, "debts array before is " + debts.toString());
-				
-	            
-				Log.d(DetApplication.TAG, "debts array after is " + debts.toString());
-
-	            
 	            // Update aggregate total
 	            if (currentDebt.getCreditor().equals(UserHomeActivity.getCurrentUser())) {
 	            	UserHomeActivity.amountOwedToYou -= currentDebt.getAmount().doubleValue();
 	            } else {
 	            	UserHomeActivity.amountOwedToOthers -= currentDebt.getAmount().doubleValue();
 	            }
-	            UserHomeActivity.resetAggregateTotals();
+	            UserHomeActivity.resetAggregateTotalsDisplay();
 	            
 	            // If debt list is empty, show no debts text
 	            if (DisplayDebtsAdapter.this.debts.isEmpty()) {

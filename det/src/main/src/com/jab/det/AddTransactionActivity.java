@@ -5,7 +5,6 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 
-import org.apache.commons.lang3.ObjectUtils.Null;
 import org.apache.commons.lang3.time.StopWatch;
 
 import android.app.Activity;
@@ -173,7 +172,7 @@ public class AddTransactionActivity extends Activity {
     	for (DTDebt debt : transaction.getDebts()) {
     		UserHomeActivity.amountOwedToYou += debt.getAmount().doubleValue();
     	}
-    	UserHomeActivity.resetAggregateTotals();
+    	UserHomeActivity.resetAggregateTotalsDisplay();
     	
     	// Update users map
     	// Note: Assumes user is the creditor

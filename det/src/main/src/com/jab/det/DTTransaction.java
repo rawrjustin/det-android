@@ -7,9 +7,6 @@ import java.util.HashMap;
 
 import org.json.JSONArray;
 
-import android.util.Log;
-
-import com.parse.ParseException;
 import com.parse.ParseObject;
 
 @SuppressWarnings("serial") // Serialized object will be deserialized in the same context
@@ -30,18 +27,12 @@ public class DTTransaction implements Serializable {
 		}
 	}
 	
+	// Called from DTDebt(ParseObject), which is called by DTUser.getDebts()
 	public DTTransaction(ParseObject parseObject) {
-		try {
-			parseObject = parseObject.fetchIfNeeded();
-		} catch (ParseException e) {
-			Log.e(DetApplication.TAG, "DETAPP ERROR: " + e.toString());
-			e.printStackTrace();
-		}
-		
 		this.parseObject = parseObject;
 		this.objectId = parseObject.getObjectId();
 		this.description = parseObject.getString("description");
-		// TODO: Get debts
+		// Debts added later in getDebts()
 	}
 
 	// Saves transaction (and corresponding debts) to Parse
