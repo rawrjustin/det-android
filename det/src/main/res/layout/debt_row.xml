@@ -7,10 +7,53 @@
 	<com.facebook.widget.ProfilePictureView
             android:id="@+id/profile_pic"
             android:layout_height="160dp"
-            android:layout_width="180dp"
+            android:layout_width="160dp"
             android:layout_centerInParent="true" 
             facebook:preset_size="large" />
-	<TextView  		
+	<RelativeLayout
+	    android:id="@+id/debt_text_content"
+	    android:layout_width="160dp"
+	    android:layout_height="wrap_content"
+	    android:paddingTop="-10dp"
+ 		android:layout_centerHorizontal="true"
+ 		android:background="@color/transparentTextBackground"
+	    android:layout_alignBottom="@+id/profile_pic">
+	    <TextView 
+	        android:id="@+id/friend_name"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:layout_alignParentTop="true"
+	 	    android:textColor="@android:color/white"
+	 	    android:textSize="28sp"
+	 	    android:layout_marginBottom="-10dp"
+	        android:layout_centerInParent="true">
+	    </TextView>
+	    <LinearLayout 
+	        android:id="@+id/owes_line"
+	        android:layout_width="fill_parent"
+	        android:layout_height="wrap_content"
+	        android:layout_below="@id/friend_name"
+	 		android:gravity="center"
+	        android:orientation="horizontal">
+	        <TextView
+	            android:id="@+id/owes" 
+	            android:layout_width="wrap_content"
+	            android:layout_height="wrap_content"
+	            android:text="@string/owes"
+	            android:layout_margin="5dp"
+	 	    	android:textColor="@android:color/white">
+	        </TextView>
+	        <TextView
+	            android:id="@+id/amount" 
+	            android:layout_width="wrap_content"
+	            android:layout_height="wrap_content"
+	            android:text="@string/debt_amount"
+		 	    android:textSize="20sp"
+	 	    	android:textColor="@color/det_green">
+	        </TextView>
+	    </LinearLayout>
+	</RelativeLayout>
+<!--	<TextView  		
 	    android:id="@+id/debt_text" 
  		android:layout_width="160dp" 
  		android:layout_height="wrap_content"
@@ -20,6 +63,7 @@
 		android:layout_alignBottom="@id/profile_pic" 		
  		android:textSize="18sp" >
 	</TextView>
+-->
 <!-- <Button 
 	    android:id="@+id/resolve_debt_button"
 	    style="?android:attr/borderlessButtonStyle"
