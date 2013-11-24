@@ -71,6 +71,11 @@ public class DTDebt implements Serializable {
 	public Number getAmount() {
 		return this.amount;
 	}
+
+	// Prepends $ to amount and returns string
+	public String getAmountToString() {
+		return "$" + this.amount.toString();
+	}
 	
 	public DTUser getCreditor() {
 		return this.creditor;
