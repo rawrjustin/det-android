@@ -50,65 +50,7 @@ public class DisplayDebtsAdapter extends ArrayAdapter<DTDebt> {
 //            holder.textView = (TextView) convertView.findViewById(R.id.debt_text);
             holder.friendNameText = (TextView) convertView.findViewById(R.id.friend_name);
             holder.resolveButton = (RelativeLayout) convertView.findViewById(R.id.grid_element);
-            holder.resolveButton.setOnClickListener(new View.OnClickListener() {
-    			@Override
-    			public void onClick(View v) {
-    				// The current debt's object id is null only between when it was added optimistically via 
-    				// serialization of the submitted transaction and when it is successfully saved
-    				if (currentDebt.getObjectId() == null) {
-    					return;
-    				}
-    				
-    				// Remove row
-    				DisplayDebtsAdapter.this.debts.remove(position);
-    	            DisplayDebtsAdapter.this.notifyDataSetChanged();
-    	            
-    	            // Update aggregate total
-    	            if (currentDebt.getCreditor().equals(UserHomeActivity.getCurrentUser())) {
-    	            	UserHomeActivity.amountOwedToYou -= currentDebt.getAmount().doubleValue();
-    	            } else {
-    	            	UserHomeActivity.amountOwedToOthers -= currentDebt.getAmount().doubleValue();
-    	            }
-    	            UserHomeActivity.resetAggregateTotals();
-    	            
-    	            // If debt list is empty, show no debts text
-    	            if (DisplayDebtsAdapter.this.debts.isEmpty()) {
-    	            	TextView noDebtTextView = (TextView) v.getRootView().findViewById(R.id.loading_debts);
-    	            	noDebtTextView.setVisibility(View.VISIBLE);
-    	            	noDebtTextView.setText(v.getResources().getString(R.string.no_debts));
-    	            }
-    	            
-    	            // Delete parse object from parse
-    				currentDebt.getParseObject().deleteInBackground(new DeleteCallback() {
-						@Override
-						public void done(ParseException e) {
-							DetApplication.showToast(parent.getContext(), "Debt deleted from parse");
-							
-							// Remove debt from users map
-							DTUser userThatIsNotCurrentUser = currentDebt.getCreditor().equals(UserHomeActivity.getCurrentUser()) ?
-									currentDebt.getDebtor() : currentDebt.getCreditor();
-							Log.d(DetApplication.TAG, "DisplayDebtsAdapater, user that is not current user is " + userThatIsNotCurrentUser.toString());
-							UserHomeActivity.usersMap.get(userThatIsNotCurrentUser).remove(currentDebt);
-							if (UserHomeActivity.usersMap.get(userThatIsNotCurrentUser).isEmpty()) {
-								UserHomeActivity.usersMap.remove(userThatIsNotCurrentUser);
-							}
-							
-							// Remove debt from transactions map and delete transaction if necessary
-							UserHomeActivity.transactionsMap.get(currentDebt.getTransaction()).remove(currentDebt);
-							if (UserHomeActivity.transactionsMap.get(currentDebt.getTransaction()).isEmpty()) {
-								currentDebt.getTransaction().getParseObject().deleteInBackground(new DeleteCallback() {
-									@Override
-									public void done(ParseException e) {
-										DetApplication.showToast(parent.getContext(), "Transaction deleted from parse");
-										UserHomeActivity.transactionsMap.remove(currentDebt.getTransaction());
-									}
-								});
-							}
-						}
-    				});
-    			}
-    		});
-
+           
             convertView.setTag(holder);
         } else {
             holder = (ViewHolder) convertView.getTag();
@@ -117,7 +59,76 @@ public class DisplayDebtsAdapter extends ArrayAdapter<DTDebt> {
         holder.profilePictureView.setProfileId(currentDebt.getDebtor().getFacebookId());
 //        holder.textView.setText(currentDebt.toString());
         holder.friendNameText.setText("Aaron Jen");
+        holder.textView.setText(currentDebt.toString());
+        holder.resolveButton.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				// The current debt's object id is null only between when it was added optimistically via 
+				// serialization of the submitted transaction and when it is successfully saved
+				
+				Log.d(DetApplication.TAG, "Current debt's objectid is " + currentDebt.getObjectId());
+				if (currentDebt.getObjectId() == null) {
+					return;
+				}
+				
+	            // Update aggregate total
+	            if (currentDebt.getCreditor().equals(UserHomeActivity.getCurrentUser())) {
+	            	UserHomeActivity.amountOwedToYou -= currentDebt.getAmount().doubleValue();
+	            } else {
+	            	UserHomeActivity.amountOwedToOthers -= currentDebt.getAmount().doubleValue();
+	            }
+	            UserHomeActivity.resetAggregateTotalsDisplay();
+	            	            
+	            // Delete parse object from parse
+				currentDebt.getParseObject().deleteInBackground(new DeleteCallback() {
+					@Override
+					public void done(ParseException e) {
+						DetApplication.showToast(parent.getContext(), "Debt deleted from parse");
+						
+						// Remove debt from users map
+						DTUser userThatIsNotCurrentUser = currentDebt.getCreditor().equals(UserHomeActivity.getCurrentUser()) ?
+								currentDebt.getDebtor() : currentDebt.getCreditor();
+						Log.d(DetApplication.TAG, "DisplayDebtsAdapter, user that is not current user is " + userThatIsNotCurrentUser.toString()
+								+ " Position is " + position);
+						Log.d(DetApplication.TAG, "DisplayDebtsAdapter, usersmap before delete is " + UserHomeActivity.usersMap.toString());
+						UserHomeActivity.usersMap.get(userThatIsNotCurrentUser).remove(currentDebt);
+						if (UserHomeActivity.usersMap.get(userThatIsNotCurrentUser).isEmpty()) {
+							UserHomeActivity.usersMap.remove(userThatIsNotCurrentUser);
+						}
+						Log.d(DetApplication.TAG, "DisplayDebtsAdapter, usersmap after delete is " + UserHomeActivity.usersMap.toString());
+
+						
+						// Remove debt from transactions map and delete transaction if necessary
+						UserHomeActivity.transactionsMap.get(currentDebt.getTransaction()).remove(currentDebt);
+						if (UserHomeActivity.transactionsMap.get(currentDebt.getTransaction()).isEmpty()) {
+							currentDebt.getTransaction().getParseObject().deleteInBackground(new DeleteCallback() {
+								@Override
+								public void done(ParseException e) {
+									DetApplication.showToast(parent.getContext(), "Transaction deleted from parse");
+									UserHomeActivity.transactionsMap.remove(currentDebt.getTransaction());
+								}
+							});
+						}
+					}
+				});
+				
+				// Remove row
+				DisplayDebtsAdapter.this.debts.remove(position);
+	            DisplayDebtsAdapter.this.notifyDataSetChanged();
+	            
+	            // If debt list is empty, show no debts text
+	            if (DisplayDebtsAdapter.this.debts.isEmpty()) {
+	            	TextView noDebtTextView = (TextView) v.getRootView().findViewById(R.id.loading_debts);
+	            	noDebtTextView.setVisibility(View.VISIBLE);
+	            	noDebtTextView.setText(v.getResources().getString(R.string.no_debts));
+	            }
+			}
+		});
         
 	    return convertView;
 	 }
+	
+	public ArrayList<DTDebt> getDebts() {
+		return this.debts;
+	}
 }

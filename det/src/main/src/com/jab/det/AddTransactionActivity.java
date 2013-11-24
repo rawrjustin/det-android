@@ -129,11 +129,23 @@ public class AddTransactionActivity extends Activity {
     				Log.e(DetApplication.TAG, "DETAPP Error calling cloud function" + e.toString());
     		    }
     			
+    			Log.d(DetApplication.TAG, "Debug.. savedDebts is " + savedDebts.toString());
+    			
     			DetApplication.showToast(getApplicationContext(), "Transaction and debts added to Parse");
     			
+    			ArrayList<DTDebt> debtsAfterDeserialization = LoadDebtsDataAsync.debtListAdapter.getDebts();
+    			DTTransaction transactionAfterDeserialization = debtsAfterDeserialization.get(debtsAfterDeserialization.size()-1).getTransaction();
     			// Save debt parse objects to their respective debts
-    			for (DTDebt debt : transaction.getDebts()) {
+    			for (DTDebt debt : debtsAfterDeserialization) {
+    				if (!savedDebts.containsKey(debt.getDebtor().getFacebookId())) {
+    					continue;
+    				}
+    				
+    				Log.d(DetApplication.TAG, "Debug.. debt is " + debt.toString());
+    				Log.d(DetApplication.TAG, "Debug.. debtor fbid is " + debt.getDebtor().getFacebookId());
     				ParseObject savedDebtParseObject= (ParseObject) savedDebts.get(debt.getDebtor().getFacebookId());
+    				Log.d(DetApplication.TAG, "Debug.. parseobject is " + savedDebtParseObject.toString());
+    				Log.d(DetApplication.TAG, "Debug.. objectid is " + savedDebtParseObject.getObjectId());
     				debt.setObjectId(savedDebtParseObject.getObjectId());
     				debt.setParseObject(savedDebtParseObject);
     				
@@ -143,20 +155,24 @@ public class AddTransactionActivity extends Activity {
     			
     			// Save transaction parse object to DTTransaction object
     			ParseObject savedTransactionParseObject = (ParseObject) savedDebts.get("transaction");
-    			transaction.setObjectId(savedTransactionParseObject.getObjectId());
-    			transaction.setParseObject(savedTransactionParseObject);
+    			transactionAfterDeserialization.setObjectId(savedTransactionParseObject.getObjectId());
+    			transactionAfterDeserialization.setParseObject(savedTransactionParseObject);
     			
     			// Update transaction map with transaction
-    			UserHomeActivity.transactionsMap.put(transaction, new HashSet<DTDebt>(transaction.getDebts()));
+    			UserHomeActivity.transactionsMap.put(transactionAfterDeserialization, new HashSet<DTDebt>(debtsAfterDeserialization));
     		}
     	});
+    	
+//    	//Remove "You are not involved in any debts" string
+//    	TextView noDebtTextView = (TextView) findViewById(R.id.loading_debts);
+//    	noDebtTextView.setVisibility(View.INVISIBLE);
     	
     	// Update aggregate totals
     	// Note: Assumes user is the creditor
     	for (DTDebt debt : transaction.getDebts()) {
     		UserHomeActivity.amountOwedToYou += debt.getAmount().doubleValue();
     	}
-    	UserHomeActivity.resetAggregateTotals();
+    	UserHomeActivity.resetAggregateTotalsDisplay();
     	
     	// Update users map
     	// Note: Assumes user is the creditor

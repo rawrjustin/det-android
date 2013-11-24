@@ -3,8 +3,6 @@ package com.jab.det;
 import java.io.Serializable;
 import java.util.HashSet;
 
-import android.util.Log;
-
 import com.parse.ParseException;
 import com.parse.ParseObject;
 
@@ -20,33 +18,27 @@ public class DTDebt implements Serializable {
 	
 	// Added from DTUser.getDebts
 	public DTDebt(ParseObject parseObject) {
-		try {
-			parseObject.fetchIfNeeded();
-		} catch (ParseException e) {
-			Log.e(DetApplication.TAG, "DETAPP ERROR: " + e.toString());
-			e.printStackTrace();
-		}
-		
 		this.objectId = parseObject.getObjectId();
 		this.amount = parseObject.getNumber("amount");
-		this.creditor = DTUser.getUserFromParseUser(parseObject.getParseUser("creditor"));
-		this.debtor = DTUser.getUserFromParseUser(parseObject.getParseUser("debtor"));
+		this.creditor = new DTUser(parseObject.getParseUser("creditor").getString("fbID"), parseObject.getParseUser("creditor").getString("name"));
+		this.debtor = new DTUser(parseObject.getParseUser("debtor").getString("fbID"), parseObject.getParseUser("debtor").getString("name"));
 		this.parseObject = parseObject;
-
+    	
 		// Transaction setup
 		ParseObject parseTransaction = parseObject.getParseObject("transaction");
 		String parseTransactionObjectId = parseTransaction.getObjectId();
-		
+    	
 		// Save to transaction maps
 		if (UserHomeActivity.transactionsObjectIdToDTTransaction.containsKey(parseTransactionObjectId)) {
 			this.transaction = UserHomeActivity.transactionsObjectIdToDTTransaction.get(parseTransactionObjectId);
+			UserHomeActivity.transactionsMap.get(this.transaction).add(this);
 		} else {
 			this.transaction = new DTTransaction(parseTransaction);
 			UserHomeActivity.transactionsObjectIdToDTTransaction.put(parseTransactionObjectId, this.transaction);
-			UserHomeActivity.transactionsMap.put(this.transaction, new HashSet<DTDebt>());
+			HashSet<DTDebt> associatedDebts = new HashSet<DTDebt>();
+			associatedDebts.add(this);
+			UserHomeActivity.transactionsMap.put(this.transaction, associatedDebts);
 		}
-
-		UserHomeActivity.transactionsMap.get(this.transaction).add(this);
 	}
 	
 	public DTUser getDebtor() {

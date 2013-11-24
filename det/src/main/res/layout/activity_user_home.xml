@@ -6,38 +6,37 @@
 	<RelativeLayout
 	    android:id="@+id/user_home_menu_bar"
 	    android:layout_width="fill_parent"
-		android:layout_height="wrap_content" 
+		android:layout_height="48dp" 
 		android:background="@color/det_green" >
 		<TextView
 		    android:id="@+id/refreshDebtsButton"
 		    android:layout_width="wrap_content"
-	        android:layout_height="55dp"
+	        android:layout_height="fill_parent"
 	        android:paddingLeft="10dp"
 	        android:layout_alignParentLeft="true"
 	        android:gravity="center_vertical"
 	        android:textColor="@android:color/white"
-			android:textSize="28sp" 
+			android:textSize="22sp" 
 			android:text="@string/refresh_debts"
 	         />
 		<TextView
 	        android:id="@+id/user_home_intro"
 	        android:layout_width="wrap_content"
-	        android:layout_height="55dp"
-			android:layout_marginBottom="18dp"
+	        android:layout_height="fill_parent"
 			android:gravity="center_vertical"
 			android:layout_centerHorizontal="true"
-	        android:textSize="28sp" 
+	        android:textSize="22sp" 
 	        android:textColor="@android:color/white"
 	        android:text="@string/user_home_intro" />
 		<TextView
 		    android:id="@+id/addTransactionButton"
 		    android:layout_width="wrap_content"
-	        android:layout_height="55dp"
+	        android:layout_height="fill_parent"
 	        android:paddingRight="10dp"
 	        android:layout_alignParentRight="true"
 	        android:gravity="center_vertical"
 	        android:textColor="@android:color/white"
-			android:textSize="28sp" 
+			android:textSize="22sp" 
 			android:text="@string/add_transaction"
 	         />
 	</RelativeLayout>>
@@ -58,7 +57,7 @@
     <View
         android:id="@+id/home_bottom_padding"
         android:layout_width="fill_parent"
-        android:layout_height="10dp"
+        android:layout_height="11dp"
         android:layout_alignParentBottom="true"
         />
     <GridView 

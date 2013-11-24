@@ -5,7 +5,6 @@ import java.math.BigInteger;
 import java.security.SecureRandom;
 import java.util.AbstractMap;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map.Entry;
@@ -76,7 +75,7 @@ public class DTUser implements Serializable {
 		}
 		
     	try {
-			parseUser.fetchIfNeeded();
+			parseUser = parseUser.fetchIfNeeded();
 		} catch (ParseException e) {
 			Log.e(DetApplication.TAG, "DETAPP ERROR: " + e.toString());
 			e.printStackTrace();
@@ -97,42 +96,41 @@ public class DTUser implements Serializable {
 		return null;
     }
     
-    // Returns a DTDebt array of all debts user is a part of
-    public DTDebt[] getDebts() {
-    	UserHomeActivity.transactionsMap = new HashMap<DTTransaction, HashSet<DTDebt>>();
-    	UserHomeActivity.transactionsObjectIdToDTTransaction = new HashMap<String, DTTransaction>();	
-    	UserHomeActivity.usersMap = new HashMap<DTUser, HashSet<DTDebt>>();
-    	
-    	UserHomeActivity.amountOwedToOthers = 0;
-    	UserHomeActivity.amountOwedToYou = 0;
-    	
-    	ArrayList<DTDebt> debts = new ArrayList<DTDebt>();
-    	    	
-        Log.d(DetApplication.TAG, "In getDebts CURRENT USER IS: " + DTUser.currentParseUser.getString("fbID")); 
+    private List<ParseObject> queryParseForDebts() throws ParseException {
+		// Query debts where user is debtor
+    	ParseQuery<ParseObject> creditorsQuery = ParseQuery.getQuery("Debt");
+    	creditorsQuery.whereEqualTo("creditor", DTUser.currentParseUser);
+    		    		
     	// Query debts where user is creditor
-    	try {
-    		// Query debts where user is debtor
-	    	ParseQuery<ParseObject> creditorsQuery = ParseQuery.getQuery("Debt");
-	    	creditorsQuery.whereEqualTo("creditor", DTUser.currentParseUser);
-	    		    		
-	    	// Query debts where user is creditor
-	    	ParseQuery<ParseObject> debtorsQuery = ParseQuery.getQuery("Debt");
-	    	debtorsQuery.whereEqualTo("debtor", DTUser.currentParseUser);
-	    	
-	    	// Main query to query for debts where the user is the creditor or debtor
-	    	List<ParseQuery<ParseObject>> queries = new ArrayList<ParseQuery<ParseObject>>();
-	    	queries.add(creditorsQuery);
-	    	queries.add(debtorsQuery);
-	    	ParseQuery<ParseObject> mainQuery = ParseQuery.or(queries);
-	    	
-	    	for (ParseObject queryResult : mainQuery.find()) {
-	    		debts.add(new DTDebt(queryResult));
-	    	}
-    	} catch (ParseException e) {
-    		Log.e(DetApplication.TAG, "DETAPP ERROR: " + e.toString());
-    		e.printStackTrace();
+    	ParseQuery<ParseObject> debtorsQuery = ParseQuery.getQuery("Debt");
+    	debtorsQuery.whereEqualTo("debtor", DTUser.currentParseUser);
+    	
+    	// Main query to query for debts where the user is the creditor or debtor
+    	List<ParseQuery<ParseObject>> queries = new ArrayList<ParseQuery<ParseObject>>();
+    	queries.add(creditorsQuery);
+    	queries.add(debtorsQuery);
+    	ParseQuery<ParseObject> mainQuery = ParseQuery.or(queries);
+    	mainQuery.include("transaction");
+    	mainQuery.include("creditor");
+    	mainQuery.include("debtor");
+    	
+    	return mainQuery.find();
+    }
+    
+    // Returns a DTDebt array of all debts user is a part of
+    public DTDebt[] getDebts() throws ParseException {    	
+    	// Reset maps
+    	UserHomeActivity.resetMaps();
+    	
+    	// Reset aggregate totals
+    	UserHomeActivity.resetAggregateTotalsValues();
+    	
+    	// Query parse for debts
+    	ArrayList<DTDebt> debts = new ArrayList<DTDebt>();    	
+    	for (ParseObject queryResult : this.queryParseForDebts()) {
+    		debts.add(new DTDebt(queryResult));
     	}
-    	    	
+    	
     	// Setup maps and add to aggregate totals
     	for (DTDebt debt : debts) {
     		// Find out whether current user is debtor or creditor
@@ -161,6 +159,10 @@ public class DTUser implements Serializable {
     		Log.d(DetApplication.TAG, "DETAPP " + keyValuePair.getKey().toString());
     	}
     	
+		Log.d(DetApplication.TAG, "DETAPP getDebts done. userMap is: " + UserHomeActivity.usersMap.toString());
+		Log.d(DetApplication.TAG, "DETAPP getDebts done. transactionMap is: " + UserHomeActivity.transactionsMap.toString());
+		Log.d(DetApplication.TAG, "DETAPP getDebts done. transactionsObjectIdToDTTransaction is: " + UserHomeActivity.transactionsObjectIdToDTTransaction.toString());
+
     	return debts.toArray(new DTDebt[debts.size()]);
     }
     
