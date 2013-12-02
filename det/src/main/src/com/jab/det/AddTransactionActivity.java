@@ -116,9 +116,6 @@ public class AddTransactionActivity extends Activity {
     	// Initialize and save transaction (note: this also saves all corresponding debts)
     	final DTTransaction transaction = new DTTransaction(UserHomeActivity.getCurrentUser(), otherUsers, Double.valueOf(transactionAmount), transactionDescription);
     	
-    	// Duplicates! >:(
-    	Log.d(DetApplication.TAG, "Duplicates test: " + transaction.toString());
-    	
     	stopWatch.stop();
     	Log.d(DetApplication.TAG, "DETAPP: Time elapsed for creating transaction: " + stopWatch.getTime());
     	
@@ -127,29 +124,43 @@ public class AddTransactionActivity extends Activity {
     		public void done(HashMap<String, Object> savedDebts, ParseException e) {
     			if (e != null) {
     				Log.e(DetApplication.TAG, "DETAPP Error calling cloud function" + e.toString());
+    				DetApplication.showToast(getApplicationContext(), "Error with parse cloud code");
+    				// TODO: Remove the debt that was optimistically added
+    				return;
     		    }
-    			
-    			Log.d(DetApplication.TAG, "Debug.. savedDebts is " + savedDebts.toString());
-    			
+    			    			
+    			// Show toast
     			DetApplication.showToast(getApplicationContext(), "Transaction and debts added to Parse");
     			
-    			ArrayList<DTDebt> debtsAfterDeserialization = LoadDebtsDataAsync.debtListAdapter.getDebts();
-    			DTTransaction transactionAfterDeserialization = debtsAfterDeserialization.get(debtsAfterDeserialization.size()-1).getTransaction();
-    			// Save debt parse objects to their respective debts
+    			// Wait to ensure debts are added before assigning parseobjects 
+    			// TODO: Do this better
+    			ArrayList<DTDebt> allDebtsInAdapter = LoadDebtsDataAsync.debtListAdapter.getDebts();
+    			if (allDebtsInAdapter.isEmpty()) {
+    				try {
+						Thread.sleep(1000);
+					} catch (InterruptedException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+    			}
+
+    			// TOOD: This assumes debt was added to the end of the array. Fix it.
+    			DTTransaction transactionAfterDeserialization = allDebtsInAdapter.get(allDebtsInAdapter.size()-1).getTransaction();
+
+    			ArrayList<DTDebt> debtsAfterDeserialization = transactionAfterDeserialization.getDebts();
+    			
+    			
+    			// For each newly saved debt, set its objectID and parseobject, and add debt to usersMap
     			for (DTDebt debt : debtsAfterDeserialization) {
-    				if (!savedDebts.containsKey(debt.getDebtor().getFacebookId())) {
-    					continue;
-    				}
-    				
-    				Log.d(DetApplication.TAG, "Debug.. debt is " + debt.toString());
-    				Log.d(DetApplication.TAG, "Debug.. debtor fbid is " + debt.getDebtor().getFacebookId());
+    				// Set debts' object ids and parse objeccts
     				ParseObject savedDebtParseObject= (ParseObject) savedDebts.get(debt.getDebtor().getFacebookId());
-    				Log.d(DetApplication.TAG, "Debug.. parseobject is " + savedDebtParseObject.toString());
-    				Log.d(DetApplication.TAG, "Debug.. objectid is " + savedDebtParseObject.getObjectId());
     				debt.setObjectId(savedDebtParseObject.getObjectId());
     				debt.setParseObject(savedDebtParseObject);
     				
     				// Save debts users map
+    				if (!UserHomeActivity.usersMap.containsKey(debt.getDebtor())) {
+    					UserHomeActivity.usersMap.put(debt.getDebtor(), new HashSet<DTDebt>());
+    				}
     				UserHomeActivity.usersMap.get(debt.getDebtor()).add(debt);
     			}
     			
@@ -163,10 +174,6 @@ public class AddTransactionActivity extends Activity {
     		}
     	});
     	
-//    	//Remove "You are not involved in any debts" string
-//    	TextView noDebtTextView = (TextView) findViewById(R.id.loading_debts);
-//    	noDebtTextView.setVisibility(View.INVISIBLE);
-    	
     	// Update aggregate totals
     	// Note: Assumes user is the creditor
     	for (DTDebt debt : transaction.getDebts()) {
@@ -175,7 +182,7 @@ public class AddTransactionActivity extends Activity {
     	UserHomeActivity.resetAggregateTotalsDisplay();
     	
     	// Update users map
-    	// Note: Assumes user is the creditor
+    	// TODO: Assumes user is the creditor
     	for (DTDebt debt : transaction.getDebts()) {
     		if (!UserHomeActivity.usersMap.containsKey(debt.getDebtor())) {
     			UserHomeActivity.usersMap.put(debt.getDebtor(), new HashSet<DTDebt>());

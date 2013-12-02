@@ -6,6 +6,7 @@ import java.util.HashSet;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.sax.StartElementListener;
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
@@ -88,7 +89,11 @@ public class UserHomeActivity extends Activity {
 		this.logoutButton.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				onLogoutButtonClicked();
+				// TODO: Remove debug messages
+				Log.d(DetApplication.TAG, "DEBUG transactionMap: " + transactionsMap);
+				Log.d(DetApplication.TAG, "DEBUG userMap: " + usersMap);
+				//Log out and start LoginActivity
+				//onLogoutButtonClicked();
 			}
 		});
     }

@@ -3,7 +3,9 @@ package com.jab.det;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 
 import org.json.JSONArray;
 
@@ -16,9 +18,11 @@ public class DTTransaction implements Serializable {
 	private ArrayList<DTDebt> debts;
 	private transient ParseObject parseObject;
 	private String objectId;
+	private final String dateCreated;
 	
 	// Create a transaction split evenly
 	public DTTransaction(DTUser currentUser, Collection<DTUser> otherUsers, Number amount, String description) {
+		this.dateCreated = (new Date()).toString();
 		// Note: Implementation assumes current user is the creditor
 		this.description = description;
 		this.debts = new ArrayList<DTDebt>();
@@ -29,6 +33,7 @@ public class DTTransaction implements Serializable {
 	
 	// Called from DTDebt(ParseObject), which is called by DTUser.getDebts()
 	public DTTransaction(ParseObject parseObject) {
+		this.dateCreated = (new Date()).toString();
 		this.parseObject = parseObject;
 		this.objectId = parseObject.getObjectId();
 		this.description = parseObject.getString("description");
@@ -90,7 +95,8 @@ public class DTTransaction implements Serializable {
 	
 	@Override
 	public int hashCode() {
-		return this.objectId.hashCode();
+		//return this.objectId.hashCode();
+		return this.dateCreated.hashCode();
 	}
 
 	public HashMap<String, Object> getCloudCodeRequestObject() {
@@ -117,5 +123,9 @@ public class DTTransaction implements Serializable {
 	
 	public void setObjectId(String objectId) {
 		this.objectId = objectId;
+	}
+
+	public void removeDebt(DTDebt debt) {
+		this.debts.remove(debt);
 	}
 }

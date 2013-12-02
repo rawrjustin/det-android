@@ -1,6 +1,7 @@
 package com.jab.det;
 
 import java.io.Serializable;
+import java.util.Date;
 import java.util.HashSet;
 
 import com.parse.ParseException;
@@ -9,15 +10,26 @@ import com.parse.ParseObject;
 @SuppressWarnings("serial") // Serialized object will be deserialized in the same context
 public class DTDebt implements Serializable {
 	
-	private String objectId;
 	private Number amount;
 	private DTUser creditor;
+	private final String dateCreated;
 	private DTUser debtor;
-	private DTTransaction transaction;
+	private String objectId;
 	private transient ParseObject parseObject;
+	private DTTransaction transaction;
+	
+	public DTDebt(DTUser creditor, DTUser debtor, Number amount, DTTransaction transaction) {
+		this.dateCreated = (new Date()).toString();
+		this.creditor = creditor;
+		this.debtor = debtor;
+		this.amount = amount;
+		this.transaction = transaction;
+		this.objectId = (new java.util.Date()).toString();
+	}
 	
 	// Added from DTUser.getDebts
 	public DTDebt(ParseObject parseObject) {
+		this.dateCreated = (new Date()).toString();
 		this.objectId = parseObject.getObjectId();
 		this.amount = parseObject.getNumber("amount");
 		this.creditor = new DTUser(parseObject.getParseUser("creditor").getString("fbID"), parseObject.getParseUser("creditor").getString("name"));
@@ -41,31 +53,9 @@ public class DTDebt implements Serializable {
 		}
 	}
 	
-	public DTUser getDebtor() {
-		return debtor;
-	}
-	
-	public DTDebt(DTUser creditor, DTUser debtor, Number amount, DTTransaction transaction) {
-		this.creditor = creditor;
-		this.debtor = debtor;
-		this.amount = amount;
-		this.transaction = transaction;
-	}
-	
-	public ParseObject getParseObject() {
-		return parseObject;
-	}
-
-	public String toString() {
-		return String.format("%s owes %s $%s for %s", this.debtor.toString(), this.creditor.toString(), this.amount.toString(), this.transaction.getDescription());
-	}
-	
-	public DTTransaction getTransaction() {
-		return this.transaction;
-	}
-	
-	public String getObjectId() {
-		return this.objectId;
+	@Override
+	public boolean equals(Object o) {
+		return !(o instanceof DTDebt) || o.equals(null) ? false : this.objectId.equals(((DTDebt) o).getObjectId());
 	}
 	
 	public Number getAmount() {
@@ -75,13 +65,31 @@ public class DTDebt implements Serializable {
 	public DTUser getCreditor() {
 		return this.creditor;
 	}
-		
-	public void setParseObject(ParseObject parseObject) {
-		this.parseObject = parseObject;
+
+	public DTUser getDebtor() {
+		return debtor;
 	}
 	
-	public void setObjectId(String objectId) {
-		this.objectId = objectId;
+	public String getObjectId() {
+		return this.objectId;
+	}
+	
+	public ParseObject getParseObject() {
+		return parseObject;
+	}
+	
+	public DTTransaction getTransaction() {
+		return this.transaction;
+	}
+	
+	@Override
+	public int hashCode() {
+		//return this.objectId.hashCode();
+		return this.dateCreated.hashCode();
+	}
+		
+	public DTUser getOtherUser() {
+		return this.creditor.equals(UserHomeActivity.getCurrentUser()) ? this.debtor : this.creditor;
 	}
 	
 	// Saves the debt to Parse, including the relationship to the transaction
@@ -96,13 +104,16 @@ public class DTDebt implements Serializable {
 		}
 	}
 	
-	@Override
-	public boolean equals(Object o) {
-		return !(o instanceof DTDebt) || o.equals(null) ? false : this.objectId.equals(((DTDebt) o).getObjectId());
+	public void setObjectId(String objectId) {
+		this.objectId = objectId;
+	}
+	
+	public void setParseObject(ParseObject parseObject) {
+		this.parseObject = parseObject;
 	}
 	
 	@Override
-	public int hashCode() {
-		return this.objectId.hashCode();
+	public String toString() {
+		return String.format("%s: %s owes %s $%s for %s", this.dateCreated.hashCode(), this.debtor, this.creditor, this.amount, this.transaction.getDescription());
 	}
 }

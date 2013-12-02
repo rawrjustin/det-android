@@ -1,7 +1,10 @@
 package com.jab.det;
 
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Iterator;
 
+import android.R.bool;
 import android.app.Activity;
 import android.content.Context;
 import android.util.Log;
@@ -46,6 +49,7 @@ public class DisplayDebtsAdapter extends ArrayAdapter<DTDebt> {
             convertView = mInflater.inflate(R.layout.debt_row, null);
             holder = new ViewHolder();
             holder.profilePictureView = (ProfilePictureView) convertView.findViewById(R.id.profile_pic);
+            holder.profilePictureView.setPresetSize(ProfilePictureView.CUSTOM);
             holder.textView = (TextView) convertView.findViewById(R.id.debt_text);
             holder.resolveButton = (RelativeLayout) convertView.findViewById(R.id.grid_element);
            
@@ -62,16 +66,19 @@ public class DisplayDebtsAdapter extends ArrayAdapter<DTDebt> {
 				// The current debt's object id is null only between when it was added optimistically via 
 				// serialization of the submitted transaction and when it is successfully saved
 				
-				Log.d(DetApplication.TAG, "Current debt's objectid is " + currentDebt.getObjectId());
+				Log.d(DetApplication.TAG, "DEBUG, debt to delete: " + currentDebt.toString());
+				
+				// Debt has not been saved to parse yet, so return without doing anything
 				if (currentDebt.getObjectId() == null) {
 					return;
 				}
 				
-	            // Update aggregate total
-	            if (currentDebt.getCreditor().equals(UserHomeActivity.getCurrentUser())) {
-	            	UserHomeActivity.amountOwedToYou -= currentDebt.getAmount().doubleValue();
-	            } else {
+				
+	            // Update aggregate totals on home activity
+	            if (UserHomeActivity.getCurrentUser().equals(currentDebt.getOtherUser())) {
 	            	UserHomeActivity.amountOwedToOthers -= currentDebt.getAmount().doubleValue();
+	            } else {
+	            	UserHomeActivity.amountOwedToYou -= currentDebt.getAmount().doubleValue();
 	            }
 	            UserHomeActivity.resetAggregateTotalsDisplay();
 	            	            
@@ -79,32 +86,45 @@ public class DisplayDebtsAdapter extends ArrayAdapter<DTDebt> {
 				currentDebt.getParseObject().deleteInBackground(new DeleteCallback() {
 					@Override
 					public void done(ParseException e) {
+						if (e != null) {
+							Log.e(DetApplication.TAG, "DETAPP Parse error: " + e.toString());
+							DetApplication.showToast(parent.getContext(), "Error deleting debt");
+							return;
+						}
+						
 						DetApplication.showToast(parent.getContext(), "Debt deleted from parse");
 						
 						// Remove debt from users map
-						DTUser userThatIsNotCurrentUser = currentDebt.getCreditor().equals(UserHomeActivity.getCurrentUser()) ?
-								currentDebt.getDebtor() : currentDebt.getCreditor();
-						Log.d(DetApplication.TAG, "DisplayDebtsAdapter, user that is not current user is " + userThatIsNotCurrentUser.toString()
-								+ " Position is " + position);
-						Log.d(DetApplication.TAG, "DisplayDebtsAdapter, usersmap before delete is " + UserHomeActivity.usersMap.toString());
-						UserHomeActivity.usersMap.get(userThatIsNotCurrentUser).remove(currentDebt);
-						if (UserHomeActivity.usersMap.get(userThatIsNotCurrentUser).isEmpty()) {
-							UserHomeActivity.usersMap.remove(userThatIsNotCurrentUser);
+						Log.d(DetApplication.TAG, "DEBUG: usersMap before removing debt: " + UserHomeActivity.usersMap);
+						UserHomeActivity.usersMap.get(currentDebt.getOtherUser()).remove(currentDebt);
+						if (UserHomeActivity.usersMap.get(currentDebt.getOtherUser()).isEmpty()) {
+							UserHomeActivity.usersMap.remove(currentDebt.getOtherUser());
 						}
-						Log.d(DetApplication.TAG, "DisplayDebtsAdapter, usersmap after delete is " + UserHomeActivity.usersMap.toString());
-
 						
+						Log.d(DetApplication.TAG, "DEBUG: usersMap after removing debt: " + UserHomeActivity.usersMap);
+
+						Log.d(DetApplication.TAG, "DEBUG: transactionsMap before removing debt: " + UserHomeActivity.transactionsMap);
+
 						// Remove debt from transactions map and delete transaction if necessary
 						UserHomeActivity.transactionsMap.get(currentDebt.getTransaction()).remove(currentDebt);
 						if (UserHomeActivity.transactionsMap.get(currentDebt.getTransaction()).isEmpty()) {
+							UserHomeActivity.transactionsMap.remove(currentDebt.getTransaction());
 							currentDebt.getTransaction().getParseObject().deleteInBackground(new DeleteCallback() {
 								@Override
 								public void done(ParseException e) {
+									if (e != null) {
+										Log.e(DetApplication.TAG, "DETAPP Parse Error: " + e.toString());
+										return;
+									}
+									
 									DetApplication.showToast(parent.getContext(), "Transaction deleted from parse");
 									UserHomeActivity.transactionsMap.remove(currentDebt.getTransaction());
 								}
 							});
 						}
+						
+						currentDebt.getTransaction().removeDebt(currentDebt);
+						Log.d(DetApplication.TAG, "DEBUG: transactionsMap after removing debt: " + UserHomeActivity.transactionsMap);
 					}
 				});
 				
