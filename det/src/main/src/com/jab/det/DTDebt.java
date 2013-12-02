@@ -77,6 +77,11 @@ public class DTDebt implements Serializable {
 	public ParseObject getParseObject() {
 		return parseObject;
 	}
+
+	// Prepends $ to amount and returns string
+	public String getAmountToString() {
+		return "$" + this.amount.toString();
+	}
 	
 	public DTTransaction getTransaction() {
 		return this.transaction;

@@ -25,4 +25,6 @@
     <string name="refresh_debts">r</string>
     <string name="no_debts">You are not involved in any debts</string>
     <string name="user_home_intro">det</string>
+    <string name="owes">owes</string>
+    <string name="debt_amount">$50</string>
 </resources>

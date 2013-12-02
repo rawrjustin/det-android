@@ -32,6 +32,8 @@ public class DisplayDebtsAdapter extends ArrayAdapter<DTDebt> {
 	private class ViewHolder {
 		ProfilePictureView profilePictureView;
 		TextView textView;
+		TextView friendNameText;
+		TextView debtAmount;
 		RelativeLayout resolveButton;
 	}
 	
@@ -49,8 +51,9 @@ public class DisplayDebtsAdapter extends ArrayAdapter<DTDebt> {
             convertView = mInflater.inflate(R.layout.debt_row, null);
             holder = new ViewHolder();
             holder.profilePictureView = (ProfilePictureView) convertView.findViewById(R.id.profile_pic);
-            holder.profilePictureView.setPresetSize(ProfilePictureView.CUSTOM);
-            holder.textView = (TextView) convertView.findViewById(R.id.debt_text);
+//            holder.textView = (TextView) convertView.findViewById(R.id.debt_text);
+            holder.friendNameText = (TextView) convertView.findViewById(R.id.friend_name);
+            holder.debtAmount = (TextView) convertView.findViewById(R.id.amount);
             holder.resolveButton = (RelativeLayout) convertView.findViewById(R.id.grid_element);
            
             convertView.setTag(holder);
@@ -59,7 +62,9 @@ public class DisplayDebtsAdapter extends ArrayAdapter<DTDebt> {
         }
         
         holder.profilePictureView.setProfileId(currentDebt.getDebtor().getFacebookId());
-        holder.textView.setText(currentDebt.toString());
+//        holder.textView.setText(currentDebt.toString());
+        holder.friendNameText.setText(currentDebt.getDebtor().getName());
+        holder.debtAmount.setText(currentDebt.getAmountToString());
         holder.resolveButton.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
@@ -140,7 +145,6 @@ public class DisplayDebtsAdapter extends ArrayAdapter<DTDebt> {
 	            }
 			}
 		});
-
         
 	    return convertView;
 	 }

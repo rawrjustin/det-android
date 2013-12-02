@@ -65,7 +65,6 @@ public class DTUser implements Serializable {
     	if (currentParseUser == null) {
     		currentParseUser = ParseUser.getCurrentUser();
     	}
-    	
         return getUserFromParseUser(currentParseUser);
     }
 
@@ -88,7 +87,6 @@ public class DTUser implements Serializable {
 		facebookID = parseUser.getString("fbID");
 		username = parseUser.getUsername();
 		email = parseUser.isAuthenticated() ? parseUser.getString("email") : "";
-		
 		
 		return new DTUser(objectId, email, facebookID, username, password, name);
 	}
