@@ -2,6 +2,7 @@ package com.jab.det;
 
 import android.app.Application;
 import android.content.Context;
+import android.graphics.Color;
 import android.widget.Toast;
 
 import com.parse.Parse;

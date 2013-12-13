@@ -3,6 +3,8 @@
   <!-- A COLOR NAMED background with value #FFFFFF in #RRGGBB hex value-->
   <color name="det_green">#66CC99</color>
   <color name="det_red">#EE6267</color>
+  <color name="det_green_opaque">#4C66CC99</color>
+  <color name="det_red_opaque">#4CEE6267</color>
   <!-- A COLOR NAMED mycolor with value #FFF in #RGB value-->
   <color name="mycolor">#FFF</color>
   <!-- A COLOR NAMED mycolor2 with value #00FFFFFF in #ARGB [A= ALPHA]value-->

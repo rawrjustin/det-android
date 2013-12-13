@@ -3,12 +3,20 @@ package com.jab.det;
 import java.util.HashMap;
 import java.util.HashSet;
 
+import javax.security.auth.PrivateCredentialPermission;
+
+import android.R.id;
 import android.app.Activity;
 import android.content.Intent;
+import android.content.res.ColorStateList;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.sax.StartElementListener;
 import android.util.Log;
 import android.view.View;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.LinearLayout.LayoutParams;
 import android.widget.TextView;
 
 import com.parse.ParseFacebookUtils;
@@ -19,7 +27,13 @@ public class UserHomeActivity extends Activity {
 	private TextView logoutButton;
 	private TextView refreshButton;
 	private TextView addTransactionButton;
-	private static TextView aggregateTextView;
+	private static TextView amountOwedToYouTextView;
+	private static TextView amountYouOweTextView;
+	private static TextView amountBalanceTextView;
+	private static View aggregate_graph_owed_to_you_ratio1;
+	private static View aggregate_graph_owed_to_you_ratio2;
+	private static View aggregate_graph_you_owe_ratio1;
+	private static View aggregate_graph_you_owe_ratio2;
 	private static DTUser currentUser;
 	private LoadDebtsDataAsync loadDebtsData;
 	public static double amountOwedToOthers;
@@ -33,7 +47,14 @@ public class UserHomeActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
     	super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_home);
-        UserHomeActivity.aggregateTextView = (TextView) findViewById(R.id.user_home_aggregate);
+//        UserHomeActivity.aggregateTextView = (TextView) findViewById(R.id.user_home_aggregate);
+        UserHomeActivity.amountOwedToYouTextView = (TextView) findViewById(R.id.aggregate_graph_owed_to_you_amount);
+        UserHomeActivity.amountYouOweTextView = (TextView) findViewById(R.id.aggregate_graph_you_owe_amount);
+        UserHomeActivity.amountBalanceTextView = (TextView) findViewById(R.id.aggregate_graph_total_balance_amount);
+        UserHomeActivity.aggregate_graph_owed_to_you_ratio1 = (View) findViewById(R.id.aggregate_graph_owed_to_you_ratio1); 
+        UserHomeActivity.aggregate_graph_owed_to_you_ratio2 = (View) findViewById(R.id.aggregate_graph_owed_to_you_ratio2);
+        UserHomeActivity.aggregate_graph_you_owe_ratio1 = (View) findViewById(R.id.aggregate_graph_you_owe_ratio1);
+        UserHomeActivity.aggregate_graph_you_owe_ratio2 = (View) findViewById(R.id.aggregate_graph_you_owe_ratio2);
         setCurrentUser();
         setupAddTransactionButton();
         setupRefreshButton();
@@ -64,8 +85,37 @@ public class UserHomeActivity extends Activity {
     	amountOwedToOthers = Math.round(amountOwedToOthers*100.0)/100.0;
     	amountOwedToYou = Math.round(amountOwedToYou*100.0)/100.0;
     	double balance = Math.round((amountOwedToYou - amountOwedToOthers)*100.0)/100.0;
-    	aggregateTextView.setText(String.format("Balance: %s\nYou owe others %s\nOthers owe you %s", 
-    			balance, amountOwedToOthers, amountOwedToYou));
+    	UserHomeActivity.amountOwedToYouTextView.setText(String.format("$%s", amountOwedToYou));
+    	UserHomeActivity.amountYouOweTextView.setText(String.format("$%s", amountOwedToOthers));
+    	UserHomeActivity.amountBalanceTextView.setText(String.format("$%s", balance));
+    	if (balance < 0) {
+    		UserHomeActivity.amountBalanceTextView.setTextColor(Color.rgb(238, 98, 103));
+    	} else {
+    		UserHomeActivity.amountBalanceTextView.setTextColor(Color.rgb(102, 204, 153));
+    	}
+
+    	float owedToYouRatio1 = (float) ((float) amountOwedToOthers/(amountOwedToYou+amountOwedToOthers));
+    	float owedToYouRatio2 = (float) ((float) amountOwedToYou/(amountOwedToYou+amountOwedToOthers));
+    	float youOweRatio1 = (float) ((float) amountOwedToYou/(amountOwedToYou+amountOwedToOthers));
+    	float youOweRatio2 = (float) ((float) amountOwedToOthers/(amountOwedToYou+amountOwedToOthers));
+    	
+    	if (amountOwedToYou == 0 && amountOwedToOthers == 0) {
+    		owedToYouRatio1 = 1;
+    		owedToYouRatio2 = 0;
+    		youOweRatio1 = 1;
+    		youOweRatio2 = 0;
+    	}
+    	// Set owed to you graph
+    	UserHomeActivity.aggregate_graph_owed_to_you_ratio1.setLayoutParams(new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, 
+    			LayoutParams.MATCH_PARENT, owedToYouRatio1));
+    	UserHomeActivity.aggregate_graph_owed_to_you_ratio2.setLayoutParams(new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, 
+    			LayoutParams.MATCH_PARENT, owedToYouRatio2));
+    	
+    	// Set you owe graph
+    	UserHomeActivity.aggregate_graph_you_owe_ratio1.setLayoutParams(new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, 
+    			LayoutParams.MATCH_PARENT, youOweRatio1));
+    	UserHomeActivity.aggregate_graph_you_owe_ratio2.setLayoutParams(new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, 
+    			LayoutParams.MATCH_PARENT, youOweRatio2));
     }
     
     private void setupRefreshButton() {

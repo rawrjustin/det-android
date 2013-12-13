@@ -39,14 +39,130 @@
 			android:textSize="22sp" 
 			android:text="@string/add_transaction"
 	         />
-	</RelativeLayout>>
+	</RelativeLayout>
+	<View
+        android:id="@+id/home_top_padding"
+        android:layout_width="fill_parent"
+        android:layout_height="11dp"
+        android:layout_below="@+id/user_home_menu_bar" />
     <TextView
         android:id="@+id/user_home_aggregate"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-    	android:layout_below="@id/user_home_menu_bar"
+    	android:layout_below="@id/home_top_padding"
         android:lines="3"
-		android:textSize="18sp" />
+		android:textSize="18sp" 
+		android:textColor="@android:color/white"/>
+    <LinearLayout
+        android:id="@+id/aggreate_graph_line1"
+        android:layout_width="match_parent"
+	    android:layout_height="wrap_content"
+		android:orientation="horizontal"
+		android:paddingBottom="5dp"
+		android:layout_below="@id/home_top_padding">
+        <TextView 
+            android:id="@+id/aggregate_graph_total_balance_text"
+            android:layout_width="110dp"
+            android:layout_height="wrap_content"
+            android:paddingLeft="15dp"
+            android:text="total balance"
+            />
+        <FrameLayout
+            android:id="@+id/aggregate_graph_owed_to_you_frame"
+            android:layout_weight="1"
+            android:layout_width="0dp"
+            android:layout_height="fill_parent">
+            <LinearLayout
+                android:id="@+id/aggregate_graph_owed_to_you_linear"
+	            android:layout_width="fill_parent"
+	            android:layout_height="fill_parent"
+	            android:orientation="horizontal">
+	            <View 
+	                android:id="@+id/aggregate_graph_owed_to_you_ratio1"
+	                android:layout_height="fill_parent"
+	                android:layout_width="0dp"
+	                android:background="@color/det_green"/>
+	            <View 
+	                android:id="@+id/aggregate_graph_owed_to_you_ratio2"
+	                android:layout_height="fill_parent"
+	                android:layout_width="0dp"
+	                android:background="@color/det_green_opaque"
+	                android:layout_weight="1"/>
+            </LinearLayout>
+            <TextView
+	            android:layout_width="fill_parent"
+	            android:layout_height="fill_parent"
+            	android:textColor="@android:color/white"
+            	android:textStyle="italic"
+            	android:text=" owed to you"/>
+        </FrameLayout>
+        <TextView 
+            android:id="@+id/aggregate_graph_owed_to_you_amount"
+            android:layout_width="90dp"
+            android:layout_height="wrap_content"
+            android:paddingRight="15dp"
+            android:gravity="right"
+            android:textColor="@color/det_green"
+            android:textStyle="bold"
+            android:textSize="17sp"
+            />
+    </LinearLayout>
+    <LinearLayout
+        android:id="@+id/aggreate_graph_line2"
+        android:layout_width="match_parent"
+	    android:layout_height="wrap_content"
+		android:orientation="horizontal"
+		android:layout_below="@id/aggreate_graph_line1">
+        <TextView 
+            android:id="@+id/aggregate_graph_total_balance_amount"
+            android:layout_width="110dp"
+            android:layout_height="wrap_content"
+            android:textColor="@color/det_green"
+            android:textSize="17sp"
+            android:textStyle="bold"
+            android:paddingLeft="15dp"
+            />
+        <FrameLayout
+            android:id="@+id/aggregate_graph_you_owe_frame"
+            android:layout_weight="1"
+            android:layout_width="0dp"
+            android:layout_height="fill_parent">
+            <LinearLayout
+                android:id="@+id/aggregate_graph_you_owe_linear"
+	            android:layout_width="fill_parent"
+	            android:layout_height="fill_parent"
+	            android:orientation="horizontal">
+	            <View 
+	                android:id="@+id/aggregate_graph_you_owe_ratio1"
+	                android:layout_height="fill_parent"
+	                android:layout_width="0dp"
+	                android:background="@color/det_red"
+	                android:layout_weight="0"/>
+	            <View 
+	                android:id="@+id/aggregate_graph_you_owe_ratio2"
+	                android:layout_height="fill_parent"
+	                android:layout_width="0dp"
+	                android:background="@color/det_red_opaque"
+	                android:layout_weight="1"/>
+            </LinearLayout>
+            <TextView
+	            android:layout_width="fill_parent"
+	            android:layout_height="wrap_content"
+            	android:textColor="@android:color/white"
+            	android:textStyle="italic"
+            	android:text=" you owe"/>
+        </FrameLayout>
+        <TextView 
+            android:id="@+id/aggregate_graph_you_owe_amount"
+            android:layout_width="90dp"
+            android:layout_height="wrap_content"
+            android:gravity="right"
+            android:paddingRight="15dp"
+            android:textColor="@color/det_red"
+            android:textStyle="bold"
+            android:textSize="17sp"
+            />
+    </LinearLayout>
     <TextView
         android:id="@+id/loading_debts"
         android:layout_width="wrap_content"
@@ -55,17 +171,15 @@
         android:layout_centerHorizontal="true"
         android:textSize="18sp" />
     <View
-        android:id="@+id/home_bottom_padding"
+        android:id="@+id/home_top_padding2"
         android:layout_width="fill_parent"
         android:layout_height="11dp"
-        android:layout_alignParentBottom="true"
-        />
+        android:layout_below="@+id/aggreate_graph_line2" />
     <GridView 
         android:id="@+id/debt_grid"
     	android:layout_width="fill_parent" 
     	android:layout_height="fill_parent"
-    	android:layout_below="@id/user_home_aggregate"
-    	android:layout_above="@id/home_bottom_padding"
+    	android:layout_below="@id/home_top_padding2"
         android:verticalSpacing="10dp"
 		android:horizontalSpacing="-13dp"
         android:numColumns="2">

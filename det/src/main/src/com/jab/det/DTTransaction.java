@@ -102,7 +102,7 @@ public class DTTransaction implements Serializable {
 	public HashMap<String, Object> getCloudCodeRequestObject() {
 		HashMap<String, Object> requestObject = new HashMap<String, Object>();
 		ArrayList<String> fbIds = new ArrayList<String>(); 
-		requestObject.put("creditor", UserHomeActivity.getCurrentUser().getObjectId());
+		requestObject.put("user", UserHomeActivity.getCurrentUser().getObjectId());
 		requestObject.put("description", this.description);
 		for (DTDebt debt : this.debts) {
 			HashMap<String, Object> debtorMap = new HashMap<String, Object>();
