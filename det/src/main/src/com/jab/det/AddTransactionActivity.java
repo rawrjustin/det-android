@@ -83,7 +83,7 @@ public class AddTransactionActivity extends Activity {
 			
 			@Override
 			public void onClick(View v) {
-				DetApplication.showToast(getApplicationContext(), "Only user paid supported");
+				DetApplication.showToast(getApplicationContext(), "Only split evenly supported");
 			}
 		});        
 		
@@ -92,7 +92,7 @@ public class AddTransactionActivity extends Activity {
 			
 			@Override
 			public void onClick(View v) {
-				DetApplication.showToast(getApplicationContext(), "Only split evenly supported");
+				DetApplication.showToast(getApplicationContext(), "Only user paid supported");
 			}
 		});
     }
