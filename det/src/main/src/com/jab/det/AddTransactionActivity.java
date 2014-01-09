@@ -10,11 +10,15 @@ import org.apache.commons.lang3.time.StopWatch;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.Editable;
 import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.facebook.model.GraphUser;
@@ -27,11 +31,14 @@ public class AddTransactionActivity extends Activity {
 
 	public final static String EXTRA_DEBTS = "com.jab.det.addTransaction";
 	private static Collection<GraphUser> selectedFriends;
-	private TextView addFriendsResultTextView;
+	private TextView homeTextView;
+	private TextView selectedFriendsTextView;
 	private Button selectFriendsButton;
-	private Button submitTransactionButton;
+	private TextView submitTransactionButton;
 	private EditText transactionAmountEditText;
 	private EditText transactionDescriptionEditText;
+	private TextView paidByText;
+	private TextView howSplitText;
 	private String transactionAmount;
 	private String transactionDescription;
 	
@@ -48,20 +55,46 @@ public class AddTransactionActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_transaction);
         
-        this.addFriendsResultTextView = (TextView) findViewById(R.id.select_friends_result);
-        this.selectFriendsButton = (Button) findViewById(R.id.select_friends);
-        this.selectFriendsButton.setOnClickListener(new View.OnClickListener() {
+        homeTextView = (TextView) findViewById(R.id.cancelDebtButton);
+        homeTextView.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				finish();
+			}
+		});
+        
+        selectedFriendsTextView = (TextView) findViewById(R.id.selected_friends);
+        selectFriendsButton = (Button) findViewById(R.id.select_friends);
+        selectFriendsButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
                 onClickSelectFriends();
             }
         });
         
-        submitTransactionButton = (Button) findViewById(R.id.add_transaction_submit);
+        submitTransactionButton = (TextView) findViewById(R.id.saveTransactionButton);
         submitTransactionButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
             	onClickSubmitTransaction();
             }
         });
+        
+        howSplitText = (TextView) findViewById(R.id.add_transaction_how_split_text);
+        howSplitText.setOnClickListener(new View.OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				DetApplication.showToast(getApplicationContext(), "Only user paid supported");
+			}
+		});        
+		
+		paidByText = (TextView) findViewById(R.id.add_transaction_whom_text);
+		paidByText.setOnClickListener(new View.OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				DetApplication.showToast(getApplicationContext(), "Only split evenly supported");
+			}
+		});
     }
 
     @Override
@@ -201,19 +234,22 @@ public class AddTransactionActivity extends Activity {
     // Display selected friends
     private void displaySelectedFriends() {
         String results = "";
+        RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) selectFriendsButton.getLayoutParams();
         if (selectedFriends != null && selectedFriends.size() > 0) {
             ArrayList<String> names = new ArrayList<String>();
             for (GraphUser user : selectedFriends) {
                 names.add(user.getName());
             }
-            results = TextUtils.join(", ", names);
+            results = TextUtils.join("\n", names);
+            params.addRule(RelativeLayout.BELOW, R.id.selected_friends);
         } else {
-            results = "<No friends selected>";
+        	params.addRule(RelativeLayout.BELOW, R.id.add_transaction_with_you_and);
         }
-
-        addFriendsResultTextView.setText(results);
+        
+        selectFriendsButton.setLayoutParams(params);
+        selectedFriendsTextView.setText(results);
     }
-
+    
     // Runs when select friends is clicked
     private void onClickSelectFriends() {
         startPickFriendsActivity();

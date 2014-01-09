@@ -1,76 +1,189 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-	android:orientation="vertical" >
-	<!-- How much did you pay -->
-    <LinearLayout
-        android:id="@+id/submit_how_much_did_you_pay"
-	    android:layout_width="fill_parent"
+    android:layout_height="match_parent" >
+	<RelativeLayout
+    android:id="@+id/add_transaction_menu_bar"
+    android:layout_width="fill_parent"
+	android:layout_height="48dp" 
+	android:background="@color/det_green" >
+	<TextView
+	    android:id="@+id/cancelDebtButton"
+	    android:layout_width="wrap_content"
+        android:layout_height="fill_parent"
+        android:paddingLeft="10dp"
+        android:layout_alignParentLeft="true"
+        android:gravity="center_vertical"
+        android:textColor="@android:color/white"
+		android:textSize="15sp" 
+		android:text="@string/cancel_transaction_text"
+        />
+	<TextView
+        android:id="@+id/add_transaction_intro"
+        android:layout_width="wrap_content"
+        android:layout_height="fill_parent"
+		android:gravity="center_vertical"
+		android:layout_centerHorizontal="true"
+        android:textSize="22sp" 
+        android:textColor="@android:color/white"
+        android:text="@string/user_home_intro" 
+        />
+	<TextView
+	    android:id="@+id/saveTransactionButton"
+	    android:layout_width="wrap_content"
+        android:layout_height="fill_parent"
+        android:paddingRight="10dp"
+        android:layout_alignParentRight="true"
+        android:gravity="center_vertical"
+        android:textColor="@android:color/white"
+		android:textSize="15sp" 
+		android:text="@string/save_transaction_text"
+         />
+	</RelativeLayout>
+	<!-- New bill of -->
+	<TextView
+	    android:id="@+id/new_bill_text"
+	    android:layout_width="wrap_content"
 	    android:layout_height="wrap_content"
-		android:orientation="horizontal" >
-	    <TextView
-	        android:layout_width="wrap_content"
-	        android:layout_height="wrap_content"
-	        android:layout_weight="0"
-	        android:text="@string/add_transaction_amount" />
-	    <EditText android:id="@+id/edit_transaction_amount"
-	        android:layout_width="wrap_content"
-	        android:layout_height="wrap_content"
-	        android:layout_weight="1"
-	        android:inputType="numberDecimal"
-	        android:hint="@string/add_transaction_amount_hint" />
-    </LinearLayout>
-	<!-- What did you pay for -->
-    <LinearLayout
-        android:id="@+id/submit_what_did_you_pay_for"
-	    android:layout_width="fill_parent"
+	    android:paddingTop="40dp"
+	    android:textSize="22sp" 
+	    android:layout_centerHorizontal="true"
+	    android:layout_below="@id/add_transaction_menu_bar"
+	    android:text="New bill of"
+	    />
+	<!-- $0.00 -->
+	<LinearLayout
+	    android:id="@+id/submit_transaction_amount_linear_layout"
+	    android:layout_width="wrap_content"
 	    android:layout_height="wrap_content"
-		android:orientation="horizontal" >
-	    <TextView
-	        android:layout_width="wrap_content"
-	        android:layout_height="wrap_content"
-	        android:layout_weight="0"
-	        android:text="@string/add_transaction_description" />
-	    <EditText android:id="@+id/edit_transaction_description"
-	        android:layout_weight="1"
-	        android:layout_width="wrap_content"
-	        android:layout_height="wrap_content"
-	        android:singleLine="true"
-	        android:hint="@string/add_transaction_description_hint" />
-    </LinearLayout>
-    <!-- Who did you pay for -->
-    <LinearLayout
-        android:id="@+id/submit_whom_did_you_pay_for"
-        android:layout_width="fill_parent"
-	    android:layout_height="wrap_content"
-	    android:orientation="vertical" >
-        <LinearLayout
+	    android:layout_centerHorizontal="true"
+	    android:layout_below="@id/new_bill_text"
+	    android:orientation="horizontal" >
+		<TextView 
 		    android:layout_width="wrap_content"
 		    android:layout_height="wrap_content"
-			android:orientation="horizontal" >
-		    <TextView
-		        android:layout_width="wrap_content"
-		        android:layout_height="wrap_content"
-		        android:text="@string/select_friends_text" />
-		    <Button android:id="@+id/select_friends"
-		        android:layout_width="wrap_content"
-		        android:layout_height="wrap_content"
-		        android:text="@string/select_friends_button" />
-		</LinearLayout>
-		<TextView
-            android:id="@+id/select_friends_result"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content" />
-		<LinearLayout
-		    android:layout_width="fill_parent"
-		    android:layout_height="wrap_content" >
-			<Button android:id="@+id/add_transaction_submit"
-		        android:layout_width="fill_parent"
-		        android:layout_height="wrap_content"
-		        android:gravity="center"
-		        android:text="@string/add_transaction_submit" />
-    	</LinearLayout>
-    </LinearLayout>
-</LinearLayout>
+		    android:textSize="22sp"
+		    android:textColor="@color/det_green"
+		    android:text="$"
+		    />
+	    <EditText 
+	        android:id="@+id/edit_transaction_amount"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:textSize="22sp"
+	        android:inputType="numberDecimal"
+	        android:background="#00000000"
+	        android:textColor="@color/det_green"
+	        android:textColorHint="@color/det_green_slightly_opaque"
+	        android:hint="@string/add_transaction_amount_hint" 
+	        />
+	</LinearLayout>
+	<!-- for -->
+	<TextView 
+	    android:id="@+id/add_transaction_for"
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"
+	    android:layout_centerHorizontal="true"
+	    android:textSize="22sp"
+	    android:layout_below="@id/submit_transaction_amount_linear_layout"
+	    android:text="for"
+	    />
+	<!-- description -->
+	<EditText 
+	    android:id="@+id/edit_transaction_description"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:gravity="center"
+        android:background="#00000000"
+        android:textSize="22sp"
+        android:maxLength="30"
+        android:singleLine="true"
+        android:inputType="textNoSuggestions"
+        android:layout_below="@id/add_transaction_for"
+        android:textColor="@color/det_green"
+        android:textColorHint="@color/det_green_slightly_opaque"
+        android:hint="@string/add_transaction_description_hint" 
+        />
+	<!-- with you and -->
+	<TextView 
+	    android:id="@+id/add_transaction_with_you_and"
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"
+	    android:layout_centerHorizontal="true"
+	    android:textSize="22sp"
+	    android:layout_below="@id/edit_transaction_description"
+	    android:text="with you and"
+	    />
+	<TextView 
+	    android:id="@+id/selected_friends"
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"
+	    android:textSize="22sp"
+	    android:gravity="center_horizontal"
+	    android:layout_centerHorizontal="true"
+	    android:textColor="@color/det_green"
+	    android:layout_below="@id/add_transaction_with_you_and"
+	    />
+	<Button 
+	    android:id="@+id/select_friends"
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"
+	    android:layout_centerHorizontal="true"
+	    android:textSize="22sp"
+	    android:textColor="@color/det_green_slightly_opaque"
+	    android:background="?android:attr/selectableItemBackground"
+	    android:layout_below="@id/add_transaction_with_you_and"
+	    android:text=" select friends "
+	    />
+	<!-- Paid by you -->
+	<LinearLayout
+	    android:id="@+id/paid_by_linear_layout"
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"
+	    android:layout_centerHorizontal="true"
+	    android:paddingTop="40dp"
+	    android:layout_below="@id/select_friends"
+	    android:orientation="horizontal" >
+	    <TextView 
+		    android:id="@+id/add_transaction_paid_by_text"
+		    android:layout_width="wrap_content"
+		    android:layout_height="wrap_content"
+		    android:textSize="22sp"
+		    android:text="Paid by "
+		    />
+	    <TextView 
+		    android:id="@+id/add_transaction_whom_text"
+		    android:layout_width="wrap_content"
+		    android:layout_height="wrap_content"
+		    android:textSize="22sp"
+		    android:textColor="@color/det_green"
+		    android:text="you"
+		    />
+	</LinearLayout>
+	<!-- Split evenly -->
+	<LinearLayout
+	    android:id="@+id/split_format_linear_layout"
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"
+	    android:layout_centerHorizontal="true"
+	    android:layout_below="@id/paid_by_linear_layout"
+	    android:orientation="horizontal" >
+	    <TextView 
+		    android:id="@+id/add_transaction_and_split_text"
+		    android:layout_width="wrap_content"
+		    android:layout_height="wrap_content"
+		    android:textSize="22sp"
+		    android:text="and split "
+		    />
+	    <TextView 
+		    android:id="@+id/add_transaction_how_split_text"
+		    android:layout_width="wrap_content"
+		    android:layout_height="wrap_content"
+		    android:textSize="22sp"
+		    android:textColor="@color/det_green"
+		    android:text="evenly"
+		    />
+	</LinearLayout>
+</RelativeLayout>
