@@ -1,5 +1,6 @@
 package com.jab.det;
 
+import java.text.DecimalFormat;
 import java.util.HashMap;
 import java.util.HashSet;
 
@@ -47,7 +48,6 @@ public class UserHomeActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
     	super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_home);
-//        UserHomeActivity.aggregateTextView = (TextView) findViewById(R.id.user_home_aggregate);
         UserHomeActivity.amountOwedToYouTextView = (TextView) findViewById(R.id.aggregate_graph_owed_to_you_amount);
         UserHomeActivity.amountYouOweTextView = (TextView) findViewById(R.id.aggregate_graph_you_owe_amount);
         UserHomeActivity.amountBalanceTextView = (TextView) findViewById(R.id.aggregate_graph_total_balance_amount);
@@ -85,9 +85,11 @@ public class UserHomeActivity extends Activity {
     	amountOwedToOthers = Math.round(amountOwedToOthers*100.0)/100.0;
     	amountOwedToYou = Math.round(amountOwedToYou*100.0)/100.0;
     	double balance = Math.round((amountOwedToYou - amountOwedToOthers)*100.0)/100.0;
-    	UserHomeActivity.amountOwedToYouTextView.setText(String.format("$%s", amountOwedToYou));
-    	UserHomeActivity.amountYouOweTextView.setText(String.format("$%s", amountOwedToOthers));
-    	UserHomeActivity.amountBalanceTextView.setText(String.format("$%s", balance));
+
+    	UserHomeActivity.amountOwedToYouTextView.setText(DetApplication.formatAsDollarAmount(amountOwedToYou));
+    	UserHomeActivity.amountYouOweTextView.setText(DetApplication.formatAsDollarAmount(amountOwedToOthers));
+    	UserHomeActivity.amountBalanceTextView.setText(DetApplication.formatAsDollarAmount(balance));
+
     	if (balance < 0) {
     		UserHomeActivity.amountBalanceTextView.setTextColor(Color.rgb(238, 98, 103));
     	} else {

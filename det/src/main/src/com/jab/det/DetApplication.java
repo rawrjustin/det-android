@@ -1,5 +1,7 @@
 package com.jab.det;
 
+import java.text.DecimalFormat;
+
 import android.app.Application;
 import android.content.Context;
 import android.graphics.Color;
@@ -10,7 +12,9 @@ import com.parse.ParseFacebookUtils;
 
 public class DetApplication extends Application {
 
-	static final String TAG = "DetApp";
+	public static final String TAG = "DetApp";
+	private static final DecimalFormat DECIMAL_FORMAT = new DecimalFormat("$##.00");
+	
 	@Override
 	public void onCreate() {
 		// Initialize Parse
@@ -25,5 +29,10 @@ public class DetApplication extends Application {
     public static void showToast(Context context, String message) {
     	Toast toast = Toast.makeText(context, message, Toast.LENGTH_SHORT);
     	toast.show();
+    }
+    
+    // Format double as dollar amount
+    public static String formatAsDollarAmount(double d) {
+    	return d == 0 ? "$0" : DetApplication.DECIMAL_FORMAT.format(d);
     }
 }
