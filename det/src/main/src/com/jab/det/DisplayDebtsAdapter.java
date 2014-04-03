@@ -13,6 +13,9 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.facebook.widget.ProfilePictureView;
+import com.jab.det.DTObjects.DTDebt;
+import com.jab.det.DTObjects.DTUser;
+import com.jab.det.DTObjects.DTUtils;
 import com.parse.DeleteCallback;
 import com.parse.ParseException;
 
@@ -48,8 +51,6 @@ public class DisplayDebtsAdapter extends ArrayAdapter<DTDebt> {
             convertView = mInflater.inflate(R.layout.debt_row, null);
             holder = new ViewHolder();
             holder.profilePictureView = (ProfilePictureView) convertView.findViewById(R.id.profile_pic);
-            // holder.textView = (TextView)
-            // convertView.findViewById(R.id.debt_text);
             holder.friendNameText = (TextView) convertView.findViewById(R.id.friend_name);
             holder.debtAmount = (TextView) convertView.findViewById(R.id.amount);
             holder.resolveButton = (RelativeLayout) convertView.findViewById(R.id.grid_element);
@@ -60,31 +61,18 @@ public class DisplayDebtsAdapter extends ArrayAdapter<DTDebt> {
         }
 
         holder.profilePictureView.setProfileId(currentDebt.getDebtor().getFacebookId());
-        // holder.textView.setText(currentDebt.toString());
         holder.friendNameText.setText(currentDebt.getDebtor().getName());
         holder.debtAmount.setText(currentDebt.getAmountToString());
-        holder.resolveButton.setOnClickListener(new View.OnClickListener() {
+        holder.resolveButton.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
-            public void onClick(View v) {
-                // The current debt's object id is null only between when it was
-                // added optimistically via
-                // serialization of the submitted transaction and when it is
-                // successfully saved
-
-                Log.d(DetApplication.TAG, "DEBUG, debt to delete: " + currentDebt.toString());
-
-                // Debt has not been saved to parse yet, so return without doing
-                // anything
-                if (currentDebt.getObjectId() == null) {
-                    return;
-                }
-
+            public boolean onLongClick(View v) {
                 // Update aggregate totals on home activity
-                if (UserHomeActivity.getCurrentUser().equals(currentDebt.getOtherUser())) {
+                if (currentDebt.getCreditor().equals(UserHomeActivity.getCurrentUser())) {
                     UserHomeActivity.amountOwedToOthers -= currentDebt.getAmount().doubleValue();
                 } else {
                     UserHomeActivity.amountOwedToYou -= currentDebt.getAmount().doubleValue();
                 }
+
                 UserHomeActivity.resetAggregateTotalsDisplay();
 
                 // Delete parse object from parse
@@ -99,38 +87,24 @@ public class DisplayDebtsAdapter extends ArrayAdapter<DTDebt> {
 
                         DetApplication.showToast(parent.getContext(), "Debt deleted from parse");
 
-                        // Remove debt from users map
-                        Log.d(DetApplication.TAG, "DEBUG: usersMap before removing debt: " + UserHomeActivity.usersMap);
-                        UserHomeActivity.usersMap.get(currentDebt.getOtherUser()).remove(currentDebt);
-                        if (UserHomeActivity.usersMap.get(currentDebt.getOtherUser()).isEmpty()) {
-                            UserHomeActivity.usersMap.remove(currentDebt.getOtherUser());
+                        // Remove debt from friend map
+                        DTUser friend = DTUtils.getFriend(currentDebt);
+                        DetApplication.friendToDebtsMap.get(friend).remove(currentDebt);
+                        if (DetApplication.friendToDebtsMap.get(friend).isEmpty()) {
+                            DetApplication.friendToDebtsMap.remove(friend);
                         }
 
-                        Log.d(DetApplication.TAG, "DEBUG: usersMap after removing debt: " + UserHomeActivity.usersMap);
-
-                        Log.d(DetApplication.TAG, "DEBUG: transactionsMap before removing debt: " + UserHomeActivity.transactionsMap);
-
-                        // Remove debt from transactions map and delete
-                        // transaction if necessary
-                        UserHomeActivity.transactionsMap.get(currentDebt.getTransaction()).remove(currentDebt);
-                        if (UserHomeActivity.transactionsMap.get(currentDebt.getTransaction()).isEmpty()) {
-                            UserHomeActivity.transactionsMap.remove(currentDebt.getTransaction());
+                        // Remove debt from transactions map and delete transaction if necessary
+                        currentDebt.getTransaction().getDebts().remove(currentDebt);
+                        if (currentDebt.getTransaction().getDebts().isEmpty()) {
                             currentDebt.getTransaction().getParseObject().deleteInBackground(new DeleteCallback() {
                                 @Override
                                 public void done(ParseException e) {
-                                    if (e != null) {
-                                        Log.e(DetApplication.TAG, "DETAPP Parse Error: " + e.toString());
-                                        return;
-                                    }
-
+                                    // TODO Auto-generated method stub
                                     DetApplication.showToast(parent.getContext(), "Transaction deleted from parse");
-                                    UserHomeActivity.transactionsMap.remove(currentDebt.getTransaction());
                                 }
                             });
                         }
-
-                        currentDebt.getTransaction().removeDebt(currentDebt);
-                        Log.d(DetApplication.TAG, "DEBUG: transactionsMap after removing debt: " + UserHomeActivity.transactionsMap);
                     }
                 });
 
@@ -144,6 +118,8 @@ public class DisplayDebtsAdapter extends ArrayAdapter<DTDebt> {
                     noDebtTextView.setVisibility(View.VISIBLE);
                     noDebtTextView.setText(v.getResources().getString(R.string.no_debts));
                 }
+
+                return true;
             }
         });
 

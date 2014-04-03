@@ -3,11 +3,11 @@ package com.jab.det;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
 
 import org.apache.commons.lang3.time.StopWatch;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -19,14 +19,14 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.facebook.model.GraphUser;
+import com.jab.det.DTObjects.DTTransaction;
+import com.jab.det.DTObjects.DTUser;
 import com.parse.FunctionCallback;
 import com.parse.ParseCloud;
 import com.parse.ParseException;
-import com.parse.ParseObject;
 
 public class AddTransactionActivity extends Activity {
 
-    public final static String EXTRA_DEBTS = "com.jab.det.addTransaction";
     private static Collection<GraphUser> selectedFriends;
     private TextView homeTextView;
     private TextView selectedFriendsTextView;
@@ -150,87 +150,26 @@ public class AddTransactionActivity extends Activity {
         stopWatch.stop();
         Log.d(DetApplication.TAG, "DETAPP: Time elapsed for creating transaction: " + stopWatch.getTime());
 
+        ProgressDialog.show(AddTransactionActivity.this, "", "Saving...", true);
+
         // Call cloud code function that creates new users if necessary and
         // creates debt(s) and transaction rows
         ParseCloud.callFunctionInBackground("createTransaction", transaction.getCloudCodeRequestObject(), new FunctionCallback<HashMap<String, Object>>() {
             public void done(HashMap<String, Object> savedDebts, ParseException e) {
                 if (e != null) {
                     Log.e(DetApplication.TAG, "DETAPP Error calling cloud function" + e.toString());
-                    DetApplication.showToast(getApplicationContext(), "Error with parse cloud code");
-                    // TODO: Remove the debt that was optimistically
-                    // added
+                    DetApplication.showToast(getApplicationContext(), "Error, please try again later");
                     return;
                 }
 
                 // Show toast
-                DetApplication.showToast(getApplicationContext(), "Transaction and debts added to Parse");
+                DetApplication.showToast(getApplicationContext(), "Transaction added to Parse");
 
-                // Wait to ensure debts are added before assigning
-                // parseobjects
-                // TODO: Do this better
-                ArrayList<DTDebt> allDebtsInAdapter = LoadDebtsDataAsync.debtListAdapter.getDebts();
-                if (allDebtsInAdapter.isEmpty()) {
-                    try {
-                        Thread.sleep(1000);
-                    } catch (InterruptedException e1) {
-                        // TODO Auto-generated catch block
-                        e1.printStackTrace();
-                    }
-                }
-
-                // TOOD: This assumes debt was added to the end of the
-                // array. Fix it.
-                DTTransaction transactionAfterDeserialization = allDebtsInAdapter.get(allDebtsInAdapter.size() - 1).getTransaction();
-
-                ArrayList<DTDebt> debtsAfterDeserialization = transactionAfterDeserialization.getDebts();
-
-                // For each newly saved debt, set its objectID and
-                // parseobject, and add debt to usersMap
-                for (DTDebt debt : debtsAfterDeserialization) {
-                    // Set debts' object ids and parse objeccts
-                    ParseObject savedDebtParseObject = (ParseObject) savedDebts.get(debt.getDebtor().getFacebookId());
-                    debt.setObjectId(savedDebtParseObject.getObjectId());
-                    debt.setParseObject(savedDebtParseObject);
-
-                    // Save debts users map
-                    if (!UserHomeActivity.usersMap.containsKey(debt.getDebtor())) {
-                        UserHomeActivity.usersMap.put(debt.getDebtor(), new HashSet<DTDebt>());
-                    }
-                    UserHomeActivity.usersMap.get(debt.getDebtor()).add(debt);
-                }
-
-                // Save transaction parse object to DTTransaction object
-                ParseObject savedTransactionParseObject = (ParseObject) savedDebts.get("transaction");
-                transactionAfterDeserialization.setObjectId(savedTransactionParseObject.getObjectId());
-                transactionAfterDeserialization.setParseObject(savedTransactionParseObject);
-
-                // Update transaction map with transaction
-                UserHomeActivity.transactionsMap.put(transactionAfterDeserialization, new HashSet<DTDebt>(debtsAfterDeserialization));
+                Intent intent = new Intent(AddTransactionActivity.this, UserHomeActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(intent);
             }
         });
-
-        // Update aggregate totals
-        // Note: Assumes user is the creditor
-        for (DTDebt debt : transaction.getDebts()) {
-            UserHomeActivity.amountOwedToYou += debt.getAmount().doubleValue();
-        }
-        UserHomeActivity.resetAggregateTotalsDisplay();
-
-        // Update users map
-        // TODO: Assumes user is the creditor
-        for (DTDebt debt : transaction.getDebts()) {
-            if (!UserHomeActivity.usersMap.containsKey(debt.getDebtor())) {
-                UserHomeActivity.usersMap.put(debt.getDebtor(), new HashSet<DTDebt>());
-            }
-            // Debt is added to users map when cloud code is done
-        }
-
-        Intent intent = new Intent(this, UserHomeActivity.class);
-        Bundle extras = new Bundle();
-        extras.putSerializable(EXTRA_DEBTS, transaction);
-        intent.putExtras(extras);
-        setResult(RESULT_OK, intent);
-        finish();
     }
 
     // Display selected friends

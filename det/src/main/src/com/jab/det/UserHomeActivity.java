@@ -1,18 +1,15 @@
 package com.jab.det;
 
-import java.util.HashMap;
-import java.util.HashSet;
-
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.LinearLayout.LayoutParams;
 import android.widget.TextView;
 
+import com.jab.det.DTObjects.DTUser;
 import com.parse.ParseFacebookUtils;
 import com.parse.ParseUser;
 
@@ -28,14 +25,9 @@ public class UserHomeActivity extends Activity {
     private static View aggregate_graph_owed_to_you_ratio2;
     private static View aggregate_graph_you_owe_ratio1;
     private static View aggregate_graph_you_owe_ratio2;
-    private static DTUser currentUser;
     private LoadDebtsDataAsync loadDebtsData;
     public static double amountOwedToOthers;
     public static double amountOwedToYou;
-    public static HashMap<DTTransaction, HashSet<DTDebt>> transactionsMap;
-    public static HashMap<String, DTTransaction> transactionsObjectIdToDTTransaction;
-    // Populated when DTUser.getDebts() is called.
-    public static HashMap<DTUser, HashSet<DTDebt>> usersMap;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,25 +45,6 @@ public class UserHomeActivity extends Activity {
         setupRefreshButton();
         setupLogoutButton();
         displayDebts();
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
-        if (requestCode != 1 || resultCode != RESULT_OK) {
-            return;
-        }
-
-        DTTransaction transactionFromIntent = (DTTransaction) intent.getExtras().get(AddTransactionActivity.EXTRA_DEBTS);
-        Log.d(DetApplication.TAG, "Received deserialized transaction from intent: " + transactionFromIntent.toString());
-
-        // If home page was empty, remove the no debts message
-        if (LoadDebtsDataAsync.debtListAdapter.getDebts().isEmpty()) {
-            TextView noDebtTextView = (TextView) findViewById(R.id.loading_debts);
-            noDebtTextView.setVisibility(View.INVISIBLE);
-        }
-
-        LoadDebtsDataAsync.debtListAdapter.addToView(transactionFromIntent.getDebts());
-        LoadDebtsDataAsync.debtListAdapter.notifyDataSetChanged();
     }
 
     public static void resetAggregateTotalsDisplay() {
@@ -130,9 +103,6 @@ public class UserHomeActivity extends Activity {
         this.logoutButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // TODO: Remove debug messages
-                Log.d(DetApplication.TAG, "DEBUG transactionMap: " + transactionsMap);
-                Log.d(DetApplication.TAG, "DEBUG userMap: " + usersMap);
                 // Log out and start LoginActivity
                 onLogoutButtonClicked();
             }
@@ -141,18 +111,17 @@ public class UserHomeActivity extends Activity {
 
     // Gets current user and checks success
     private void setCurrentUser() {
-        currentUser = DTUser.getCurrentUser();
-        if (currentUser == null) {
-            startLoginActivity();
+        DetApplication.currentUser = DTUser.getCurrentUser();
+        if (DetApplication.currentUser == null) {
+            UserHomeActivity.this.startLoginActivity();
         }
     }
 
     public static DTUser getCurrentUser() {
-        return currentUser;
+        return DetApplication.currentUser;
     }
 
-    // Gets all of current user's associated debts and writes them to the
-    // ListView
+    // Gets all of current user's associated debts and writes them to the ListView
     private void displayDebts() {
         // Populate debtsList ListView with debts
         this.loadDebtsData = new LoadDebtsDataAsync(this, getWindow().getDecorView().getRootView());
@@ -194,17 +163,11 @@ public class UserHomeActivity extends Activity {
     }
 
     // Starts LoginActivity
-    private void startLoginActivity() {
+    public void startLoginActivity() {
         Intent intent = new Intent(this, LoginActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(intent);
-    }
-
-    public static void resetMaps() {
-        UserHomeActivity.transactionsMap = new HashMap<DTTransaction, HashSet<DTDebt>>();
-        UserHomeActivity.transactionsObjectIdToDTTransaction = new HashMap<String, DTTransaction>();
-        UserHomeActivity.usersMap = new HashMap<DTUser, HashSet<DTDebt>>();
     }
 
     public static void resetAggregateTotalsValues() {

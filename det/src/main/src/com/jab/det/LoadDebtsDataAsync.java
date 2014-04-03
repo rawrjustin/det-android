@@ -12,6 +12,7 @@ import android.view.View;
 import android.widget.GridView;
 import android.widget.TextView;
 
+import com.jab.det.DTObjects.DTDebt;
 import com.parse.ParseException;
 
 public class LoadDebtsDataAsync extends AsyncTask<Void, Void, DTDebt[]> {
