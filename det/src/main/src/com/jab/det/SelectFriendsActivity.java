@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.widget.Toast;
+
 import com.facebook.FacebookException;
 import com.facebook.widget.FriendPickerFragment;
 import com.facebook.widget.PickerFragment;
@@ -17,9 +18,12 @@ import com.facebook.widget.PickerFragment;
 public class SelectFriendsActivity extends FragmentActivity {
     FriendPickerFragment friendPickerFragment;
 
-    // A helper to simplify life for callers who want to populate a Bundle with the necessary
-    // parameters. A more sophisticated Activity might define its own set of parameters; our needs
-    // are simple, so we just populate what we want to pass to the FriendPickerFragment.
+    // A helper to simplify life for callers who want to populate a Bundle with
+    // the necessary
+    // parameters. A more sophisticated Activity might define its own set of
+    // parameters; our needs
+    // are simple, so we just populate what we want to pass to the
+    // FriendPickerFragment.
     public static void populateParameters(Intent intent, String userId, boolean multiSelect, boolean showTitleBar) {
         intent.putExtra(FriendPickerFragment.USER_ID_BUNDLE_KEY, userId);
         intent.putExtra(FriendPickerFragment.MULTI_SELECT_BUNDLE_KEY, multiSelect);
@@ -37,13 +41,14 @@ public class SelectFriendsActivity extends FragmentActivity {
             // First time through, we create our fragment programmatically.
             final Bundle args = getIntent().getExtras();
             friendPickerFragment = new FriendPickerFragment(args);
-            fm.beginTransaction()
-                    .add(R.id.friend_picker_fragment, friendPickerFragment)
-                    .commit();
+            fm.beginTransaction().add(R.id.friend_picker_fragment, friendPickerFragment).commit();
         } else {
-            // Subsequent times, our fragment is recreated by the framework and already has saved and
-            // restored its state, so we don't need to specify args again. (In fact, this might be
-            // incorrect if the fragment was modified programmatically since it was created.)
+            // Subsequent times, our fragment is recreated by the framework and
+            // already has saved and
+            // restored its state, so we don't need to specify args again. (In
+            // fact, this might be
+            // incorrect if the fragment was modified programmatically since it
+            // was created.)
             friendPickerFragment = (FriendPickerFragment) fm.findFragmentById(R.id.friend_picker_fragment);
         }
 
@@ -57,11 +62,13 @@ public class SelectFriendsActivity extends FragmentActivity {
         friendPickerFragment.setOnDoneButtonClickedListener(new PickerFragment.OnDoneButtonClickedListener() {
             @Override
             public void onDoneButtonClicked(PickerFragment<?> fragment) {
-                // We just store our selection in the Application for other activities to look at.
-            	//FriendPickerApplication application = (FriendPickerApplication) getApplication();
-                //application.setSelectedUsers(friendPickerFragment.getSelection());
+                // We just store our selection in the Application for
+                // other activities to look at.
+                // FriendPickerApplication application =
+                // (FriendPickerApplication) getApplication();
+                // application.setSelectedUsers(friendPickerFragment.getSelection());
 
-            	AddTransactionActivity.setSelectedUsers(friendPickerFragment.getSelection());
+                AddTransactionActivity.setSelectedUsers(friendPickerFragment.getSelection());
                 setResult(RESULT_OK, null);
                 finish();
             }

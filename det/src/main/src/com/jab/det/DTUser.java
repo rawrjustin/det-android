@@ -16,244 +16,249 @@ import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
 
-@SuppressWarnings("serial") // Serialized object will be deserialized in the same context
+@SuppressWarnings("serial")
+// Serialized object will be deserialized in the same context
 public class DTUser implements Serializable {
 
-	private String objectId;
+    private String objectId;
     private String email;
     private String facebookID;
     private String name;
     public static transient ParseUser currentParseUser;
     private static String defaultPassword = "password";
-    
+
     // Constructs DTUser with fields
     public DTUser(String objectId, String email, String facebookID, String username, String password, String name) {
-    	this.objectId = objectId;
-    	this.email = email;
-    	this.facebookID = facebookID;
-    	this.name = name;
+        this.objectId = objectId;
+        this.email = email;
+        this.facebookID = facebookID;
+        this.name = name;
     }
-    
+
     public DTUser(String facebookID, String name) {
-    	this.facebookID = facebookID;
-    	this.name = name;
+        this.facebookID = facebookID;
+        this.name = name;
     }
 
     // Constructs DTUser object with objectId
     public static DTUser getUserFromObjectId(String objectIdParam) {
-    	ParseQuery<ParseObject> query = ParseQuery.getQuery("user");
-		ParseObject parseObject;
-		String objectId = null, email = null, facebookID = null, username = null, password = null, name = null;
-		try {
-			parseObject = query.get(objectIdParam);
-			objectId = parseObject.getObjectId();
-			email = parseObject.getString("email");
-			facebookID = parseObject.getString("fbID");
-			username = parseObject.getString("username");
-			password = "";
-			name = parseObject.getString("name");
+        ParseQuery<ParseObject> query = ParseQuery.getQuery("user");
+        ParseObject parseObject;
+        String objectId = null, email = null, facebookID = null, username = null, password = null, name = null;
+        try {
+            parseObject = query.get(objectIdParam);
+            objectId = parseObject.getObjectId();
+            email = parseObject.getString("email");
+            facebookID = parseObject.getString("fbID");
+            username = parseObject.getString("username");
+            password = "";
+            name = parseObject.getString("name");
 
-		} catch (ParseException e) {
-			e.printStackTrace();
-		}
-		
-		return new DTUser(objectId, email, facebookID, username, password, name);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+        return new DTUser(objectId, email, facebookID, username, password, name);
     }
-    
+
     // Returns a DTUser representing the current user.
     public static DTUser getCurrentUser() {
-    	if (currentParseUser == null) {
-    		currentParseUser = ParseUser.getCurrentUser();
-    	}
+        if (currentParseUser == null) {
+            currentParseUser = ParseUser.getCurrentUser();
+        }
         return getUserFromParseUser(currentParseUser);
     }
 
     // Returns a DTUser given a ParseUser object
     public static DTUser getUserFromParseUser(ParseUser parseUser) {
-    	if (parseUser == null) {
-			return null;
-		}
-		
-    	try {
-			parseUser = parseUser.fetchIfNeeded();
-		} catch (ParseException e) {
-			Log.e(DetApplication.TAG, "DETAPP ERROR: " + e.toString());
-			e.printStackTrace();
-		}
-    	
-		String objectId = null, facebookID = null, name = null, email = null, username = null, password = generatePassword(false);
-		objectId = parseUser.getObjectId();
-		name = parseUser.getString("name");
-		facebookID = parseUser.getString("fbID");
-		username = parseUser.getUsername();
-		email = parseUser.isAuthenticated() ? parseUser.getString("email") : "";
-		
-		return new DTUser(objectId, email, facebookID, username, password, name);
-	}
-    
-    // Returns consolidated debts as a list of user integer pairs, representing users and how much they owe currentUser
+        if (parseUser == null) {
+            return null;
+        }
+
+        try {
+            parseUser = parseUser.fetchIfNeeded();
+        } catch (ParseException e) {
+            Log.e(DetApplication.TAG, "DETAPP ERROR: " + e.toString());
+            e.printStackTrace();
+        }
+
+        String objectId = null, facebookID = null, name = null, email = null, username = null, password = generatePassword(false);
+        objectId = parseUser.getObjectId();
+        name = parseUser.getString("name");
+        facebookID = parseUser.getString("fbID");
+        username = parseUser.getUsername();
+        email = parseUser.isAuthenticated() ? parseUser.getString("email") : "";
+
+        return new DTUser(objectId, email, facebookID, username, password, name);
+    }
+
+    // Returns consolidated debts as a list of user integer pairs, representing
+    // users and how much they owe currentUser
     public List<AbstractMap.SimpleEntry<DTUser, Integer>> getConsolidatedDebts() {
-		return null;
+        return null;
     }
-    
+
     private List<ParseObject> queryParseForDebts() throws ParseException {
-		// Query debts where user is debtor
-    	ParseQuery<ParseObject> creditorsQuery = ParseQuery.getQuery("Debt");
-    	creditorsQuery.whereEqualTo("creditor", DTUser.currentParseUser);
-    		    		
-    	// Query debts where user is creditor
-    	ParseQuery<ParseObject> debtorsQuery = ParseQuery.getQuery("Debt");
-    	debtorsQuery.whereEqualTo("debtor", DTUser.currentParseUser);
-    	
-    	// Main query to query for debts where the user is the creditor or debtor
-    	List<ParseQuery<ParseObject>> queries = new ArrayList<ParseQuery<ParseObject>>();
-    	queries.add(creditorsQuery);
-    	queries.add(debtorsQuery);
-    	ParseQuery<ParseObject> mainQuery = ParseQuery.or(queries);
-    	mainQuery.include("transaction");
-    	mainQuery.include("creditor");
-    	mainQuery.include("debtor");
-    	
-    	return mainQuery.find();
+        // Query debts where user is debtor
+        ParseQuery<ParseObject> creditorsQuery = ParseQuery.getQuery("Debt");
+        creditorsQuery.whereEqualTo("creditor", DTUser.currentParseUser);
+
+        // Query debts where user is creditor
+        ParseQuery<ParseObject> debtorsQuery = ParseQuery.getQuery("Debt");
+        debtorsQuery.whereEqualTo("debtor", DTUser.currentParseUser);
+
+        // Main query to query for debts where the user is the creditor or
+        // debtor
+        List<ParseQuery<ParseObject>> queries = new ArrayList<ParseQuery<ParseObject>>();
+        queries.add(creditorsQuery);
+        queries.add(debtorsQuery);
+        ParseQuery<ParseObject> mainQuery = ParseQuery.or(queries);
+        mainQuery.include("transaction");
+        mainQuery.include("creditor");
+        mainQuery.include("debtor");
+
+        return mainQuery.find();
     }
-    
+
     // Returns a DTDebt array of all debts user is a part of
-    public DTDebt[] getDebts() throws ParseException {    	
-    	// Reset maps
-    	UserHomeActivity.resetMaps();
-    	
-    	// Reset aggregate totals
-    	UserHomeActivity.resetAggregateTotalsValues();
-    	
-    	// Query parse for debts
-    	ArrayList<DTDebt> debts = new ArrayList<DTDebt>();    	
-    	for (ParseObject queryResult : this.queryParseForDebts()) {
-    		debts.add(new DTDebt(queryResult));
-    	}
-    	
-    	// Setup maps and add to aggregate totals
-    	for (DTDebt debt : debts) {
-    		// Find out whether current user is debtor or creditor
-    		DTUser userThatIsNotCurrentUser = null;
-    		
-    		// Increment aggregate totals
-    		if (debt.getCreditor().equals(UserHomeActivity.getCurrentUser())) {
-    			userThatIsNotCurrentUser = debt.getDebtor();
-    			UserHomeActivity.amountOwedToYou += debt.getAmount().doubleValue();
-    		} else {
-    			userThatIsNotCurrentUser = debt.getCreditor();
-    			UserHomeActivity.amountOwedToOthers += debt.getAmount().doubleValue();
-    		}
-    		
-    		// Add to users map
-    		if (!UserHomeActivity.usersMap.containsKey(userThatIsNotCurrentUser)) {
-    			UserHomeActivity.usersMap.put(userThatIsNotCurrentUser, new HashSet<DTDebt>());
-    		}
+    public DTDebt[] getDebts() throws ParseException {
+        // Reset maps
+        UserHomeActivity.resetMaps();
 
-    		UserHomeActivity.usersMap.get(userThatIsNotCurrentUser).add(debt);
-    	}
-    	
-    	// Associate DTTransaction objects with their respective debts
-    	for (Entry<DTTransaction, HashSet<DTDebt>> keyValuePair : UserHomeActivity.transactionsMap.entrySet()) {
-    		keyValuePair.getKey().setDebts(new ArrayList<DTDebt>(keyValuePair.getValue()));
-    		Log.d(DetApplication.TAG, "DETAPP " + keyValuePair.getKey().toString());
-    	}
-    	
-		Log.d(DetApplication.TAG, "DETAPP getDebts done. userMap is: " + UserHomeActivity.usersMap.toString());
-		Log.d(DetApplication.TAG, "DETAPP getDebts done. transactionMap is: " + UserHomeActivity.transactionsMap.toString());
-		Log.d(DetApplication.TAG, "DETAPP getDebts done. transactionsObjectIdToDTTransaction is: " + UserHomeActivity.transactionsObjectIdToDTTransaction.toString());
+        // Reset aggregate totals
+        UserHomeActivity.resetAggregateTotalsValues();
 
-    	return debts.toArray(new DTDebt[debts.size()]);
+        // Query parse for debts
+        ArrayList<DTDebt> debts = new ArrayList<DTDebt>();
+        for (ParseObject queryResult : this.queryParseForDebts()) {
+            debts.add(new DTDebt(queryResult));
+        }
+
+        // Setup maps and add to aggregate totals
+        for (DTDebt debt : debts) {
+            // Find out whether current user is debtor or creditor
+            DTUser userThatIsNotCurrentUser = null;
+
+            // Increment aggregate totals
+            if (debt.getCreditor().equals(UserHomeActivity.getCurrentUser())) {
+                userThatIsNotCurrentUser = debt.getDebtor();
+                UserHomeActivity.amountOwedToYou += debt.getAmount().doubleValue();
+            } else {
+                userThatIsNotCurrentUser = debt.getCreditor();
+                UserHomeActivity.amountOwedToOthers += debt.getAmount().doubleValue();
+            }
+
+            // Add to users map
+            if (!UserHomeActivity.usersMap.containsKey(userThatIsNotCurrentUser)) {
+                UserHomeActivity.usersMap.put(userThatIsNotCurrentUser, new HashSet<DTDebt>());
+            }
+
+            UserHomeActivity.usersMap.get(userThatIsNotCurrentUser).add(debt);
+        }
+
+        // Associate DTTransaction objects with their respective debts
+        for (Entry<DTTransaction, HashSet<DTDebt>> keyValuePair : UserHomeActivity.transactionsMap.entrySet()) {
+            keyValuePair.getKey().setDebts(new ArrayList<DTDebt>(keyValuePair.getValue()));
+            Log.d(DetApplication.TAG, "DETAPP " + keyValuePair.getKey().toString());
+        }
+
+        Log.d(DetApplication.TAG, "DETAPP getDebts done. userMap is: " + UserHomeActivity.usersMap.toString());
+        Log.d(DetApplication.TAG, "DETAPP getDebts done. transactionMap is: " + UserHomeActivity.transactionsMap.toString());
+        Log.d(DetApplication.TAG, "DETAPP getDebts done. transactionsObjectIdToDTTransaction is: " + UserHomeActivity.transactionsObjectIdToDTTransaction.toString());
+
+        return debts.toArray(new DTDebt[debts.size()]);
     }
-    
-    // Returns the user with given facebook id. If the user did not already exist, a default DTUser with the facebook id will be created.
-    @Deprecated // Functionality replaced by cloud code
+
+    // Returns the user with given facebook id. If the user did not already
+    // exist, a default DTUser with the facebook id will be created.
+    @Deprecated
+    // Functionality replaced by cloud code
     public static DTUser getOrCreateUser(String fbID, String name) {
-    	// Query ParseUser table for entry for fbID.
-    	ParseQuery<ParseUser> query = ParseUser.getQuery();
-		query.whereEqualTo("fbID", fbID);
-		List<ParseUser> queryResult = null;
-		try {
-			queryResult = query.find();
-		} catch (ParseException e) {
-			Log.e(DetApplication.TAG, "DETAPP ERROR: " + e.toString());
-			e.printStackTrace();
-		}
-		
-		if (queryResult.size() == 1) {
-			return getUserFromParseUser(queryResult.get(0));
-		}
-		
-		ParseUser parseUser = new ParseUser();
-		parseUser.put("fbID", fbID);
-		parseUser.put("name", name);
-		parseUser.setUsername(fbID);
-		parseUser.setPassword(generatePassword(false));
-		
-		try {
-			parseUser.signUp();
-		} catch (ParseException e) {
-			Log.e(DetApplication.TAG, "DETAPP ERROR: " + e.toString());
-			e.printStackTrace();
-		}
+        // Query ParseUser table for entry for fbID.
+        ParseQuery<ParseUser> query = ParseUser.getQuery();
+        query.whereEqualTo("fbID", fbID);
+        List<ParseUser> queryResult = null;
+        try {
+            queryResult = query.find();
+        } catch (ParseException e) {
+            Log.e(DetApplication.TAG, "DETAPP ERROR: " + e.toString());
+            e.printStackTrace();
+        }
+
+        if (queryResult.size() == 1) {
+            return getUserFromParseUser(queryResult.get(0));
+        }
+
+        ParseUser parseUser = new ParseUser();
+        parseUser.put("fbID", fbID);
+        parseUser.put("name", name);
+        parseUser.setUsername(fbID);
+        parseUser.setPassword(generatePassword(false));
+
+        try {
+            parseUser.signUp();
+        } catch (ParseException e) {
+            Log.e(DetApplication.TAG, "DETAPP ERROR: " + e.toString());
+            e.printStackTrace();
+        }
         return getUserFromParseUser(parseUser);
     }
-    
+
     // Implements toString() behavior
     public String toString() {
-    	return getName();
+        return getName();
     }
 
-	// Gets DTUser name
-	public String getName() {
-		return this.name;
-	}
-	
-	public String getFacebookId() {
-		return this.facebookID;
-	}
-	
-	// Gets ObjectId
-	public String getObjectId() {
-		return this.objectId;
-	}
-	
-	// Gets ParseUser
-	public ParseUser getParseUser() {
-		// TODO: Change this to a field and add logic to constructors
-		ParseQuery<ParseUser> query = ParseUser.getQuery();
-		query.whereEqualTo("fbID", this.facebookID);
-		ParseUser parseUser = null;
-		try {
-			List<ParseUser> queryResult = query.find();
-			if (queryResult.size() != 1) {
-				Log.e(DetApplication.TAG, "DTUser query for parse user using facebook ID did not return one element");
-			} else {
-				parseUser = queryResult.get(0);
-			}
-		} catch (ParseException e) {
-			Log.e(DetApplication.TAG, "DETAPP ERROR: " + e.toString());
-			e.printStackTrace();
-		}
-		
-		return parseUser;
-	}
-	
-	public static String generatePassword(Boolean random) {
-		return random ? new BigInteger(130, new SecureRandom()).toString(32) : defaultPassword;
-	}
+    // Gets DTUser name
+    public String getName() {
+        return this.name;
+    }
 
-	public String getEmail() {
-		return this.email;
-	}
+    public String getFacebookId() {
+        return this.facebookID;
+    }
 
-	@Override
-	public boolean equals(Object o) {
-		return !(o instanceof DTUser) || o.equals(null) ? false : this.facebookID.equals(((DTUser) o).getFacebookId());
-	}
-	
-	@Override
-	public int hashCode() {
-		return this.facebookID.hashCode();
-	}
+    // Gets ObjectId
+    public String getObjectId() {
+        return this.objectId;
+    }
+
+    // Gets ParseUser
+    public ParseUser getParseUser() {
+        // TODO: Change this to a field and add logic to constructors
+        ParseQuery<ParseUser> query = ParseUser.getQuery();
+        query.whereEqualTo("fbID", this.facebookID);
+        ParseUser parseUser = null;
+        try {
+            List<ParseUser> queryResult = query.find();
+            if (queryResult.size() != 1) {
+                Log.e(DetApplication.TAG, "DTUser query for parse user using facebook ID did not return one element");
+            } else {
+                parseUser = queryResult.get(0);
+            }
+        } catch (ParseException e) {
+            Log.e(DetApplication.TAG, "DETAPP ERROR: " + e.toString());
+            e.printStackTrace();
+        }
+
+        return parseUser;
+    }
+
+    public static String generatePassword(Boolean random) {
+        return random ? new BigInteger(130, new SecureRandom()).toString(32) : defaultPassword;
+    }
+
+    public String getEmail() {
+        return this.email;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        return !(o instanceof DTUser) || o.equals(null) ? false : this.facebookID.equals(((DTUser) o).getFacebookId());
+    }
+
+    @Override
+    public int hashCode() {
+        return this.facebookID.hashCode();
+    }
 }
