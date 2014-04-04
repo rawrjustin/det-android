@@ -118,9 +118,6 @@ public class DTUser {
 
     // Returns a DTDebt array of all debts user is a part of
     public DTDebt[] getDebts() throws ParseException {
-        // Reset maps
-        DetApplication.resetMaps();
-
         // Reset aggregate totals
         UserHomeActivity.resetAggregateTotalsValues();
 
@@ -130,10 +127,10 @@ public class DTUser {
             debts.add(new DTDebt(queryResult));
         }
 
-        // Populate friends to debts map
-        DetApplication.populateFriendToDebtsMap(debts);
+        // Populate friends collection
+        DetApplication.populateFriendsCollection(debts);
 
-        // Setup maps and add to aggregate totals
+        // Add to aggregate totals
         for (DTDebt debt : debts) {
             // Get the friend in the debt (because the current use could be the debtor or creditor)
             DTUser friend = DTUtils.getFriend(debt);
@@ -145,12 +142,10 @@ public class DTUser {
                 UserHomeActivity.amountOwedToOthers += debt.getAmount().doubleValue();
             }
 
-            // Add to friends map
-            DetApplication.populateFriendToDebtsMap(debts);
-
-            // Associate debts to transactions
-            DTUtils.associateDebtsTransactions(debts);
         }
+
+        // Associate debts to transactions
+        DTUtils.associateDebtsTransactions(debts);
 
         return debts.toArray(new DTDebt[debts.size()]);
     }

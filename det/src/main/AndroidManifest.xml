@@ -52,8 +52,12 @@
                 android:value="UserHomeActivity" />
         </activity>
         <activity
-            android:name="com.jab.det.AboutPage"
-            android:label="@string/title_activity_about_page" >
+            android:name="com.jab.det.FriendBreakdownActivity"
+            android:theme="@android:style/Theme.Holo.Light.NoActionBar"
+            android:parentActivityName="UserHomeActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="UserHomeActivity" />
         </activity>
     </application>
 

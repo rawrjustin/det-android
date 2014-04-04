@@ -6,13 +6,14 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import android.app.Application;
 import android.content.Context;
 import android.widget.Toast;
 
 import com.jab.det.DTObjects.DTDebt;
-import com.jab.det.DTObjects.DTTransaction;
+import com.jab.det.DTObjects.DTFriend;
 import com.jab.det.DTObjects.DTUser;
 import com.jab.det.DTObjects.DTUtils;
 import com.parse.Parse;
@@ -23,12 +24,8 @@ public class DetApplication extends Application {
     // The current user in the context of a user instance of the application
     public static DTUser currentUser;
 
-    // Maps friends to their respective debts
-    public static Map<DTUser, List<DTDebt>> friendToDebtsMap;
-
-    // Maps transactions to their respective debts.
-    // This is used so that we know when need to remove a transaction from parse.
-    public static Map<DTTransaction, List<DTDebt>> transactionToDebtsMap;
+    // Collection of friends, each object representing a debt relationship between user and friend
+    public static List<DTFriend> friends;
 
     // The tag used for filtering debug logs
     public static final String TAG = "DetApp";
@@ -75,28 +72,26 @@ public class DetApplication extends Application {
     }
 
     /**
-     * Reinitialize all application scoped hash maps
-     */
-    public static void resetMaps() {
-        DetApplication.friendToDebtsMap = new HashMap<DTUser, List<DTDebt>>();
-        DetApplication.transactionToDebtsMap = new HashMap<DTTransaction, List<DTDebt>>();
-    }
-
-    /**
      * Populates the friends to debts map using a debt list
      * 
      * @param debts
      */
-    public static void populateFriendToDebtsMap(List<DTDebt> debts) {
+    public static void populateFriendsCollection(List<DTDebt> debts) {
+        Map<DTUser, List<DTDebt>> friendToDebtsMap = new HashMap<DTUser, List<DTDebt>>();
+
         for (DTDebt debt : debts) {
             DTUser friend = DTUtils.getFriend(debt);
 
-            if (!DetApplication.friendToDebtsMap.containsKey(friend)) {
-                DetApplication.friendToDebtsMap.put(friend, new ArrayList<DTDebt>(Arrays.asList(debt)));
+            if (!friendToDebtsMap.containsKey(friend)) {
+                friendToDebtsMap.put(friend, new ArrayList<DTDebt>(Arrays.asList(debt)));
             } else {
-                DetApplication.friendToDebtsMap.get(friend).add(debt);
+                friendToDebtsMap.get(friend).add(debt);
             }
         }
-    }
 
+        friends = new ArrayList<DTFriend>();
+        for (Entry<DTUser, List<DTDebt>> keyValuePair : friendToDebtsMap.entrySet()) {
+            friends.add(new DTFriend(keyValuePair.getKey(), keyValuePair.getValue()));
+        }
+    }
 }

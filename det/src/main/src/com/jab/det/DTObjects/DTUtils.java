@@ -64,4 +64,30 @@ public class DTUtils {
             }
         }
     }
+
+    // Prepends $ to amount and returns string
+    public static String getDisplayableDollarAmount(Number amount) {
+        // Making the string look pretty. Amounts will have no decimals if it is
+        // an integer, two decimal places otherwise
+        StringBuilder amountString = new StringBuilder(amount.toString());
+        boolean isInt = false;
+        if (amountString.indexOf(".") >= 0) {
+            isInt = true;
+            for (int i = 0; i < amountString.length() - 1 - amountString.indexOf("."); i++) {
+                if (amountString.charAt(amountString.length() - 1 - i) != '0') {
+                    isInt = false;
+                }
+            }
+
+            if (!isInt && amountString.length() - 1 - amountString.indexOf(".") == 1) {
+                amountString.append("0");
+            }
+        }
+
+        if (isInt) {
+            amountString.delete(amountString.indexOf("."), amountString.length() - 1);
+        }
+
+        return "$" + amountString.toString();
+    }
 }

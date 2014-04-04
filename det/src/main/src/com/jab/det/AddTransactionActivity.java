@@ -150,7 +150,7 @@ public class AddTransactionActivity extends Activity {
         stopWatch.stop();
         Log.d(DetApplication.TAG, "DETAPP: Time elapsed for creating transaction: " + stopWatch.getTime());
 
-        ProgressDialog.show(AddTransactionActivity.this, "", "Saving...", true);
+        final ProgressDialog progressDialog = ProgressDialog.show(AddTransactionActivity.this, "", "Saving...", true);
 
         // Call cloud code function that creates new users if necessary and
         // creates debt(s) and transaction rows
@@ -159,6 +159,7 @@ public class AddTransactionActivity extends Activity {
                 if (e != null) {
                     Log.e(DetApplication.TAG, "DETAPP Error calling cloud function" + e.toString());
                     DetApplication.showToast(getApplicationContext(), "Error, please try again later");
+                    progressDialog.dismiss();
                     return;
                 }
 

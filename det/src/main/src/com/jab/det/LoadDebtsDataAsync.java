@@ -1,7 +1,6 @@
 package com.jab.det;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 
 import org.apache.commons.lang3.time.StopWatch;
 
@@ -13,6 +12,7 @@ import android.widget.GridView;
 import android.widget.TextView;
 
 import com.jab.det.DTObjects.DTDebt;
+import com.jab.det.DTObjects.DTFriend;
 import com.parse.ParseException;
 
 public class LoadDebtsDataAsync extends AsyncTask<Void, Void, DTDebt[]> {
@@ -39,7 +39,7 @@ public class LoadDebtsDataAsync extends AsyncTask<Void, Void, DTDebt[]> {
         this.refreshButton.setEnabled(false);
         this.loadingDebtsTextView.setVisibility(View.VISIBLE);
         this.loadingDebtsTextView.setText("Loading debts...");
-        LoadDebtsDataAsync.debtListAdapter = new DisplayDebtsAdapter(this.context, R.layout.debt_row, new ArrayList<DTDebt>());
+        LoadDebtsDataAsync.debtListAdapter = new DisplayDebtsAdapter(this.context, R.layout.debt_row, new ArrayList<DTFriend>());
         this.debtGridView.setAdapter(debtListAdapter);
         UserHomeActivity.resetAggregateTotalsValues();
         UserHomeActivity.resetAggregateTotalsDisplay();
@@ -54,7 +54,7 @@ public class LoadDebtsDataAsync extends AsyncTask<Void, Void, DTDebt[]> {
         } else {
             // Writes debts to view
             this.loadingDebtsTextView.setVisibility(View.GONE);
-            LoadDebtsDataAsync.debtListAdapter = new DisplayDebtsAdapter(this.context, R.layout.debt_row, new ArrayList<DTDebt>(Arrays.asList(debts)));
+            LoadDebtsDataAsync.debtListAdapter = new DisplayDebtsAdapter(this.context, R.layout.debt_row, (ArrayList<DTFriend>) DetApplication.friends);
             debtGridView.setAdapter(LoadDebtsDataAsync.debtListAdapter);
         }
 
@@ -63,9 +63,6 @@ public class LoadDebtsDataAsync extends AsyncTask<Void, Void, DTDebt[]> {
 
     @Override
     protected DTDebt[] doInBackground(Void... params) {
-        stopWatch.reset();
-        stopWatch.start();
-
         DTDebt[] currentUserDebts = null;
         try {
             currentUserDebts = UserHomeActivity.getCurrentUser().getDebts();
@@ -73,9 +70,6 @@ public class LoadDebtsDataAsync extends AsyncTask<Void, Void, DTDebt[]> {
             Log.e(DetApplication.TAG, "Parse exception thrown: " + e.toString());
             e.printStackTrace();
         }
-
-        stopWatch.stop();
-        Log.d(DetApplication.TAG, "DETAPP: Time elapsed for doInBackground: " + stopWatch.getTime());
 
         return currentUserDebts;
     }
