@@ -11,11 +11,11 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.facebook.model.GraphUser;
@@ -176,19 +176,15 @@ public class AddTransactionActivity extends Activity {
     // Display selected friends
     private void displaySelectedFriends() {
         String results = "";
-        RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) selectFriendsButton.getLayoutParams();
         if (selectedFriends != null && selectedFriends.size() > 0) {
             ArrayList<String> names = new ArrayList<String>();
             for (GraphUser user : selectedFriends) {
                 names.add(user.getName());
             }
             results = TextUtils.join("\n", names);
-            params.addRule(RelativeLayout.BELOW, R.id.selected_friends);
-        } else {
-            params.addRule(RelativeLayout.BELOW, R.id.add_transaction_with_you_and);
         }
 
-        selectFriendsButton.setLayoutParams(params);
+        selectedFriendsTextView.setMovementMethod(new ScrollingMovementMethod());
         selectedFriendsTextView.setText(results);
     }
 
@@ -212,16 +208,9 @@ public class AddTransactionActivity extends Activity {
             SelectFriendsActivity.populateParameters(intent, null, true, true);
             startActivityForResult(intent, 1);
         } else {
-            startLoginActivity();
+            DetApplication.startActivity(LoginActivity.class, getBaseContext(), this, true);
+            // startLoginActivity();
         }
-    }
-
-    // Starts LoginActivity
-    private void startLoginActivity() {
-        Intent intent = new Intent(this, LoginActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        startActivity(intent);
     }
 
     // Returns whether user inputted amount is valid.

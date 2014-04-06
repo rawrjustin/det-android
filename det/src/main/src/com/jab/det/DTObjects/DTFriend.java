@@ -49,6 +49,10 @@ public class DTFriend {
         return this.amountOwedToCurrentUser;
     }
 
+    public List<DTDebt> getDebts() {
+        return this.debts;
+    }
+
     @Override
     public boolean equals(Object o) {
         return !(o instanceof DTFriend) || o.equals(null) ? false : this.friend.getFacebookId().equals(((DTFriend) o).getFriend().getFacebookId());

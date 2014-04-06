@@ -69,25 +69,22 @@ public class DTUtils {
     public static String getDisplayableDollarAmount(Number amount) {
         // Making the string look pretty. Amounts will have no decimals if it is
         // an integer, two decimal places otherwise
-        StringBuilder amountString = new StringBuilder(amount.toString());
-        boolean isInt = false;
-        if (amountString.indexOf(".") >= 0) {
-            isInt = true;
-            for (int i = 0; i < amountString.length() - 1 - amountString.indexOf("."); i++) {
-                if (amountString.charAt(amountString.length() - 1 - i) != '0') {
-                    isInt = false;
-                }
-            }
+        StringBuilder sb = new StringBuilder("$" + amount.toString());
 
-            if (!isInt && amountString.length() - 1 - amountString.indexOf(".") == 1) {
-                amountString.append("0");
+        if (sb.toString().contains(".")) {
+            String[] split = sb.toString().split("\\.");
+            sb = new StringBuilder(split[0]);
+            if (split[1].length() == 0) {
+
+            } else if (split[1].length() == 1) {
+                sb.append("." + split[1] + "0");
+            } else if (split[1].length() == 2) {
+                sb.append("." + split[1]);
+            } else {
+                sb.append("." + split[1].substring(0, 2));
             }
         }
 
-        if (isInt) {
-            amountString.delete(amountString.indexOf("."), amountString.length() - 1);
-        }
-
-        return "$" + amountString.toString();
+        return sb.toString();
     }
 }

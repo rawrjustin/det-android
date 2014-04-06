@@ -2,8 +2,6 @@ package com.jab.det;
 
 import java.util.ArrayList;
 
-import org.apache.commons.lang3.time.StopWatch;
-
 import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
@@ -23,14 +21,12 @@ public class LoadDebtsDataAsync extends AsyncTask<Void, Void, DTDebt[]> {
     private Context context;
     public static DisplayDebtsAdapter debtListAdapter;
     private TextView refreshButton;
-    private StopWatch stopWatch;
 
     public LoadDebtsDataAsync(Context context, View rootView) {
         this.context = context;
         this.rootView = rootView;
         this.loadingDebtsTextView = (TextView) this.rootView.findViewById(R.id.loading_debts);
         this.refreshButton = (TextView) this.rootView.findViewById(R.id.refreshDebtsButton);
-        this.stopWatch = new StopWatch();
         this.debtGridView = (GridView) this.rootView.findViewById(R.id.debt_grid);
     }
 
@@ -41,14 +37,24 @@ public class LoadDebtsDataAsync extends AsyncTask<Void, Void, DTDebt[]> {
         this.loadingDebtsTextView.setText("Loading debts...");
         LoadDebtsDataAsync.debtListAdapter = new DisplayDebtsAdapter(this.context, R.layout.debt_row, new ArrayList<DTFriend>());
         this.debtGridView.setAdapter(debtListAdapter);
-        UserHomeActivity.resetAggregateTotalsValues();
-        UserHomeActivity.resetAggregateTotalsDisplay();
     }
 
     protected void onPostExecute(DTDebt[] debts) {
         // Set text for aggregates
-        UserHomeActivity.resetAggregateTotalsDisplay();
+        double amountOwedToYou = 0;
+        double amountOwedToOthers = 0;
 
+        for (DTDebt debt : debts) {
+            if (debt.getCreditor().equals(DetApplication.currentUser)) {
+                amountOwedToYou += Double.valueOf(debt.getAmount().toString());
+            } else {
+                amountOwedToYou -= Double.valueOf(debt.getAmount().toString());
+            }
+        }
+
+        UserHomeActivity.resetAggregateTotalsDisplay(amountOwedToYou, amountOwedToOthers);
+
+        // Set loading text
         if (debts.length == 0) {
             loadingDebtsTextView.setText(this.rootView.getResources().getString(R.string.no_debts));
         } else {
@@ -58,6 +64,7 @@ public class LoadDebtsDataAsync extends AsyncTask<Void, Void, DTDebt[]> {
             debtGridView.setAdapter(LoadDebtsDataAsync.debtListAdapter);
         }
 
+        // Set refresh button
         this.refreshButton.setEnabled(true);
     }
 

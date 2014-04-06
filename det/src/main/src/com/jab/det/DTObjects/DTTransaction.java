@@ -87,7 +87,6 @@ public class DTTransaction {
         for (DTDebt debt : this.debts) {
             HashMap<String, Object> debtorMap = new HashMap<String, Object>();
             debtorMap.put("name", debt.getDebtor().getName());
-            // debtorMap.put("email", debt.getDebtor().getEmail());
             debtorMap.put("amount", debt.getAmount());
             requestObject.put(debt.getDebtor().getFacebookId(), debtorMap);
             fbIds.add(debt.getDebtor().getFacebookId());

@@ -1,6 +1,6 @@
 package com.jab.det;
 
-import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -8,8 +8,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.app.Application;
 import android.content.Context;
+import android.content.Intent;
+import android.graphics.Color;
 import android.widget.Toast;
 
 import com.jab.det.DTObjects.DTDebt;
@@ -30,12 +34,16 @@ public class DetApplication extends Application {
     // The tag used for filtering debug logs
     public static final String TAG = "DetApp";
 
-    private static final DecimalFormat DECIMAL_FORMAT = new DecimalFormat("$##.00");
+    @SuppressLint("SimpleDateFormat")
+    public static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("MMM dd, yyyy");
 
     public static final String DEBT_TABLE_NAME = "Debt";
     public static final String DEBT_TABLE_DEBTOR_COLUMN_NAME = "debtor";
     public static final String DEBT_TABLE_CREDITOR_COLUMN_NAME = "creditor";
     public static final String DEBT_TABLE_TRANSACTION_COLUMN_NAME = "transaction";
+
+    public static final int DET_RED = Color.rgb(238, 98, 103);
+    public static final int DET_GREEN = Color.rgb(102, 204, 153);
 
     @Override
     public void onCreate() {
@@ -57,18 +65,6 @@ public class DetApplication extends Application {
     public static void showToast(Context context, String message) {
         Toast toast = Toast.makeText(context, message, Toast.LENGTH_SHORT);
         toast.show();
-    }
-
-    // Format double as dollar amount
-    /**
-     * Formats a double valued number as a dollar amount
-     * 
-     * @param the
-     *            double valued number
-     * @return a string representing the dollar amount
-     */
-    public static String formatAsDollarAmount(double d) {
-        return d == 0 ? "$0" : DetApplication.DECIMAL_FORMAT.format(d);
     }
 
     /**
@@ -93,5 +89,16 @@ public class DetApplication extends Application {
         for (Entry<DTUser, List<DTDebt>> keyValuePair : friendToDebtsMap.entrySet()) {
             friends.add(new DTFriend(keyValuePair.getKey(), keyValuePair.getValue()));
         }
+    }
+
+    // Start activity
+    public static void startActivity(@SuppressWarnings("rawtypes") Class clazz, Context context, Activity activityInstance, boolean clearStack) {
+        Intent intent = new Intent(context, clazz);
+        if (clearStack == true) {
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        }
+
+        activityInstance.startActivity(intent);
     }
 }

@@ -1,5 +1,7 @@
 package com.jab.det.DTObjects;
 
+import java.util.Date;
+
 import com.jab.det.UserHomeActivity;
 import com.parse.ParseObject;
 
@@ -10,6 +12,7 @@ public class DTDebt {
     private DTUser debtor;
     private ParseObject parseObject;
     private DTTransaction transaction;
+    private Date updatedAt;
 
     public DTDebt(DTUser creditor, DTUser debtor, Number amount, DTTransaction transaction) {
         this.creditor = creditor;
@@ -23,6 +26,7 @@ public class DTDebt {
         this.amount = parseObject.getNumber("amount");
         this.creditor = new DTUser(parseObject.getParseUser("creditor").getString("fbID"), parseObject.getParseUser("creditor").getString("name"));
         this.debtor = new DTUser(parseObject.getParseUser("debtor").getString("fbID"), parseObject.getParseUser("debtor").getString("name"));
+        this.updatedAt = parseObject.getUpdatedAt();
         this.parseObject = parseObject;
     }
 
@@ -66,6 +70,10 @@ public class DTDebt {
 
     public void setParseObject(ParseObject parseObject) {
         this.parseObject = parseObject;
+    }
+
+    public Date getUpdatedAt() {
+        return this.updatedAt;
     }
 
     @Override

@@ -6,10 +6,7 @@ import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.List;
 
-import android.util.Log;
-
 import com.jab.det.DetApplication;
-import com.jab.det.UserHomeActivity;
 import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
@@ -72,13 +69,6 @@ public class DTUser {
             return null;
         }
 
-        try {
-            parseUser = parseUser.fetchIfNeeded();
-        } catch (ParseException e) {
-            Log.e(DetApplication.TAG, "DETAPP ERROR: " + e.toString());
-            e.printStackTrace();
-        }
-
         String objectId = null, facebookID = null, name = null, email = null, username = null, password = generatePassword(false);
         objectId = parseUser.getObjectId();
         name = parseUser.getString("name");
@@ -118,9 +108,6 @@ public class DTUser {
 
     // Returns a DTDebt array of all debts user is a part of
     public DTDebt[] getDebts() throws ParseException {
-        // Reset aggregate totals
-        UserHomeActivity.resetAggregateTotalsValues();
-
         // Query parse for debts
         ArrayList<DTDebt> debts = new ArrayList<DTDebt>();
         for (ParseObject queryResult : this.queryParseForDebts()) {
@@ -129,20 +116,6 @@ public class DTUser {
 
         // Populate friends collection
         DetApplication.populateFriendsCollection(debts);
-
-        // Add to aggregate totals
-        for (DTDebt debt : debts) {
-            // Get the friend in the debt (because the current use could be the debtor or creditor)
-            DTUser friend = DTUtils.getFriend(debt);
-
-            // Increment aggregate totals
-            if (friend.equals(debt.getCreditor())) {
-                UserHomeActivity.amountOwedToYou += debt.getAmount().doubleValue();
-            } else {
-                UserHomeActivity.amountOwedToOthers += debt.getAmount().doubleValue();
-            }
-
-        }
 
         // Associate debts to transactions
         DTUtils.associateDebtsTransactions(debts);

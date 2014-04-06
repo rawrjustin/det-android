@@ -2,7 +2,6 @@ package com.jab.det;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.LinearLayout;
@@ -10,6 +9,7 @@ import android.widget.LinearLayout.LayoutParams;
 import android.widget.TextView;
 
 import com.jab.det.DTObjects.DTUser;
+import com.jab.det.DTObjects.DTUtils;
 import com.parse.ParseFacebookUtils;
 import com.parse.ParseUser;
 
@@ -26,8 +26,6 @@ public class UserHomeActivity extends Activity {
     private static View aggregate_graph_you_owe_ratio1;
     private static View aggregate_graph_you_owe_ratio2;
     private LoadDebtsDataAsync loadDebtsData;
-    public static double amountOwedToOthers;
-    public static double amountOwedToYou;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,29 +41,27 @@ public class UserHomeActivity extends Activity {
         setCurrentUser();
         setupAddTransactionButton();
         setupRefreshButton();
-        setupLogoutButton();
+        // setupLogoutButton();
         displayDebts();
     }
 
-    public static void resetAggregateTotalsDisplay() {
-        amountOwedToOthers = Math.round(amountOwedToOthers * 100.0) / 100.0;
-        amountOwedToYou = Math.round(amountOwedToYou * 100.0) / 100.0;
-        double balance = Math.round((amountOwedToYou - amountOwedToOthers) * 100.0) / 100.0;
+    public static void resetAggregateTotalsDisplay(double amountOwedToYou, double amountOwedToOthers) {
+        double balance = amountOwedToYou - amountOwedToOthers;
 
-        UserHomeActivity.amountOwedToYouTextView.setText(DetApplication.formatAsDollarAmount(amountOwedToYou));
-        UserHomeActivity.amountYouOweTextView.setText(DetApplication.formatAsDollarAmount(amountOwedToOthers));
-        UserHomeActivity.amountBalanceTextView.setText(DetApplication.formatAsDollarAmount(balance));
+        UserHomeActivity.amountOwedToYouTextView.setText(DTUtils.getDisplayableDollarAmount(amountOwedToYou));
+        UserHomeActivity.amountYouOweTextView.setText(DTUtils.getDisplayableDollarAmount(amountOwedToOthers));
+        UserHomeActivity.amountBalanceTextView.setText(DTUtils.getDisplayableDollarAmount(balance));
 
         if (balance < 0) {
-            UserHomeActivity.amountBalanceTextView.setTextColor(Color.rgb(238, 98, 103));
+            UserHomeActivity.amountBalanceTextView.setTextColor(DetApplication.DET_RED);
         } else {
-            UserHomeActivity.amountBalanceTextView.setTextColor(Color.rgb(102, 204, 153));
+            UserHomeActivity.amountBalanceTextView.setTextColor(DetApplication.DET_GREEN);
         }
 
-        float owedToYouRatio1 = (float) ((float) amountOwedToOthers / (amountOwedToYou + amountOwedToOthers));
-        float owedToYouRatio2 = (float) ((float) amountOwedToYou / (amountOwedToYou + amountOwedToOthers));
-        float youOweRatio1 = (float) ((float) amountOwedToYou / (amountOwedToYou + amountOwedToOthers));
-        float youOweRatio2 = (float) ((float) amountOwedToOthers / (amountOwedToYou + amountOwedToOthers));
+        float owedToYouRatio1 = (float) (amountOwedToOthers / (amountOwedToYou + amountOwedToOthers));
+        float owedToYouRatio2 = (float) (amountOwedToYou / (amountOwedToYou + amountOwedToOthers));
+        float youOweRatio1 = (float) (amountOwedToYou / (amountOwedToYou + amountOwedToOthers));
+        float youOweRatio2 = (float) (amountOwedToOthers / (amountOwedToYou + amountOwedToOthers));
 
         if (amountOwedToYou == 0 && amountOwedToOthers == 0) {
             owedToYouRatio1 = 1;
@@ -87,14 +83,10 @@ public class UserHomeActivity extends Activity {
         this.refreshButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                onRefreshButtonClicked();
+                UserHomeActivity.this.loadDebtsData = new LoadDebtsDataAsync(UserHomeActivity.this, getWindow().getDecorView().getRootView());
+                UserHomeActivity.this.loadDebtsData.execute();
             }
         });
-    }
-
-    private void onRefreshButtonClicked() {
-        this.loadDebtsData = new LoadDebtsDataAsync(this, getWindow().getDecorView().getRootView());
-        this.loadDebtsData.execute();
     }
 
     // Adds onClick listener for logout button
@@ -103,8 +95,14 @@ public class UserHomeActivity extends Activity {
         this.logoutButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // Log out and start LoginActivity
-                onLogoutButtonClicked();
+                // Clear token information
+                ParseFacebookUtils.getSession().closeAndClearTokenInformation();
+
+                // Log the user out
+                ParseUser.logOut();
+
+                // Go to the login view
+                DetApplication.startActivity(LoginActivity.class, getBaseContext(), UserHomeActivity.this, true);
             }
         });
     }
@@ -113,7 +111,7 @@ public class UserHomeActivity extends Activity {
     private void setCurrentUser() {
         DetApplication.currentUser = DTUser.getCurrentUser();
         if (DetApplication.currentUser == null) {
-            UserHomeActivity.this.startLoginActivity();
+            DetApplication.startActivity(LoginActivity.class, getBaseContext(), this, true);
         }
     }
 
@@ -128,50 +126,24 @@ public class UserHomeActivity extends Activity {
         loadDebtsData.execute();
     }
 
-    // Called when user clicks add transaction button
-    private void onAddTransactionButtonClicked() {
-        AddTransactionActivity.setSelectedUsers(null);
-        startAddTransactionActivity();
-    }
-
-    // Starts AddTransactionActivity
-    private void startAddTransactionActivity() {
-        Intent intent = new Intent(this, AddTransactionActivity.class);
-        startActivityForResult(intent, 1);
-    }
-
     private void setupAddTransactionButton() {
         this.addTransactionButton = (TextView) findViewById(R.id.addTransactionButton);
         this.addTransactionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                onAddTransactionButtonClicked();
+                AddTransactionActivity.setSelectedUsers(null);
+                Intent intent = new Intent(UserHomeActivity.this, AddTransactionActivity.class);
+                startActivityForResult(intent, 1);
             }
         });
     }
 
-    // Logs the user out and starts LoginActivity
-    private void onLogoutButtonClicked() {
-        // Clear token information
-        ParseFacebookUtils.getSession().closeAndClearTokenInformation();
-
-        // Log the user out
-        ParseUser.logOut();
-
-        // Go to the login view
-        startLoginActivity();
-    }
-
-    // Starts LoginActivity
-    public void startLoginActivity() {
-        Intent intent = new Intent(this, LoginActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        startActivity(intent);
-    }
-
-    public static void resetAggregateTotalsValues() {
-        UserHomeActivity.amountOwedToOthers = 0;
-        UserHomeActivity.amountOwedToYou = 0;
+    // Back button on the home activity will back out of the app instead of to login activity
+    @Override
+    public void onBackPressed() {
+        Intent startMain = new Intent(Intent.ACTION_MAIN);
+        startMain.addCategory(Intent.CATEGORY_HOME);
+        startMain.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(startMain);
     }
 }

@@ -43,7 +43,7 @@ public class LoginActivity extends Activity {
         ParseUser currentUser = ParseUser.getCurrentUser();
         if ((currentUser != null) && ParseFacebookUtils.isLinked(currentUser)) {
             // Go to the user info activity
-            startUserHomeActivity();
+            DetApplication.startActivity(UserHomeActivity.class, getBaseContext(), this, true);
         }
     }
 
@@ -93,8 +93,7 @@ public class LoginActivity extends Activity {
                                     if (queryResult.size() > 0) {
                                         // Delete newly created user
                                         ParseUser.deleteAllInBackground(new ArrayList<ParseObject>(Arrays.asList(newlyCreatedUser)), null);
-                                        // Authenticate existing user
-                                        // row
+                                        // Authenticate existing user row
                                         ParseUser userToAuthenticate = queryResult.get(0);
                                         ParseUser.logIn(userToAuthenticate.getUsername(), DTUser.generatePassword(false));
                                         // Set random password
@@ -119,7 +118,7 @@ public class LoginActivity extends Activity {
                                 }
 
                                 LoginActivity.this.progressDialog.dismiss();
-                                startUserHomeActivity();
+                                DetApplication.startActivity(UserHomeActivity.class, getBaseContext(), LoginActivity.this, true);
                             } else {
                                 Log.e(DetApplication.TAG, "DETAPP ERROR: Unable to fetch graph user object for current user");
                                 throw new org.apache.http.ParseException();
@@ -141,15 +140,9 @@ public class LoginActivity extends Activity {
                     Log.d(DetApplication.TAG, "User logged in through Facebook!");
                     Log.d(DetApplication.TAG, "USER ID: " + newlyCreatedUser.getString("fbID"));
 
-                    startUserHomeActivity();
+                    DetApplication.startActivity(UserHomeActivity.class, getBaseContext(), LoginActivity.this, true);
                 }
             }
         });
-    }
-
-    // Starts UserHomeActivity
-    private void startUserHomeActivity() {
-        Intent intent = new Intent(this, UserHomeActivity.class);
-        startActivity(intent);
     }
 }
